@@ -12,5 +12,5 @@ public class TemplesActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new TemplesFragment()).commit();
 
     }}
-    
+
 

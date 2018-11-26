@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">DyFragmentData</string>
+    <string name="temples_activity_name">Temples</string>
+    <string name="places_activity_name">Places</string>
+    <string name="restaurants_activity_name">Restaurants</string>
+    <string name="temples_category">Temples</string>
+    <string name="places_category">Places</string>
+    <string name="restaurants_category">Restaurants</string>
+    <string name="monuments_category">Monuments</string>
+    <string name="outing_category">Outing</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>

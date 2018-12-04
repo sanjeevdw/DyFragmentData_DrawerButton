@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".HomepageActivity">
+    tools:context=".CheckoutActivity">
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this)-->
     <FrameLayout
@@ -268,6 +268,16 @@
             android:text="@string/dollar_sign"
             />
         </RelativeLayout>
+        <View
+            android:id="@+id/separator_cart_order_summary_button"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_height="1dp"
+            android:background="#aba9a9"
+            />
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -377,4 +387,5 @@
         app:menu="@menu/drawer_view"
         app:headerLayout="@layout/header_layout"/>
 </android.support.v4.widget.DrawerLayout>
+
 

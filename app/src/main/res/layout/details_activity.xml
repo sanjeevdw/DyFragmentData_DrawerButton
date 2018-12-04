@@ -59,29 +59,37 @@
         android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_marginTop="20dp"
         android:layout_height="wrap_content">
-    <ImageView
+        <ImageButton
+        android:id="@+id/thumbnail_image_one"
         android:layout_width="60dp"
         android:layout_height="60dp"
+            android:clickable="true"
+            android:focusable="true"
+            android:onClick="thumbOne"
         android:layout_gravity="center"
         android:layout_marginStart="15dp"
         android:background="@drawable/rectangle_shape"
         android:src="@drawable/t_shirt"
         />
-    <ImageView
+    <ImageButton
+        android:id="@+id/thumbnail_image_two"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:layout_marginStart="8dp"
         android:background="@drawable/rectangle_shape"
-        android:src="@drawable/t_shirt"
+        android:clickable="true"
+        android:src="@drawable/cart_image_two"
         />
-    <ImageView
+        <ImageButton
+        android:id="@+id/thumbnail_image_three"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:layout_marginStart="8dp"
+            android:clickable="true"
         android:background="@drawable/rectangle_shape"
-        android:src="@drawable/t_shirt"
+        android:src="@drawable/cart_image_three"
         />
     </LinearLayout>
     <LinearLayout
@@ -115,6 +123,18 @@ android:orientation="vertical">
     android:text="@string/product_price"
     android:fontFamily="sans-serif"
     android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/sku"
+                android:layout_alignParentEnd="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp"
+                android:textStyle="bold"
+                android:text="@string/product_sku_whistlist"/>
+        </RelativeLayout>
         <LinearLayout
             android:id="@+id/ratings_container"
             android:layout_width="match_parent"
@@ -320,6 +340,205 @@ android:orientation="vertical">
             android:fontFamily="sans-serif"
             android:layout_height="wrap_content"/>
     </LinearLayout>
+    <TableLayout
+        android:id="@+id/table_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp">
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/spec_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:text="@string/specification_heading"
+                />
+            <TextView
+                android:id="@+id/spec_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="30dp"
+                android:layout_column="2"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:text="@string/specification_value"
+                />
+        </TableRow>
+        <View
+            android:id="@+id/line_separator_one"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="#ddd" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/spec_heading_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="14sp"
+                android:text="@string/specification_heading_two"
+                />
+            <TextView
+                android:id="@+id/spec_value_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_marginStart="30dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:text="@string/specification_value_two"
+            />
+        </TableRow>
+        <View
+            android:id="@+id/line_separator_two"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="#ddd" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/spec_heading_two"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="14sp"
+                android:text="@string/specification_heading_three"
+                />
+            <TextView
+                android:id="@+id/spec_value_two"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_marginStart="30dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:text="@string/specification_value_three"
+                />
+        </TableRow>
+        <View
+            android:id="@+id/line_separator_three"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="#ddd" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/spec_heading_three"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="14sp"
+                android:text="@string/specification_heading_four"
+                />
+            <TextView
+                android:id="@+id/spec_value_three"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_marginStart="30dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:text="@string/specification_value_four"
+                />
+        </TableRow>
+        <View
+            android:id="@+id/line_separator_four"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="#ddd" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/spec_heading_four"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="14sp"
+                android:text="@string/specification_heading_five"
+                />
+            <TextView
+                android:id="@+id/spec_value_four"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_marginStart="30dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:text="@string/specification_value_five"
+                />
+        </TableRow>
+        <View
+            android:id="@+id/line_separator_five"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="#ddd" />
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:id="@+id/spec_heading_five"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="1"
+                android:textSize="14sp"
+                android:text="@string/specification_heading_six"
+                />
+            <TextView
+                android:id="@+id/spec_value_five"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_column="2"
+                android:layout_marginStart="30dp"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:text="@string/specification_value_seven"
+                />
+        </TableRow>
+        <View
+            android:id="@+id/line_separator_six"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginStart="5dp"
+            android:background="#ddd" />
+    </TableLayout>
     <LinearLayout
         android:id="@+id/reviews_rating_container"
         android:layout_width="match_parent"

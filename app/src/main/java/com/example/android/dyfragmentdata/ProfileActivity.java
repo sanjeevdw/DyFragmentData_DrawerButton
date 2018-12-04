@@ -104,6 +104,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
+            case R.id.nav_product:
+                Intent intentProduct = new Intent(this, DetailsActivity.class);
+                startActivity(intentProduct);
+                break;
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);

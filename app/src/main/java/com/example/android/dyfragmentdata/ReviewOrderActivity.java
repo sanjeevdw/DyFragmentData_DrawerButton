@@ -133,6 +133,11 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
+            case R.id.nav_product:
+                Intent intentProduct = new Intent(this, DetailsActivity.class);
+                startActivity(intentProduct);
+                break;
+
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
@@ -158,7 +163,7 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 startActivity(intentWishlist);
                 break;
 
-            case R.id.nav_about_industry:
+                case R.id.nav_about_industry:
                 Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;

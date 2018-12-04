@@ -56,7 +56,7 @@
     <string name="enter_your_address">Enter Your Address</string>
     <string name="sign_up">SIGN UP</string>
     <string name="sign_in">SIGN IN</string>
-    <string name="already_have_account_sign_in">Already Have Account? SIGN IN</string>
+    <string name="already_have_account_sign_in">Already have account? Click here</string>
     <string name="todo">TODO</string>
     <string name="signin_here">Please sign in here</string>
     <string name="category_item_drawer_menu">Category wise</string>
@@ -104,6 +104,23 @@
     <string name="wishlist_heading">Wishlist</string>
     <string name="wishlist_remove_product_icon">X</string>
     <string name="product_price_whistlist">$799.00</string>
+    <string name="product_sku_whistlist">SKU: #12345</string>
+    <string name="product_specification">Product Specification</string>
+    <string name="specification_heading">Specification Heading</string>
+    <string name="specification_value">Specification Value</string>
+    <string name="specification_heading_two">RAM</string>
+    <string name="specification_value_two">2 GB</string>
+    <string name="specification_heading_three">Screen Size</string>
+    <string name="specification_value_three">15 inch</string>
+    <string name="specification_heading_four">Color</string>
+    <string name="specification_value_four">Black</string>
+    <string name="specification_heading_five">Hard disk</string>
+    <string name="specification_value_five">500 GB</string>
+    <string name="specification_heading_six">Back Camera</string>
+    <string name="specification_value_six">5 MP</string>
+    <string name="specification_heading_seven">Front Camera</string>
+    <string name="specification_value_seven">2 MP</string>
+    <string name="product_details">Product</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
 </resources>
 

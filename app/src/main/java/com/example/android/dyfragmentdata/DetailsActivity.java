@@ -2,6 +2,7 @@ package com.example.android.dyfragmentdata;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -13,8 +14,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -37,6 +41,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private ArrayList<Guide> temples;
     private GuideAdapter adapter;
     private ListView listView;
+    private ImageView mainImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +72,52 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+       mainImageView = (ImageView) findViewById(R.id.main_image);
+
+       ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
+        thumbTwoImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mainImageView.setImageResource(R.drawable.cart_image_two);
+                        Toast.makeText(DetailsActivity.this, "Thumb two clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+
+        ImageButton thumbThreeImageView = (ImageButton) findViewById(R.id.thumbnail_image_three);
+        thumbThreeImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mainImageView.setImageResource(R.drawable.cart_image_three);
+                        Toast.makeText(DetailsActivity.this, "Thumb three clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        }
+
+    public void thumbOne(View view) {
+        ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
+        thumbOneImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mainImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mainImageView.setImageResource(R.drawable.cart_image_three);
+                        Toast.makeText(DetailsActivity.this, "Thumb one clicked", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
     }
 
     // NavigationView click events
@@ -126,6 +177,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             case R.id.nav_category:
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
+                break;
+            case R.id.nav_product:
+                Intent intentProduct = new Intent(this, DetailsActivity.class);
+                startActivity(intentProduct);
                 break;
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);

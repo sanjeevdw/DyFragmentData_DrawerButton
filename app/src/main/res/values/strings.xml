@@ -1,14 +1,117 @@
 <resources>
-    <string name="app_name">DyFragmentData</string>
+    <string name="app_name">God Price</string>
     <string name="temples_activity_name">Temples</string>
     <string name="places_activity_name">Places</string>
     <string name="restaurants_activity_name">Restaurants</string>
-    <string name="temples_category">Temples</string>
-    <string name="places_category">Places</string>
-    <string name="restaurants_category">Restaurants</string>
-    <string name="monuments_category">Monuments</string>
-    <string name="outing_category">Outing</string>
-
+    <string name="temples_category">Shoes</string>
+    <string name="places_category">Pants</string>
+    <string name="restaurants_category">Case</string>
+    <string name="monuments_category">Accessories</string>
+    <string name="outing_category">Wallet</string>
+    <string name="header_name">God Price</string>
+    <string name="register">Register</string>
+    <string name="login">Login</string>
+    <string name="about_industry">About GodPrice</string>
+    <string name="home">Home</string>
+    <string name="button_details_text">View More</string>
+    <string name="sign_out">Sign out</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="product_details_name">Alan Jones Full Sleeve Solid Mens Sweatshirt</string>
+    <string name="product_price">$ 200</string>
+    <string name="women_outwear">Women Outwear</string>
+    <string name="color_text">Color</string>
+    <string name="size_text">Size</string>
+    <string name="blue_color_text">Blue</string>
+    <string name="red_color_text">Red</string>
+    <string name="green_text">Green</string>
+    <string name="small_size_text">S</string>
+    <string name="medium_color_text">M</string>
+    <string name="large_text">L</string>
+    <string name="xtra_large_text">XL</string>
+    <string name="add_to_cart">Add to Cart</string>
+    <string name="buy_now">Buy Now</string>
+    <string name="rating_count">200 Reviews</string>
+    <string name="description_heading">Description</string>
+    <string name="description_details">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</string>
+    <string name="reviewer_name">Jacky Chain</string>
+    <string name="review_text">Nice product</string>
+    <string name="ratings_reviews_text">Ratings &amp; Reviews</string>
+    <string name="related_products_heading">Related Products</string>
+    <string name="search_items">Search Items</string>
+    <string name="search_box_hint">Search for products, brand and more</string>
+    <string name="homepage_heading">Fashion picks from emerging brands</string>
+    <string name="homepage_heading_two">Your Recommendations</string>
+    <string name="listview_homepage_heading">Deals of the Day</string>
+    <string name="see_more">See More</string>
+    <string name="less_than_sign">></string>
+    <string name="cart_menu_icon">Cart</string>
+    <string name="sign_in_menu_icon">Sign In</string>
+    <string name="grid_category_heading">Up To 40% Off: Each Product</string>
+    <string name="please_enter_detail_here">Please Enter Details Here</string>
+    <string name="enter_your_name">Enter Your Name*</string>
+    <string name="enter_your_email">Enter Your Email*</string>
+    <string name="enter_your_mobile_number">Enter Your Mobile Number*</string>
+    <string name="enter_your_password">Enter Your Password*</string>
+    <string name="enter_your_address">Enter Your Address</string>
+    <string name="sign_up">SIGN UP</string>
+    <string name="sign_in">SIGN IN</string>
+    <string name="already_have_account_sign_in">Already Have Account? SIGN IN</string>
+    <string name="todo">TODO</string>
+    <string name="signin_here">Please sign in here</string>
+    <string name="category_item_drawer_menu">Category wise</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="mobile_number">Mobile Number</string>
+    <string name="email_address">Email address</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="submit_button_text">SUBMIT</string>
+    <string name="deactivate_account">Deactivate account</string>
+    <string name="profile">Profile</string>
+    <string name="update">UPDATE</string>
+    <string name="checkout_address_header">Checkout Address</string>
+    <string name="billing_address">1. Billing Address</string>
+    <string name="review_order">2. Review Order</string>c
+    <string name="payment">3. Payment</string>
+    <string name="add_new_address">ADD NEW ADDRESS</string>
+    <string name="full_name_checkout">Full Name</string>
+    <string name="phone_number_checkout">Phone Number</string>
+    <string name="email_address_checkout">E-Mail Address</string>
+    <string name="alt_phone_no_checkout">Alternative Phone NO.</string>
+    <string name="country_checkout">Country</string>
+    <string name="city_checkout">City</string>
+    <string name="zip_code_checkout">ZIP code</string>
+    <string name="address_two_checkout">Address 2</string>
+    <string name="order_summary_checkout">Order Summary</string>
+    <string name="save_deliver_here_checkout">SAVE AND DELIVER HERE</string>
+    <string name="cart_total_checkout">Cart Total:</string>
+    <string name="wallet_amount_checkout">Wallet Amount</string>
+    <string name="amount_pay_checkout">Amount To Pay</string>
+    <string name="dollar_sign">$ 100</string>
+    <string name="dollar_sign_zero">$ 50</string>
+    <string name="checkout">Checkout</string>
+    <string name="billing_address_heading">Billing Address</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <string name="quantity_review_order">Quantity: 1</string>
+    <string name="quantity_value">1</string>
+    <string name="review_order_heading">Review Order</string>
+    <string name="payment_done">You have successfully placed your order.</string>
+    <string name="payment_heading">Payment</string>
+    <string name="change_password">Change Password</string>
+    <string name="current_password">Current Password</string>
+    <string name="new_password">New Password</string>
+    <string name="wishlist_heading">Wishlist</string>
+    <string name="wishlist_remove_product_icon">X</string>
+    <string name="product_price_whistlist">$799.00</string>
+    <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
 </resources>
+
+
+
+
+
+
+
+
+

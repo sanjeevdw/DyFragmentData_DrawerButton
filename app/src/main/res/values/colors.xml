@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4A312A</color>
+    <color name="colorPrimary">#e53935</color>
     <color name="colorPrimaryDark">#2F1D1A</color>
     <color name="colorAccent">#FF4081</color>
 
     <!-- Background color for the app -->
-    <color name="tan_background">#FFF7DA</color>
+    <color name="tan_background">#ffffff</color>
 
     <!-- Background color for the temples category -->
-    <color name="temples_category">#FD8E09</color>
+    <color name="temples_category">#ffffff</color>
 
     <!-- Background color for the places category -->
     <color name="places_category">#379237</color>

@@ -1,6 +1,7 @@
 package com.example.android.dyfragmentdata;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ public class SimpleFragmentPageAdapter extends FragmentPagerAdapter {
     // context of the app
 
         private Context mContext;
+        private Drawable myDrawable;
 
         /* Create a new {@link SimpleFragmentPageAdapter} object.
          * @param context is the context of the app

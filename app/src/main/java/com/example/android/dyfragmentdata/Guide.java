@@ -13,15 +13,17 @@ public class Guide {
     private String mTempleLocation;
     private int mImageResourceId = NO_IMAGE_PROVIDED;
     private static final int NO_IMAGE_PROVIDED = 1;
+    private String mImageUrl;
     // created constructor with two parameters templeName and templeLocation
 
 
-    public Guide(String templeName, String templeLocation) {
+    public Guide(String templeName, String templeLocation, String mImageUrl) {
 
         // Variable initial values
 
         mTempleName = templeName;
         mTempleLocation = templeLocation;
+        this.mImageUrl = mImageUrl;
     }
 
   //  public Guide(String templeName, String templeLocation) {
@@ -45,11 +47,15 @@ public class Guide {
         return mTempleLocation;
     }
 
+    public String getImageUrl() {
+        return  mImageUrl;
+    }
+
     // Get method to return temple location
 
-  //  public int getImageResourceId() {
+   // public int getImageResourceId() {
 
-   //    return mImageResourceId;
+   //   return mImageResourceId;
   //  }
 
     /* Returns whether or not there is an image for this word
@@ -59,7 +65,7 @@ public class Guide {
 
   //  public boolean hasImage() {
 
- //       return mImageResourceId != NO_IMAGE_PROVIDED;
-  //  }
+    //    return mImageResourceId != NO_IMAGE_PROVIDED;
+  // }
 }
 

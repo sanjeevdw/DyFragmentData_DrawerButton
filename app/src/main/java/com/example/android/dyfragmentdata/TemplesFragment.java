@@ -1,5 +1,6 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -7,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -50,100 +52,8 @@ public class TemplesFragment extends Fragment {
         //  ListView listView = (ListView) rootView.findViewById(R.id.list);
         //  listView.setAdapter(adapter);
         categoryNetworkRequest();
-            //TODO: Insert all the code from the TemplesActivity onCreate method after the setContentView method.
 
-            // Create an ArrayList of temples.
-       // Bundle extras = getActivity().getIntent().getExtras();
-       // if (extras!= null) {
-       //     temples = extras.getParcelableArrayList("temples");
-       // }
-
-        // ArrayList<Guide> temples = (ArrayList<Guide>)getArguments().getSerializable("temples");
-
-          //  temples.add(new Guide("Manua Bhan Ki Tekri", "Sun City, Lalghati"));
-            //  temples.add(new Guide("Laxminarayan Temple", "Arera Hills"));
-           //  temples.add(new Guide("Gayatri Mandir", "Zone-1, Maharana Pratap Nagar"));
-            // temples.add(new Guide("Gufa Mandir", "Lalghati"));
-           //  temples.add(new Guide("Balaji Mandir", "Bankhera, BHEL"));
-            // temples.add(new Guide("Birla Mandir", "Arera Hills"));
-            // temples.add(new Guide("Maa Kali Bijasen Temple", "Kolar Road, Chunna Bhatti"));
-            // temples.add(new Guide("Mahalakshmi Temple", "Karunadham Ashram, Gomti Colony"));
-           //  temples.add(new Guide("Bhojpur Shiva Temple", "Bhojpur"));
-           //   temples.add(new Guide("ISKCON Bhopal Center", "Sector A, Indrapuri"));
-
-     /* temples.add("Mata Mandir");
-
-
-
-        temples.add("Manua Bhan Ki Tekri");
-        temples.add("Laxminarayan Temple");
-        temples.add("Shri Radha Krishna Mandir");
-        temples.add("Bhojpur Shiva Temple");
-        temples.add("Ganesh Mandir");
-        temples.add("Sai Baba Temple");
-        temples.add("Balaji Mandir");
-        temples.add("Gayatri Mandir"); */
-
-
-            /* Create an {@link ArrayAdapter}, whose data source is a list of Strings. The
-             * adapter knows how to create layouts for each item in the list, using the
-             * simple_list_item_1.xml layout resource defined in the Android framework.
-             * This list item layout contains a single {@link TextView}, which the adapter will set to
-             * display a single temple.
-             */
-
-         //   GuideAdapter adapter = new GuideAdapter(getActivity().getApplicationContext(), temples,  R.color.temples_category);
-          //  Log.d("tag", String.valueOf(adapter));
-
-            /* Find the {@link ListView} object in the view hierarchy of the {@link Activity}.
-             * There should be a {@link ListView} with the view ID called list, which is declared in the
-             * guide_list.xmlt file.
-             */
-          //  ListView listView = (ListView) rootView.findViewById(R.id.list);
-
-            /* Make the {@link ListView} use the {@link ArrayAdapter} we created above, so that the
-             * {@link ListView} will display list items for each temple in the list of temples.
-             * Do this by calling the setAdapter method on the {@link ListView} object and pass in
-             * 1 argument, which is the {@link ArrayAdapter} with the variable name itemsAdapter.
-             */
-
-
-          //  listView.setAdapter(adapter);
-
-            // Find the root view of the whole layout
-
-            //   LinearLayout rootView = (LinearLayout) findViewById(R.id.rootView);
-
-            // Create a variable to keep track of current index position
-
-
-            // int index = 0;
-            // while(index<temples.size()) {
-
-            // update counter variable
-
-       /* for (int index=0; index<temples.size(); index++)
-        {
-            TextView templesView = new TextView(this);
-            templesView.setText(temples.get(index));
-            rootView.addView(templesView);
-
-         //   index++; // index = index +1
-        } */
-
-            // Create a new {@link TextView} to display the temple
-            // and add the view as a child to the root view
-
-
-            // Verify each elements in the ArrayList by printing out ArrayList elements in the log.
-
-       /*  Log.v("TemplesActivity", "Temple at index 0: " + temples.get(0));
-        Log.v("TemplesActivity", "Temple at index 0: " + temples.get(1));
-        Log.v("TemplesActivity", "Temple at index 0: " + temples.get(2));
-        Log.v("TemplesActivity", "Temple at index 0: " + temples.get(3));
-        Log.v("TemplesActivity", "Temple at index 0: " + temples.get(4)); */
-
-            return rootView;
+        return rootView;
         }
 
         private void categoryNetworkRequest() {
@@ -172,14 +82,26 @@ public class TemplesFragment extends Fragment {
                             map.put("Category name", "Category name : " + e.getString("categoryname"));
                             String categoryId = e.getString("m_cid");
                             String categoryName = e.getString("categoryname");
+                            String imageUrl = e.getString("image");
 
-                            Guide currentGuide = new Guide(categoryId, categoryName);
+                            Guide currentGuide = new Guide(categoryId, categoryName, imageUrl);
                             temples.add(currentGuide);
 
                               adapter = new GuideAdapter(getActivity(), temples,  R.color.temples_category);
                               ListView listView = (ListView) rootView.findViewById(R.id.list);
                               listView.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
+                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                    long viewId = view.getId();
+
+                                    if (viewId == R.id.button_details_two) {
+                                        Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
+                                        startActivity(intent);
+                                    }
+                                }
+                            });
 
                             //  temples.add(new Guide("Manua Bhan Ki Tekri", "Sun City, Lalghati"));
                             //temples.add(new Guide("Laxminarayan Temple", "Arera Hills"));
@@ -193,7 +115,7 @@ public class TemplesFragment extends Fragment {
                             // temples.add(new Guide("ISKCON Bhopal Center", "Sector A, Indrapuri"));
 
                             // addTab(categoryName);
-                            Toast.makeText(getActivity().getApplicationContext(), "Post successful.", Toast.LENGTH_SHORT).show();
+                     //       Toast.makeText(getActivity().getApplicationContext(), "Post successful.", Toast.LENGTH_SHORT).show();
                             //  Log.d("tag", String.valueOf(map));
                         }
 
@@ -211,7 +133,7 @@ public class TemplesFragment extends Fragment {
             }, new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {
-            Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
 
         }
 

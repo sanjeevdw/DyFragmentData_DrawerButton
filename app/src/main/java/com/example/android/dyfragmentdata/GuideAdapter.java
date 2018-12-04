@@ -9,8 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
@@ -28,7 +32,7 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
 
     @NonNull
     @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+    public View getView(final int position, @Nullable View convertView, @NonNull final ViewGroup parent) {
 
         View itemListView = convertView;
 
@@ -45,14 +49,33 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
         TextView locationTempleView = (TextView) itemListView.findViewById(R.id.location_view);
         locationTempleView.setText(currentGuide.getTempleLocation());
 
-     //   ImageView imageTempleView = (ImageView) itemListView.findViewById(R.id.image);
+        ImageView imageTempleView = (ImageView) itemListView.findViewById(R.id.image);
 
-    //    if (currentGuide.hasImage()) {
+        //   if (currentProduct.getImageUrl()) {
+        if (currentGuide != null) {
 
-       //     imageTempleView.setImageResource(currentGuide.getImageResourceId());
+            Glide.with(imageTempleView.getContext())
+                    .load(currentGuide.getImageUrl())
+                    .into(imageTempleView);
+        }
+
+        Button detailsButton = (Button) itemListView.findViewById(R.id.button_details_two);
+        detailsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) parent).performItemClick(v, position, 0);
+
+             //   int position = getPosition();
+              //  long id = getItemId(position);
+              //  ((CatalogActivity) context).onButtonClick(id);
+            }
+        });
+      //  if (currentGuide.hasImage()) {
+
+         //   imageTempleView.setImageResource(currentGuide.getImageResourceId());
        //     imageTempleView.setVisibility(View.VISIBLE);
-      //  }
-      // else {
+     //   }
+    //   else {
      //       imageTempleView.setVisibility(View.GONE);
      //   }
 
@@ -67,6 +90,5 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
         return itemListView;
         // return super.getView(position, convertView, parent);
     }
-
-
 }
+

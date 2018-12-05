@@ -28,12 +28,17 @@
         <item
             android:id="@+id/nav_wishlist"
             android:title="@string/wishlist_heading"/>
-        <item
-            android:id="@+id/nav_about_industry"
-            android:title="@string/about_industry"/>
+
         <item
             android:id="@+id/nav_checkout"
             android:title="@string/checkout"/>
+
+        <item
+            android:id="@+id/nav_order_history"
+            android:title="@string/order_history"/>
+        <item
+            android:id="@+id/nav_about_industry"
+            android:title="@string/about_industry"/>
         <item
             android:id="@+id/sign_out_menu"
             android:title="@string/sign_out"/>

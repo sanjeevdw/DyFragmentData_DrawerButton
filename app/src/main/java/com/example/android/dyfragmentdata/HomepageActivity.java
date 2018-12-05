@@ -276,6 +276,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
                 break;
+            case R.id.nav_order_history:
+                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                startActivity(intentOrderHistory);
+                break;
             case R.id.sign_out_menu:
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 break;
@@ -285,68 +289,82 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     private void dealsProductsNetworkRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://carpediemsocial.com/onlineshop/api/category_master.php";
+        String url = "https://www.godprice.com/api/product_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
                         try {
-                            JSONArray internships = new JSONArray(response);
-                            for (int i = 0; i < internships.length(); i++) {
-                                Log.e("Message", "loop");
-                                HashMap<String, String> map = new HashMap<String, String>();
-                                JSONObject e = internships.getJSONObject(i);
-                                map.put("cid", "cid :" + e.getString("m_cid"));
-                                map.put("Category name", "Category name : " + e.getString("categoryname"));
-                                String categoryId = e.getString("m_cid");
-                                String categoryName = e.getString("categoryname");
-                                String imageUrl = e.getString("image");
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+                                    for (int j = 0; j < currentProductDetail.length(); j++) {
+                                        //    for (int j = 0; j < productDetail.length(); j++) {
+                                        //   JSONArray productDetail = new JSONArray("product_detail");
+                                        Log.e("Message", "loop");
+                                        HashMap<String, String> map = new HashMap<String, String>();
+                                        JSONObject e = currentProductDetail.getJSONObject(j);
+                                        map.put("cid", "cid :" + e.getString("product_id"));
+                                        map.put("Category name", "Category name : " + e.getString("productsname"));
 
-                                Guide currentGuide = new Guide(categoryId, categoryName, imageUrl);
-                                temples.add(currentGuide);
-                                adapter = new GuideAdapter(HomepageActivity.this, temples,  R.color.temples_category);
-                                listView.setAdapter(adapter);
-                                listViewTwo.setAdapter(adapter);
-                                listViewThree.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        long viewId = view.getId();
+                                        String productId = e.getString("product_id");
+                                        String productName = e.getString("productsname");
+                                        String productPrice = e.getString("price");
+                                        String imageUrl = e.getString("feature_image");
+                                        String productRating = e.getString("rating");
 
-                                        if (viewId == R.id.button_details_two) {
-                                            Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
-                                            startActivity(intent);
-                                        }
+                                        Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
+                                        temples.add(currentGuide);
+                                        adapter = new GuideAdapter(HomepageActivity.this, temples, R.color.temples_category);
+                                        listView.setAdapter(adapter);
+                                        listViewTwo.setAdapter(adapter);
+                                        listViewThree.setAdapter(adapter);
+                                        adapter.notifyDataSetChanged();
+                                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+
+                                                if (viewId == R.id.button_details_two) {
+                                                    Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            }
+                                        });
+
+                                        listViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+
+                                                if (viewId == R.id.button_details_two) {
+                                                    Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            }
+                                        });
+                                        listViewThree.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+
+                                                if (viewId == R.id.button_details_two) {
+                                                    Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            }
+                                        });
                                     }
-                                });
 
-                                listViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        long viewId = view.getId();
-
-                                        if (viewId == R.id.button_details_two) {
-                                            Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    }
-                                });
-                                listViewThree.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        long viewId = view.getId();
-
-                                        if (viewId == R.id.button_details_two) {
-                                            Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    }
-                                });
+                                }
                             }
-
-
                         } catch (JSONException e) {
                             //     Log.e("Volley", "Problem parsing the category JSON results", e);
                         }

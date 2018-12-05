@@ -12,7 +12,7 @@
         android:id="@+id/user_image"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@mipmap/sign"
+        android:src="@mipmap/profile_pic"
         />
     <TextView
         android:id="@+id/header_username_tv"

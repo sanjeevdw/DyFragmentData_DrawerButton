@@ -58,7 +58,7 @@ public class TemplesFragment extends Fragment {
 
         private void categoryNetworkRequest() {
     RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-    String url = "http://carpediemsocial.com/onlineshop/api/category_master.php";
+    String url = "https://www.godprice.com/api/product_list.php";
     StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
             new Response.Listener<String>() {
                 @Override
@@ -71,63 +71,60 @@ public class TemplesFragment extends Fragment {
                     // Catch the exception so the app doesn't crash, and print the error message to the logs.
                     try {
 
-                        JSONArray internships = new JSONArray(response);
+                        String trimResponse = response.substring(3);
+                        String trimmedResponse = trimResponse.trim();
+                        JSONObject jsonObject = new JSONObject(trimmedResponse);
+                        JSONArray data = jsonObject.getJSONArray("data");
+                        if (data.length() > 0) {
+                            //Loop the Array
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject currentObject = data.getJSONObject(i);
+                                JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
 
-                        //Loop the Array
-                        for (int i = 0; i < internships.length(); i++) {
-                            Log.e("Message", "loop");
-                            HashMap<String, String> map = new HashMap<String, String>();
-                            JSONObject e = internships.getJSONObject(i);
-                            map.put("cid", "cid :" + e.getString("m_cid"));
-                            map.put("Category name", "Category name : " + e.getString("categoryname"));
-                            String categoryId = e.getString("m_cid");
-                            String categoryName = e.getString("categoryname");
-                            String imageUrl = e.getString("image");
+                                for (int j = 0; j < currentProductDetail.length(); j++) {
+                                    //   JSONArray productDetail = new JSONArray("product_detail");
+                                    Log.e("Message", "loop");
+                                    HashMap<String, String> map = new HashMap<String, String>();
+                                    JSONObject e = currentProductDetail.getJSONObject(j);
+                                    map.put("cid", "cid :" + e.getString("product_id"));
+                                    map.put("Category name", "Category name : " + e.getString("productsname"));
 
-                            Guide currentGuide = new Guide(categoryId, categoryName, imageUrl);
-                            temples.add(currentGuide);
+                                    String productId = e.getString("product_id");
+                                    String productName = e.getString("productsname");
+                                    String productPrice = e.getString("price");
+                                    String imageUrl = e.getString("feature_image");
+                                    String productRating = e.getString("rating");
 
-                              adapter = new GuideAdapter(getActivity(), temples,  R.color.temples_category);
-                              ListView listView = (ListView) rootView.findViewById(R.id.list);
-                              listView.setAdapter(adapter);
-                            adapter.notifyDataSetChanged();
-                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                @Override
-                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                    long viewId = view.getId();
+                                    Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
+                                    temples.add(currentGuide);
 
-                                    if (viewId == R.id.button_details_two) {
-                                        Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
-                                        startActivity(intent);
-                                    }
+                                    adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
+                                    ListView listView = (ListView) rootView.findViewById(R.id.list);
+                                    listView.setAdapter(adapter);
+                                    adapter.notifyDataSetChanged();
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+
+                                            if (viewId == R.id.button_details_two) {
+                                                Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    });
+
                                 }
-                            });
 
-                            //  temples.add(new Guide("Manua Bhan Ki Tekri", "Sun City, Lalghati"));
-                            //temples.add(new Guide("Laxminarayan Temple", "Arera Hills"));
-                            //temples.add(new Guide("Gayatri Mandir", "Zone-1, Maharana Pratap Nagar"));
-                            // temples.add(new Guide("Gufa Mandir", "Lalghati"));
-                            // temples.add(new Guide("Balaji Mandir", "Bankhera, BHEL"));
-                            // temples.add(new Guide("Birla Mandir", "Arera Hills"));
-                            // temples.add(new Guide("Maa Kali Bijasen Temple", "Kolar Road, Chunna Bhatti"));
-                            // temples.add(new Guide("Mahalakshmi Temple", "Karunadham Ashram, Gomti Colony"));
-                            // temples.add(new Guide("Bhojpur Shiva Temple", "Bhojpur"));
-                            // temples.add(new Guide("ISKCON Bhopal Center", "Sector A, Indrapuri"));
-
-                            // addTab(categoryName);
-                     //       Toast.makeText(getActivity().getApplicationContext(), "Post successful.", Toast.LENGTH_SHORT).show();
-                            //  Log.d("tag", String.valueOf(map));
+                            }
                         }
-
-
                     } catch (JSONException e) {
                         // If an error is thrown when executing any of the above statements in the "try" block,
                         // catch the exception here, so the app doesn't crash. Print a log message
                         // with the message from the exception.
                         //     Log.e("Volley", "Problem parsing the category JSON results", e);
                     }
-                    // Return the list of earthquakes
-                    // return categories;
+
 
                 }
             }, new Response.ErrorListener() {

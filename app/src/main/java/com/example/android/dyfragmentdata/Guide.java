@@ -9,21 +9,25 @@ public class Guide {
 
     // Variable declaration
 
+    private String mProductId;
     private String mTempleName;
     private String mTempleLocation;
+    private String mRating;
     private int mImageResourceId = NO_IMAGE_PROVIDED;
     private static final int NO_IMAGE_PROVIDED = 1;
     private String mImageUrl;
     // created constructor with two parameters templeName and templeLocation
 
 
-    public Guide(String templeName, String templeLocation, String mImageUrl) {
+    public Guide(String productId, String templeName, String templeLocation, String mImageUrl, String rating) {
 
         // Variable initial values
 
+        mProductId = productId;
         mTempleName = templeName;
         mTempleLocation = templeLocation;
         this.mImageUrl = mImageUrl;
+        mRating = rating;
     }
 
   //  public Guide(String templeName, String templeLocation) {
@@ -37,6 +41,10 @@ public class Guide {
 
     // Get method to return temple name
 
+    public String getProductId() {
+        return  mProductId;
+    }
+
     public String getTempleName() {
         return mTempleName;
     }
@@ -49,6 +57,10 @@ public class Guide {
 
     public String getImageUrl() {
         return  mImageUrl;
+    }
+
+    public String getRating() {
+        return  mRating;
     }
 
     // Get method to return temple location

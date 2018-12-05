@@ -121,6 +121,15 @@
     <string name="specification_heading_seven">Front Camera</string>
     <string name="specification_value_seven">2 MP</string>
     <string name="product_details">Product</string>
+    <string name="order_history">Order History</string>
+    <string name="purchased_history_text">Purchased</string>
+    <string name="purchased_date">Dec 05, 2018</string>
+    <string name="order_id">OrderId: 123456789</string>
+    <string name="order_total">Order Total</string>
+    <string name="order_status">Status</string>
+    <string name="order_cancelled">Cancelled</string>
+    <string name="order_delivered">Delivered</string>
+    <string name="order_view_invoice">View Invoice</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
 </resources>
 

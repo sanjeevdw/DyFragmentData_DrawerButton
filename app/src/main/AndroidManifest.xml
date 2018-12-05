@@ -60,6 +60,9 @@
         <activity android:name=".WishlistActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
+        <activity android:name=".OrderHistoryActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
     </application>
 
 </manifest>

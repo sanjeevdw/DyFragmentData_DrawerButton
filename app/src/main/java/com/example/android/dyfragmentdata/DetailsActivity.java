@@ -2,7 +2,6 @@ package com.example.android.dyfragmentdata;
 
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -14,7 +13,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -74,53 +72,38 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
        mainImageView = (ImageView) findViewById(R.id.main_image);
+        mainImageView.setImageResource(R.drawable.product_image);
 
-       ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
-        thumbTwoImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mainImageView.setImageResource(R.drawable.cart_image_two);
-                        Toast.makeText(DetailsActivity.this, "Thumb two clicked", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-
-        ImageButton thumbThreeImageView = (ImageButton) findViewById(R.id.thumbnail_image_three);
-        thumbThreeImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainImageView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mainImageView.setImageResource(R.drawable.cart_image_three);
-                        Toast.makeText(DetailsActivity.this, "Thumb three clicked", Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-        });
-        }
-
-    public void thumbOne(View view) {
         ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
         thumbOneImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                mainImageView.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        mainImageView.setImageResource(R.drawable.product_image);
+                        }
+                });
+
+
+       ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
+        thumbTwoImageView.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+                    public void onClick(View v) {
+                        mainImageView.setImageResource(R.drawable.product_image_two);
+
+                   }
+                });
+
+        ImageButton thumbThreeImageView = (ImageButton) findViewById(R.id.thumbnail_image_three);
+        thumbThreeImageView.setOnClickListener(new View.OnClickListener() {
+
                     @Override
                     public void onClick(View v) {
-                        mainImageView.setImageResource(R.drawable.cart_image_three);
-                        Toast.makeText(DetailsActivity.this, "Thumb one clicked", Toast.LENGTH_SHORT).show();
-                    }
+                        mainImageView.setImageResource(R.drawable.product_image_three);
+                        }
                 });
-            }
-        });
-    }
+        }
 
-    // NavigationView click events
+        // NavigationView click events
     private void setNavigationViewListener() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -217,7 +200,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
-
+                break;
+            case R.id.nav_order_history:
+                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -228,45 +214,59 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
     private void relatedProductsNetworkRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://carpediemsocial.com/onlineshop/api/category_master.php";
+        String url = "https://www.godprice.com/api/product_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
                         try {
-                            JSONArray internships = new JSONArray(response);
-                            for (int i = 0; i < internships.length(); i++) {
-                                Log.e("Message", "loop");
-                                HashMap<String, String> map = new HashMap<String, String>();
-                                JSONObject e = internships.getJSONObject(i);
-                                map.put("cid", "cid :" + e.getString("m_cid"));
-                                map.put("Category name", "Category name : " + e.getString("categoryname"));
-                                String categoryId = e.getString("m_cid");
-                                String categoryName = e.getString("categoryname");
-                                String imageUrl = e.getString("image");
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+                                    for (int j = 0; j < currentProductDetail.length(); j++) {
 
-                                Guide currentGuide = new Guide(categoryId, categoryName, imageUrl);
-                                temples.add(currentGuide);
-                                adapter = new GuideAdapter(DetailsActivity.this, temples,  R.color.temples_category);
+                                        //   JSONArray productDetail = new JSONArray("product_detail");
+                                        Log.e("Message", "loop");
+                                        HashMap<String, String> map = new HashMap<String, String>();
+                                        JSONObject e = currentProductDetail.getJSONObject(j);
+                                        map.put("cid", "cid :" + e.getString("product_id"));
+                                        map.put("Category name", "Category name : " + e.getString("productsname"));
 
-                                listView.setAdapter(adapter);
-                                adapter.notifyDataSetChanged();
-                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        long viewId = view.getId();
+                                        String productId = e.getString("product_id");
+                                        String productName = e.getString("productsname");
+                                        String productPrice = e.getString("price");
+                                        String imageUrl = e.getString("feature_image");
+                                        String productRating = e.getString("rating");
 
-                                        if (viewId == R.id.button_details_two) {
-                                            Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
-                                       //     Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
-                                         //   startActivity(intent);
-                                        }
+                                        Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
+                                        temples.add(currentGuide);
+                                        adapter = new GuideAdapter(DetailsActivity.this, temples, R.color.temples_category);
+
+                                        listView.setAdapter(adapter);
+                                        adapter.notifyDataSetChanged();
+                                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+
+                                                if (viewId == R.id.button_details_two) {
+                                                    Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                    //     Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
+                                                    //   startActivity(intent);
+                                                }
+                                            }
+                                        });
+
                                     }
-                                });
-
                                 }
-
+                            }
 
                         } catch (JSONException e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,

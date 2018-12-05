@@ -131,7 +131,10 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
-
+                break;
+            case R.id.nav_order_history:
+                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();

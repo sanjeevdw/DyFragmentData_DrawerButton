@@ -70,6 +70,30 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
               //  ((CatalogActivity) context).onButtonClick(id);
             }
         });
+
+        ImageView ratingView = (ImageView) itemListView.findViewById(R.id.image_rating);
+        int reviewRating = Integer.parseInt(currentGuide.getRating());
+       switch(reviewRating) {
+           case 1:
+               ratingView.setImageResource(R.drawable.one_star_rating);
+           break;
+           case 2:
+               ratingView.setImageResource(R.drawable.two_star_rating);
+               break;
+           case 3:
+               ratingView.setImageResource(R.drawable.three_star_rating);
+               break;
+           case 4:
+               ratingView.setImageResource(R.drawable.four_star_rating);
+               break;
+           case 5:
+               ratingView.setImageResource(R.drawable.four_star_rating);
+               break;
+       }
+     //   if (reviewRating == 4) {
+     //   ratingView.setImageResource(R.drawable.four_star_rating);
+     //   }
+
       //  if (currentGuide.hasImage()) {
 
          //   imageTempleView.setImageResource(currentGuide.getImageResourceId());

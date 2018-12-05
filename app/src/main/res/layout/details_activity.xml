@@ -45,7 +45,7 @@
             android:layout_width="300dp"
             android:layout_height="250dp"
             android:layout_marginTop="70dp"
-            android:src="@drawable/t_shirt" />
+            />
 
         <ImageView
             android:id="@+id/product_favorite"
@@ -65,11 +65,10 @@
         android:layout_height="60dp"
             android:clickable="true"
             android:focusable="true"
-            android:onClick="thumbOne"
-        android:layout_gravity="center"
+            android:layout_gravity="center"
         android:layout_marginStart="15dp"
         android:background="@drawable/rectangle_shape"
-        android:src="@drawable/t_shirt"
+        android:src="@drawable/product_image"
         />
     <ImageButton
         android:id="@+id/thumbnail_image_two"
@@ -79,7 +78,8 @@
         android:layout_marginStart="8dp"
         android:background="@drawable/rectangle_shape"
         android:clickable="true"
-        android:src="@drawable/cart_image_two"
+        android:focusable="true"
+        android:src="@drawable/product_image_two"
         />
         <ImageButton
         android:id="@+id/thumbnail_image_three"
@@ -88,8 +88,9 @@
         android:layout_gravity="center"
         android:layout_marginStart="8dp"
             android:clickable="true"
+            android:focusable="true"
         android:background="@drawable/rectangle_shape"
-        android:src="@drawable/cart_image_three"
+        android:src="@drawable/product_image_three"
         />
     </LinearLayout>
     <LinearLayout

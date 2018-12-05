@@ -87,7 +87,7 @@ public Bundle bundle;
     private void categoryNetworkRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "http://carpediemsocial.com/onlineshop/api/category_master.php";
+        String url = "https://www.godprice.com/api/product_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
@@ -100,37 +100,51 @@ public Bundle bundle;
                         // Catch the exception so the app doesn't crash, and print the error message to the logs.
                         try {
 
-                            JSONArray internships = new JSONArray(response);
-
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
                             //Loop the Array
-                            for (int i = 0; i < internships.length(); i++) {
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject currentObject = data.getJSONObject(i);
+                                JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+
+                        //    for (int j = 0; j < productDetail.length(); j++) {
+                                //   JSONArray productDetail = new JSONArray("product_detail");
                                 Log.e("Message", "loop");
                                 HashMap<String, String> map = new HashMap<String, String>();
-                                JSONObject e = internships.getJSONObject(i);
-                                map.put("cid", "cid :" + e.getString("m_cid"));
-                                map.put("Category name", "Category name : " + e.getString("categoryname"));
-                                String categoryId = e.getString("m_cid");
-                                String categoryName = e.getString("categoryname");
-                                String imageUrl = e.getString("image");
+                                JSONObject e = currentProductDetail.getJSONObject(i);
+                                map.put("cid", "cid :" + e.getString("product_id"));
+                                map.put("Category name", "Category name : " + e.getString("productsname"));
 
-                Guide currentGuide = new Guide(categoryId, categoryName, imageUrl);
+                                String productId = e.getString("product_id");
+                                String productName = e.getString("productsname");
+                                String productPrice = e.getString("price");
+                                String imageUrl = e.getString("feature_image");
+                                String productRating = e.getString("rating");
+
+                                Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
                                 temples.add(currentGuide);
 
                                 //  temples.add(new Guide("Manua Bhan Ki Tekri", "Sun City, Lalghati"));
                                 //temples.add(new Guide("Laxminarayan Temple", "Arera Hills"));
                                 //temples.add(new Guide("Gayatri Mandir", "Zone-1, Maharana Pratap Nagar"));
-                               // temples.add(new Guide("Gufa Mandir", "Lalghati"));
-                               // temples.add(new Guide("Balaji Mandir", "Bankhera, BHEL"));
-                               // temples.add(new Guide("Birla Mandir", "Arera Hills"));
-                               // temples.add(new Guide("Maa Kali Bijasen Temple", "Kolar Road, Chunna Bhatti"));
-                               // temples.add(new Guide("Mahalakshmi Temple", "Karunadham Ashram, Gomti Colony"));
-                               // temples.add(new Guide("Bhojpur Shiva Temple", "Bhojpur"));
-                               // temples.add(new Guide("ISKCON Bhopal Center", "Sector A, Indrapuri"));
+                                // temples.add(new Guide("Gufa Mandir", "Lalghati"));
+                                // temples.add(new Guide("Balaji Mandir", "Bankhera, BHEL"));
+                                // temples.add(new Guide("Birla Mandir", "Arera Hills"));
+                                // temples.add(new Guide("Maa Kali Bijasen Temple", "Kolar Road, Chunna Bhatti"));
+                                // temples.add(new Guide("Mahalakshmi Temple", "Karunadham Ashram, Gomti Colony"));
+                                // temples.add(new Guide("Bhojpur Shiva Temple", "Bhojpur"));
+                                // temples.add(new Guide("ISKCON Bhopal Center", "Sector A, Indrapuri"));
 
                                 // addTab(categoryName);
-                             //   Toast.makeText(getApplicationContext(), "Post successful.", Toast.LENGTH_SHORT).show();
-                              //  Log.d("tag", String.valueOf(map));
+                                //   Toast.makeText(getApplicationContext(), "Post successful.", Toast.LENGTH_SHORT).show();
+                                //  Log.d("tag", String.valueOf(map));
                             }
+}
+
+
                       //      bundle = new Bundle();
                     //        bundle.putParcelableArrayList("temples", temples);
                       //      Log.d("tag",String.valueOf(bundle));
@@ -245,7 +259,10 @@ public Bundle bundle;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
-
+                break;
+            case R.id.nav_order_history:
+                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();

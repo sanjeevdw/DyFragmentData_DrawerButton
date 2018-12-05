@@ -15,29 +15,30 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-public class ForgotPasswordActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class OrderHistoryActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_forgot_password);
 
-        setNavigationViewListener();
-
+        // Set the content of the activity to use the activity_category.xml layout file
+        setContentView(R.layout.activity_order_history);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         ActionBar actionbar = getSupportActionBar();
 
-        if (actionbar !=null) {
+        if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+        setNavigationViewListener();
 
-    }
+        }
 
     // NavigationView click events
     private void setNavigationViewListener() {
@@ -85,7 +86,7 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
         // close drawer when item is tapped
         mDrawerLayout.closeDrawers();
 
-        switch(id) {
+        switch (id) {
 
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
@@ -102,14 +103,12 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
-
                 break;
             case R.id.nav_register:
                 Intent intentRegister = new Intent(this, SignupActivity.class);
                 startActivity(intentRegister);
-
                 break;
-                case R.id.nav_profile:
+            case R.id.nav_profile:
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
@@ -125,17 +124,20 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-            case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
-                break;
-            case R.id.nav_checkout:
+                case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
                 break;
+
             case R.id.nav_order_history:
                 Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
                 startActivity(intentOrderHistory);
+                break;
+
+            case R.id.nav_about_industry:
+                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+
                 break;
             case R.id.sign_out_menu:
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -144,5 +146,3 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
         return false;
     }
 }
-
-

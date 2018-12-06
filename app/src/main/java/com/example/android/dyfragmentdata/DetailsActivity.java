@@ -52,8 +52,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         temples = new ArrayList<Guide>();
         listView.setNestedScrollingEnabled(true);
 
-
-      //  listView.setAdapter(adapter);
+        //  listView.setAdapter(adapter);
 
         setNavigationViewListener();
 
@@ -257,9 +256,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 long viewId = view.getId();
 
                                                 if (viewId == R.id.button_details_two) {
-                                                    Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
-                                                    //     Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
-                                                    //   startActivity(intent);
+                                                   // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                         Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                       startActivity(intent);
                                                 }
                                             }
                                         });

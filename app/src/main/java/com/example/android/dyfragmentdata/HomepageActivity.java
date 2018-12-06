@@ -42,7 +42,8 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class
+HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
     private ArrayList<Guide> temples;

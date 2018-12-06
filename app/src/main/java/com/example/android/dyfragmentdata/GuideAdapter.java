@@ -43,6 +43,10 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
 
         Guide currentGuide = getItem(position);
 
+        TextView productIdView = (TextView) itemListView.findViewById(R.id.product_id);
+        productIdView.setText(currentGuide.getProductId());
+     //   productIdView.setVisibility(View.GONE);
+
         TextView nameTempleView = (TextView) itemListView.findViewById(R.id.name_view);
         nameTempleView.setText(currentGuide.getTempleName());
 
@@ -68,6 +72,18 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
              //   int position = getPosition();
               //  long id = getItemId(position);
               //  ((CatalogActivity) context).onButtonClick(id);
+            }
+        });
+
+        ImageView wishlistImage = (ImageView) itemListView.findViewById(R.id.image_favorite);
+        wishlistImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) parent).performItemClick(v, position, 0);
+
+                //   int position = getPosition();
+                //  long id = getItemId(position);
+                //  ((CatalogActivity) context).onButtonClick(id);
             }
         });
 

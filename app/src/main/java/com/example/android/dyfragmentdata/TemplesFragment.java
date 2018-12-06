@@ -9,7 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -22,14 +24,19 @@ import com.android.volley.toolbox.Volley;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class TemplesFragment extends Fragment {
     private ArrayList<Guide> temples;
     private View rootView;
     private GuideAdapter adapter;
+    private ListView listView;
+    private String sessionToken;
+
     /**
      * A simple {@link Fragment} subclass.
      */
@@ -52,6 +59,12 @@ public class TemplesFragment extends Fragment {
         //  ListView listView = (ListView) rootView.findViewById(R.id.list);
         //  listView.setAdapter(adapter);
         categoryNetworkRequest();
+
+      //  TextView productIdtv = (TextView) listView.findViewById(R.id.product_id);
+     //   productIdtv.setVisibility(View.GONE);
+
+        Session session = new Session(getActivity().getApplicationContext());
+        sessionToken = session.getusertoken();
 
         return rootView;
         }
@@ -89,19 +102,21 @@ public class TemplesFragment extends Fragment {
                                     map.put("cid", "cid :" + e.getString("product_id"));
                                     map.put("Category name", "Category name : " + e.getString("productsname"));
 
-                                    String productId = e.getString("product_id");
+                                    String productID = e.getString("product_id");
                                     String productName = e.getString("productsname");
                                     String productPrice = e.getString("price");
                                     String imageUrl = e.getString("feature_image");
                                     String productRating = e.getString("rating");
 
-                                    Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
+                                    Guide currentGuide = new Guide(productID, productName, productPrice, imageUrl, productRating);
                                     temples.add(currentGuide);
 
                                     adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
-                                    ListView listView = (ListView) rootView.findViewById(R.id.list);
+                                    listView = (ListView) rootView.findViewById(R.id.list);
                                     listView.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
+                                   // TextView productIdtv = (TextView) listView.findViewById(R.id.product_id);
+                                   // productIdtv.setVisibility(View.GONE);
                                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -110,6 +125,18 @@ public class TemplesFragment extends Fragment {
                                             if (viewId == R.id.button_details_two) {
                                                 Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
                                                 startActivity(intent);
+                                            }
+                                        }
+                                    });
+
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+
+                                            if (viewId == R.id.image_favorite) {
+                                                String productId = ((TextView) view.findViewById(R.id.product_id)).getText().toString();
+                                                sendWishlistRequest(sessionToken, productId);
                                             }
                                         }
                                     });
@@ -135,6 +162,40 @@ public class TemplesFragment extends Fragment {
         }
 
     });
+        queue.add(stringRequest);
+    }
+
+    private void sendWishlistRequest(String uid, String pid) {
+
+        final String userId = String.valueOf(uid);
+        final String productId = String.valueOf(pid);
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        String url = "https://www.godprice.com/api/whishlist.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                     ImageView wishlistImage = (ImageView) listView.findViewById(R.id.image_favorite);
+                        wishlistImage.setImageResource(R.drawable.red_wishlist);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", userId);
+            params.put("pid", productId);
+            return params;
+        }
+
+        };
+
         queue.add(stringRequest);
     }
 }

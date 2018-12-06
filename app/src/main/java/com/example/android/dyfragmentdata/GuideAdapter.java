@@ -76,6 +76,12 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
         });
 
         ImageView wishlistImage = (ImageView) itemListView.findViewById(R.id.image_favorite);
+
+        int userWishlist = Integer.parseInt(currentGuide.getWishlist());
+        if (userWishlist == 1) {
+        wishlistImage.setImageResource(R.drawable.red_wishlist);
+        }
+
         wishlistImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

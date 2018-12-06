@@ -1,6 +1,7 @@
 package com.example.android.dyfragmentdata;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -36,6 +37,7 @@ public class TemplesFragment extends Fragment {
     private GuideAdapter adapter;
     private ListView listView;
     private String sessionToken;
+   // private String productID;
 
     /**
      * A simple {@link Fragment} subclass.
@@ -102,17 +104,19 @@ public class TemplesFragment extends Fragment {
                                     map.put("cid", "cid :" + e.getString("product_id"));
                                     map.put("Category name", "Category name : " + e.getString("productsname"));
 
-                                    String productID = e.getString("product_id");
+                                    String prodID = e.getString("product_id");
                                     String productName = e.getString("productsname");
                                     String productPrice = e.getString("price");
                                     String imageUrl = e.getString("feature_image");
                                     String productRating = e.getString("rating");
+                                    String productWishlist = e.getString("is_whishlit");
 
-                                    Guide currentGuide = new Guide(productID, productName, productPrice, imageUrl, productRating);
+                                    Guide currentGuide = new Guide(prodID, productName, productPrice, imageUrl, productRating, productWishlist);
                                     temples.add(currentGuide);
 
                                     adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
                                     listView = (ListView) rootView.findViewById(R.id.list);
+                                    listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
                                     listView.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
                                    // TextView productIdtv = (TextView) listView.findViewById(R.id.product_id);
@@ -133,17 +137,64 @@ public class TemplesFragment extends Fragment {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             long viewId = view.getId();
-
+                                            String productId = listView.getItemAtPosition(position).toString().trim();
+                                       //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                            TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                          String productID = PPid.getText().toString().trim();
                                             if (viewId == R.id.image_favorite) {
-                                                String productId = ((TextView) view.findViewById(R.id.product_id)).getText().toString();
-                                                sendWishlistRequest(sessionToken, productId);
+                                                ImageView wishlistImage = (ImageView) view.findViewById(R.id.image_favorite);
+                                                wishlistImage.setImageResource(R.drawable.red_wishlist);
+
+                                                Drawable drawable = wishlistImage.getDrawable();
+                                                Drawable drawable1 = getActivity().getApplicationContext().getDrawable(R.drawable.red_wishlist);
+                                                if (drawable.equals(drawable1)) {
+                                                    wishlistImage.setImageResource(R.drawable.favorite_icon);
+                                                }
+                                                /// String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    sendWishlistRequest(sessionToken, productID);
+                                                    //     final String text = ((TextView) text.findViewById(R.id.product_id)).getText().toString();
+                                             //   TextView Pid = (TextView) view.findViewById(R.id.product_id);
+                                             //   String productId = Pid.getText().toString().trim();
+                                                // String productId = ((TextView) view.findViewById(R.id.product_id)).getText().toString();
+
                                             }
+
+                                        /*    if (viewId == R.id.image_favorite) {
+                                                ImageView wishlistImage = (ImageView) view.findViewById(R.id.image_favorite);
+                                                wishlistImage.setImageResource(R.drawable.red_wishlist);
+
+                                                Drawable drawable = wishlistImage.getDrawable();
+                                                Drawable drawable1 = getActivity().getApplicationContext().getDrawable(R.drawable.red_wishlist);
+                                                if (drawable.equals(drawable1)) {
+                                                    wishlistImage.setImageResource(R.drawable.favorite_icon);
+                                                }
+
+                                                /// String productId = listView.getItemAtPosition(position).toString().trim();
+                                            } */
+
+
                                         }
                                     });
 
-                                }
+                                  /*  listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> c, View view, int position, long id) {
 
-                            }
+                                          //  if (id == R.id.product_id) {
+                                            String productId = listView.getItemAtPosition(position).toString().trim();
+                                            TextView Pid = (TextView) view.findViewById(R.id.product_id);
+                                               productID = Pid.getText().toString().trim();
+                                            // String productId = ((TextView) view.findViewById(R.id.product_id)).getText().toString();
+                                          //  }
+                                        //    long viewId = view.getId();
+                                         //   if (viewId == R.id.image_favorite) {
+                                        //        sendWishlistRequest(sessionToken, productID);
+                                       //         }
+                                        }
+                                    }); */
+
+                                }
+                                }
                         }
                     } catch (JSONException e) {
                         // If an error is thrown when executing any of the above statements in the "try" block,
@@ -171,13 +222,12 @@ public class TemplesFragment extends Fragment {
         final String productId = String.valueOf(pid);
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
-        String url = "https://www.godprice.com/api/whishlist.php";
+        String url = "https://www.godprice.com/api/whishlist_add.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                     ImageView wishlistImage = (ImageView) listView.findViewById(R.id.image_favorite);
-                        wishlistImage.setImageResource(R.drawable.red_wishlist);
+                    Toast.makeText(getActivity().getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -199,5 +249,4 @@ public class TemplesFragment extends Fragment {
         queue.add(stringRequest);
     }
 }
-
 

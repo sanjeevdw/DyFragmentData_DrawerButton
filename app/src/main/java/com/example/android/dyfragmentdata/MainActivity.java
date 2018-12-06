@@ -123,8 +123,9 @@ public Bundle bundle;
                                 String productPrice = e.getString("price");
                                 String imageUrl = e.getString("feature_image");
                                 String productRating = e.getString("rating");
+                                String productWishlist = e.getString("is_whishlit");
 
-                                Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
+                                Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating, productWishlist);
                                 temples.add(currentGuide);
 
                                 //  temples.add(new Guide("Manua Bhan Ki Tekri", "Sun City, Lalghati"));

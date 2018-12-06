@@ -243,8 +243,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                         String productPrice = e.getString("price");
                                         String imageUrl = e.getString("feature_image");
                                         String productRating = e.getString("rating");
+                                        String productWishlist = e.getString("is_whishlit");
 
-                                        Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating);
+                                        Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating, productWishlist);
                                         temples.add(currentGuide);
                                         adapter = new GuideAdapter(DetailsActivity.this, temples, R.color.temples_category);
 

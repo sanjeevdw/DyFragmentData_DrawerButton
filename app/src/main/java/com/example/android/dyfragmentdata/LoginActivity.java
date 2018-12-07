@@ -10,6 +10,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -24,9 +26,30 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
 
 import org.json.JSONObject;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +60,21 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     // private String username;
     private String userToken;
     private Session session;
+    private static final int RC_SIGN_IN = 6;
+    private static final String ANONYMOUS = "anonymous";
+    private static final String LOG_TAG = MainActivity.class.getSimpleName();
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private static final String TAG = "tag";
+    private GoogleSignInClient mGoogleSignInClient;
+    private CallbackManager mCallbackManager;
+    private Button loginEmailButton;
+    private String username;
+    private String tokenFacebook;
+    private String commonToken;
+    private String mUsername;
+    private String email;
+    private String uidFirebase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +82,85 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
         // Set the content of the activity to use the activity_category.xml layout file
         setContentView(R.layout.login_activity);
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    onSignedInInitialize(user.getDisplayName());
+                    email = user.getEmail();
+                    uidFirebase = user.getUid();
+
+                    user.getIdToken(true)
+                            .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                    if (task.isSuccessful()) {
+                                        String idToken = task.getResult().getToken();
+                                    } else {
+                                        Log.d(LOG_TAG, "Id token error message", task.getException());
+                                    }
+                                }
+                            });
+                    // sendNetworkRequest(email);
+                } else {
+                    onSignedOutCleanUp();
+                    startActivityForResult(
+                            AuthUI.getInstance()
+                                    .createSignInIntentBuilder()
+                                    .setIsSmartLockEnabled(false)
+                                    .setAvailableProviders(Arrays.asList(
+                                            new AuthUI.IdpConfig.GoogleBuilder().build(),
+                                            new AuthUI.IdpConfig.FacebookBuilder().build()))
+                                    .build(),
+                            RC_SIGN_IN);
+                }
+            }
+        };
+
+        GoogleSignInOptions googleSignInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions);
+
+        findViewById(R.id.sign_in_button).setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                switch(v.getId()) {
+                    case R.id.sign_in_button:
+                        signIn();
+                        break;
+                }
+            }
+        });
+        // signInButton.setSize(signInButton.SIZE_STANDARD);
+
+
+        mCallbackManager = CallbackManager.Factory.create();
+        LoginButton loginButton = findViewById(R.id.login_button);
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                Log.d(TAG, "facebook:onError", error);
+            }
+        });
+
+        session = new Session(this);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -75,14 +192,128 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             //    }
             }
         });
+        }
 
-        session = new Session(this);
+    private void signIn() {
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     // NavigationView click events
     private void setNavigationViewListener() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
+            Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+            handleSignInResult(task);
+
+            mCallbackManager.onActivityResult(requestCode, resultCode, data);
+            Toast.makeText(this, "Signed In.", Toast.LENGTH_SHORT).show();
+            Intent intentHomepage = new Intent(LoginActivity.this, HomepageActivity.class);
+            startActivity(intentHomepage);
+        } else if (requestCode == RESULT_CANCELED) {
+            Toast.makeText(this, "Sign in cancelled.", Toast.LENGTH_SHORT).show();
+            finish();
+        }
+    }
+
+    private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
+        try {
+            GoogleSignInAccount account = completedTask.getResult(ApiException.class);
+            updateUI(account);
+        }catch (ApiException e) {
+            Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
+            updateUI(null);
+        }
+    }
+
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+        mFirebaseAuth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            String idToken;
+                            Log.d(TAG, "signInWithCredential:success");
+                            FirebaseUser user = mFirebaseAuth.getCurrentUser();
+                            String usernameFacebook = user.getDisplayName();
+                            String personFBEmail = user.getEmail();
+                            String fbUserId = user.getUid();
+                            user.getIdToken(true)
+                                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                            if (task.isSuccessful()) {
+                                                tokenFacebook = task.getResult().getToken();
+                                            } else {
+                                                Log.d(LOG_TAG, "Id token error message", task.getException());
+                                            }
+                                        }
+                                    });
+                            session.setusename(usernameFacebook);
+                            session.setusertoken(tokenFacebook);
+                            String userSession = session.getusename();
+                            String tokenSession = session.getusertoken();
+                            Log.d(TAG, "tokenSession" + tokenSession);
+                            Log.d(TAG, "userSession" + userSession);
+
+                            updateUI(user);
+                            Intent intentHomepage = new Intent(LoginActivity.this, HomepageActivity.class);
+                            startActivity(intentHomepage);
+                        } else {
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
+                            updateUI(null);
+                        }
+                    }
+                });
+
+    }
+
+    public void updateUI(Object o) {
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            username = user.getDisplayName();
+            session.setusename(username);
+            String commonUsername = session.getusename();
+            user.getIdToken(true)
+                    .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<GetTokenResult> task) {
+                            if (task.isSuccessful()) {
+                                String idToken = task.getResult().getToken();
+                                session.setusertoken(idToken);
+                                commonToken = session.getusertoken();
+                                String userSession = session.getusename();
+                                Log.d(TAG, "tokenSession" + commonToken);
+                                Log.d(TAG, "userSession" + userSession);
+                                Intent intentHomepage = new Intent(LoginActivity.this, HomepageActivity.class);
+                                startActivity(intentHomepage);
+
+                            } else {
+                                Log.d(LOG_TAG, "Id token error message", task.getException());
+                            }
+                        }
+                    });
+        }
+    }
+
+    private void onSignedInInitialize (String username){
+        mUsername = username;
+    }
+
+    private void onSignedOutCleanUp () {
+        mUsername = ANONYMOUS;
+
     }
 
     @Override
@@ -112,6 +343,43 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mAuthStateListener != null) {
+            mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            String usernameGoogle = account.getDisplayName();
+            String personEmail = account.getEmail();
+            String personId = account.getId();
+            userToken = account.getIdToken();
+            session.setusename(usernameGoogle);
+            session.setusertoken(userToken);
+            String sessionGoogleToken = session.getusertoken();
+            String sessionGoogleUsername = session.getusename();
+            Log.d(TAG, "sessionGoogleToken" + sessionGoogleToken);
+            Log.d(TAG, "sessionGoogleUsername" + sessionGoogleUsername);
+
+        }
+        updateUI(account);
+        FirebaseUser currentFacebookUser = mFirebaseAuth.getCurrentUser();
+        updateUI(currentFacebookUser);
+
     }
 
     @Override
@@ -165,8 +433,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-
-                case R.id.nav_about_industry:
+            case R.id.nav_about_industry:
                 Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;
@@ -179,6 +446,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
+                AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 break;
         }

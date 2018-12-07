@@ -18,6 +18,7 @@ import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -26,6 +27,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -33,6 +35,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DetailsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private DrawerLayout mDrawerLayout;
@@ -40,6 +43,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private GuideAdapter adapter;
     private ListView listView;
     private ImageView mainImageView;
+    private ArrayList<ProductDetails> products;
+    private ProductAdapter productAdapter;
+    private String pid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,10 +53,21 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         // Set the content of the activity to use the activity_category.xml layout file
         setContentView(R.layout.details_activity);
+
+        Intent productIdIntent = getIntent();
+        Bundle bundle = productIdIntent.getExtras();
+
+        if (bundle != null) {
+            pid = (String) bundle.get("ProductId");
+
+        }
+
         relatedProductsNetworkRequest();
         listView = (ListView) findViewById(R.id.list);
         temples = new ArrayList<Guide>();
+        products = new ArrayList<ProductDetails>();
         listView.setNestedScrollingEnabled(true);
+        productsDetailsRequest();
 
         //  listView.setAdapter(adapter);
 
@@ -71,7 +88,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
        mainImageView = (ImageView) findViewById(R.id.main_image);
-        mainImageView.setImageResource(R.drawable.product_image);
+       // mainImageView.setImageResource(R.drawable.product_image);
 
         ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
         thumbOneImageView.setOnClickListener(new View.OnClickListener() {
@@ -257,9 +274,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 long viewId = view.getId();
 
                                                 if (viewId == R.id.button_details_two) {
-                                                   // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
-                                                         Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
-                                                       startActivity(intent);
+                                                    // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                    Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                    startActivity(intent);
                                                 }
                                             }
                                         });
@@ -286,6 +303,109 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             }
 
         });
+        queue.add(stringRequest);
+    }
+
+    private void productsDetailsRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/products.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    JSONObject currentProductDetail = currentObject.getJSONObject("product_detail");
+                                 //   for (int j = 0; j < currentProductDetail.length(); j++) {
+
+                                        //   JSONArray productDetail = new JSONArray("product_detail");
+                                        Log.e("Message", "loop");
+                                        HashMap<String, String> map = new HashMap<String, String>();
+                                      //  JSONObject e = currentProductDetail.getJSONObject(i);
+                                        map.put("cid", "cid :" + currentProductDetail.getString("product_id"));
+                                        map.put("Category name", "Category name : " + currentProductDetail.getString("productsname"));
+
+                                        String productId = currentProductDetail.getString("product_id");
+                                        String productName = currentProductDetail.getString("productsname");
+                                       // String productDescription = e.getString("description");
+                                        String productPrice = currentProductDetail.getString("discount_percent");
+                                        String imageUrl = currentProductDetail.getString("image");
+
+                                        TextView productIdView = (TextView) findViewById(R.id.sku);
+                                        productIdView.setText(productId);
+
+                                        TextView productNameView = (TextView) findViewById(R.id.product_name_view);
+                                        productNameView.setText(productName);
+
+                                        TextView discountPriceView = (TextView) findViewById(R.id.product_price_view);
+                                        discountPriceView.setText(productPrice);
+
+                                        ImageView productImageView = (ImageView) findViewById(R.id.main_image);
+
+                                        Glide.with(productImageView.getContext())
+                                                   .load(imageUrl)
+                                                     .into(productImageView);
+
+                                        //  ProductDetails currentProduct = new ProductDetails(productId, productName, productPrice, imageUrl);
+                                     //   products.add(currentProduct);
+                                     //   productAdapter = new ProductAdapter(DetailsActivity.this, products);
+
+                                     //   listView.setAdapter(productAdapter);
+                                    //    productAdapter.notifyDataSetChanged();
+
+                                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+
+                                                if (viewId == R.id.button_details_two) {
+                                                    // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                    Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            }
+                                        });
+
+                               //     }
+                                }
+                            }
+
+                        } catch (JSONException e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                        // Return the list of earthquakes
+                        // return categories;
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        })
+        { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("product_id", pid);
+            return params;
+        }
+
+        };
+
+                ;
         queue.add(stringRequest);
     }
 }

@@ -59,7 +59,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         if (bundle != null) {
             pid = (String) bundle.get("ProductId");
-
         }
 
         relatedProductsNetworkRequest();
@@ -82,44 +81,44 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setDisplayShowHomeEnabled(true);
-             actionbar.setHomeAsUpIndicator(R.drawable.back_arrow);
+            actionbar.setHomeAsUpIndicator(R.drawable.back_arrow);
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
-       mainImageView = (ImageView) findViewById(R.id.main_image);
-       // mainImageView.setImageResource(R.drawable.product_image);
+        mainImageView = (ImageView) findViewById(R.id.main_image);
+        // mainImageView.setImageResource(R.drawable.product_image);
 
         ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
         thumbOneImageView.setOnClickListener(new View.OnClickListener() {
             @Override
-                    public void onClick(View v) {
-                        mainImageView.setImageResource(R.drawable.product_image);
-                        }
-                });
+            public void onClick(View v) {
+                mainImageView.setImageResource(R.drawable.product_image);
+            }
+        });
 
 
-       ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
+        ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
         thumbTwoImageView.setOnClickListener(new View.OnClickListener() {
 
             @Override
-                    public void onClick(View v) {
-                        mainImageView.setImageResource(R.drawable.product_image_two);
+            public void onClick(View v) {
+                mainImageView.setImageResource(R.drawable.product_image_two);
 
-                   }
-                });
+            }
+        });
 
         ImageButton thumbThreeImageView = (ImageButton) findViewById(R.id.thumbnail_image_three);
         thumbThreeImageView.setOnClickListener(new View.OnClickListener() {
 
-                    @Override
-                    public void onClick(View v) {
-                        mainImageView.setImageResource(R.drawable.product_image_three);
-                        }
-                });
-        }
+            @Override
+            public void onClick(View v) {
+                mainImageView.setImageResource(R.drawable.product_image_three);
+            }
+        });
+    }
 
-        // NavigationView click events
+    // NavigationView click events
     private void setNavigationViewListener() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -324,57 +323,57 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                 for (int i = 0; i < data.length(); i++) {
                                     JSONObject currentObject = data.getJSONObject(i);
                                     JSONObject currentProductDetail = currentObject.getJSONObject("product_detail");
-                                 //   for (int j = 0; j < currentProductDetail.length(); j++) {
+                                    //   for (int j = 0; j < currentProductDetail.length(); j++) {
 
-                                        //   JSONArray productDetail = new JSONArray("product_detail");
-                                        Log.e("Message", "loop");
-                                        HashMap<String, String> map = new HashMap<String, String>();
-                                      //  JSONObject e = currentProductDetail.getJSONObject(i);
-                                        map.put("cid", "cid :" + currentProductDetail.getString("product_id"));
-                                        map.put("Category name", "Category name : " + currentProductDetail.getString("productsname"));
+                                    //   JSONArray productDetail = new JSONArray("product_detail");
+                                    Log.e("Message", "loop");
+                                    HashMap<String, String> map = new HashMap<String, String>();
+                                    //  JSONObject e = currentProductDetail.getJSONObject(i);
+                                    map.put("cid", "cid :" + currentProductDetail.getString("product_id"));
+                                    map.put("Category name", "Category name : " + currentProductDetail.getString("productsname"));
 
-                                        String productId = currentProductDetail.getString("product_id");
-                                        String productName = currentProductDetail.getString("productsname");
-                                       // String productDescription = e.getString("description");
-                                        String productPrice = currentProductDetail.getString("discount_percent");
-                                        String imageUrl = currentProductDetail.getString("image");
+                                    String productId = currentProductDetail.getString("product_id");
+                                    String productName = currentProductDetail.getString("productsname");
+                                    // String productDescription = e.getString("description");
+                                    String productPrice = currentProductDetail.getString("discount_percent");
+                                    String imageUrl = currentProductDetail.getString("image");
 
-                                        TextView productIdView = (TextView) findViewById(R.id.sku);
-                                        productIdView.setText(productId);
+                                    TextView productIdView = (TextView) findViewById(R.id.sku);
+                                    productIdView.setText(productId);
 
-                                        TextView productNameView = (TextView) findViewById(R.id.product_name_view);
-                                        productNameView.setText(productName);
+                                    TextView productNameView = (TextView) findViewById(R.id.product_name_view);
+                                    productNameView.setText(productName);
 
-                                        TextView discountPriceView = (TextView) findViewById(R.id.product_price_view);
-                                        discountPriceView.setText(productPrice);
+                                    TextView discountPriceView = (TextView) findViewById(R.id.product_price_view);
+                                    discountPriceView.setText(productPrice);
 
-                                        ImageView productImageView = (ImageView) findViewById(R.id.main_image);
+                                    ImageView productImageView = (ImageView) findViewById(R.id.main_image);
 
-                                        Glide.with(productImageView.getContext())
-                                                   .load(imageUrl)
-                                                     .into(productImageView);
+                                    Glide.with(productImageView.getContext())
+                                            .load(imageUrl)
+                                            .into(productImageView);
 
-                                        //  ProductDetails currentProduct = new ProductDetails(productId, productName, productPrice, imageUrl);
-                                     //   products.add(currentProduct);
-                                     //   productAdapter = new ProductAdapter(DetailsActivity.this, products);
+                                    //  ProductDetails currentProduct = new ProductDetails(productId, productName, productPrice, imageUrl);
+                                    //   products.add(currentProduct);
+                                    //   productAdapter = new ProductAdapter(DetailsActivity.this, products);
 
-                                     //   listView.setAdapter(productAdapter);
+                                    //   listView.setAdapter(productAdapter);
                                     //    productAdapter.notifyDataSetChanged();
 
-                                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                long viewId = view.getId();
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
 
-                                                if (viewId == R.id.button_details_two) {
-                                                    // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
-                                                    Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
-                                                    startActivity(intent);
-                                                }
+                                            if (viewId == R.id.button_details_two) {
+                                                // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                startActivity(intent);
                                             }
-                                        });
+                                        }
+                                    });
 
-                               //     }
+                                    //     }
                                 }
                             }
 
@@ -405,7 +404,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         };
 
-                ;
         queue.add(stringRequest);
     }
 }

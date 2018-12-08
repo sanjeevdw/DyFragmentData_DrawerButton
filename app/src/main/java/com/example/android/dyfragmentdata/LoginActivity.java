@@ -85,7 +85,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     private String uidFirebase;
     private FirebaseAuth mAuth;
     private String firbaseUsername;
-    private boolean isHomepageActivityStarted = false;
     private static final String EMAIL = "email";
 
     @Override
@@ -199,10 +198,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             public void onCompleted(JSONObject object, GraphResponse response) {
                         Log.d("LoginActivity", response.toString());
                         String email = object.optString("email");
-                                    String name = object.optString("name");
+                        String name = object.optString("name");
                         Log.d("LoginActivity", email);
                         String id = object.optString("id");
-                        registerNetworkRequest(name, id);
+                        registerNetworkRequest(name, email);
                                     Log.d("LoginActivity", name);
                                     }
                         });
@@ -512,9 +511,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             String userToken = jsonObject.getString("userid");
                             session.setusertoken(userToken);
                             String sessionToken = session.getusertoken();
+                            Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
+                            startActivity(intentHomepage);
                             Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-
-                        }catch(Exception e) {
+                            }catch(Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -542,18 +542,24 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
         final String nameGoogle = name;
         final String emailGoogle = email;
-        final String mobileGoogle = "1234567890";
-        final String passwordGoogle = "123456";
-        final String addressGoogle = "Dezven, Bhopal";
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/register.php";
+        String url = "https://www.godprice.com/api/gmail.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        try {
+                        String jsonResponse = response.toString().trim();
+                        jsonResponse = jsonResponse.substring(3);
+                        JSONObject jsonObject = new JSONObject(jsonResponse);
+                        String userToken = jsonObject.getString("message");
+                        session.setusertoken(userToken);
+                        String sessionToken = session.getusertoken();
                         Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -567,9 +573,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             Map<String, String> params = new HashMap<String, String>();
             params.put("name", nameGoogle);
             params.put("email", emailGoogle);
-            params.put("mobile", mobileGoogle);
-            params.put("password", passwordGoogle);
-            params.put("address", addressGoogle);
             return params;
         }
         };

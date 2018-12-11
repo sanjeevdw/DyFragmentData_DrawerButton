@@ -106,7 +106,7 @@
             android:textStyle="bold"
         android:hint="@string/email_address" />
     <Button
-        android:id="@+id/forgot_password_bt"
+        android:id="@+id/change_password_bt"
         android:layout_marginTop="16dp"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:layout_marginStart="5dp"
-        android:text="@string/forgot_password"
+        android:text="@string/change_password"
         />
     <TextView
         android:id="@+id/deactivate_account_tv"
@@ -148,6 +148,5 @@ android:layout_width="wrap_content"
 android:layout_height="match_parent"
 android:layout_gravity="start"
 android:fitsSystemWindows="true"
-app:menu="@menu/drawer_view"
-app:headerLayout="@layout/header_layout"/>
+    app:headerLayout="@layout/header_layout"/>
     </android.support.v4.widget.DrawerLayout>

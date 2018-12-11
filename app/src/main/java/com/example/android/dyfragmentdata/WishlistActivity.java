@@ -1,6 +1,8 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,11 +15,36 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Toast;
+
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+import com.firebase.ui.auth.AuthUI;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WishlistActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
+    private ListView listView;
+    private ArrayList<WishlistData> wishlistProducts;
+    private WishlistAdapter wishlistAdapter;
+    private Session session;
+    private String sessionToken;
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,21 +56,42 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         ActionBar actionbar = getSupportActionBar();
+        wishlistProducts = new ArrayList<WishlistData>();
 
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
+        session = new Session(this);
+        sessionToken = session.getusertoken();
+        wishlistNetworkRequest(sessionToken);
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        if (sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.drawer_view_without_login);
+        }
+
+        if (!sessionToken.isEmpty()) {
+            showFullNavItem();
+        }
+
         setNavigationViewListener();
+    }
+
+    private void showFullNavItem() {
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().clear();
+        navigationView.inflateMenu(R.menu.drawer_view);
     }
 
     // NavigationView click events
     private void setNavigationViewListener() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
+        }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -60,14 +108,27 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 AuthUI.getInstance().signOut(this);
                 return true; */
             case R.id.action_drawer_signin:
-                Intent intent = new Intent(this, SignupActivity.class);
-                startActivity(intent);
+                if (!sessionToken.isEmpty()) {
+                    Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
+                    startActivity(intentUpdateProfile);
+
+                } else {
+                    Intent intent = new Intent(this, SignupActivity.class);
+                    startActivity(intent);
+                }
                 return true;
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                } else {
+                    showFullNavItem();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -90,15 +151,13 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
+                setNavigationViewListener();
                 break;
             case R.id.nav_category:
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
-            case R.id.nav_product:
-                Intent intentProduct = new Intent(this, DetailsActivity.class);
-                startActivity(intentProduct);
-                break;
+
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
@@ -124,7 +183,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intentWishlist);
                 break;
 
-                case R.id.nav_about_industry:
+            case R.id.nav_about_industry:
                 Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;
@@ -137,9 +196,73 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
+                AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
+                sessionToken = "";
+                session.setusertoken("");
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                }
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
                 break;
         }
         return false;
     }
+
+    private void wishlistNetworkRequest(String UserID) {
+        final String USERID = UserID;
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+
+                                    String productId = currentObject.getString("pid");
+
+                                    String productName = currentObject.getString("productname");
+                                    String productPrice = currentObject.getString("price");
+                                    String productImage = currentObject.getString("image");
+                                    WishlistData currentWishlist = new WishlistData(productId, productName, productPrice, productImage);
+                                    wishlistProducts.add(currentWishlist);
+                                    wishlistAdapter = new WishlistAdapter(WishlistActivity.this, wishlistProducts);
+                                    listView = (ListView) findViewById(R.id.wishlist_list);
+                                    listView.setAdapter(wishlistAdapter);
+                                    wishlistAdapter.notifyDataSetChanged();
+
+                                }  //      Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", USERID);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
 }

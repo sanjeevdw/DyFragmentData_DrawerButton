@@ -1,6 +1,8 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,6 +30,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.firebase.ui.auth.AuthUI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -46,6 +49,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private ArrayList<ProductDetails> products;
     private ProductAdapter productAdapter;
     private String pid;
+    private Session session;
+    private String sessionToken;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +66,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         if (bundle != null) {
             pid = (String) bundle.get("ProductId");
         }
+        session = new Session(this);
+        sessionToken = session.getusertoken();
 
         relatedProductsNetworkRequest();
         listView = (ListView) findViewById(R.id.list);
@@ -85,6 +93,16 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        if (sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.drawer_view_without_login);
+        }
+
+        if (!sessionToken.isEmpty()) {
+            showFullNavItem();
+        }
 
         mainImageView = (ImageView) findViewById(R.id.main_image);
         // mainImageView.setImageResource(R.drawable.product_image);
@@ -118,10 +136,17 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         });
     }
 
+    private void showFullNavItem() {
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().clear();
+        navigationView.inflateMenu(R.menu.drawer_view);
+    }
+
     // NavigationView click events
     private void setNavigationViewListener() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
     }
 
     @Override
@@ -139,16 +164,27 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 AuthUI.getInstance().signOut(this);
                 return true; */
             case R.id.action_drawer_signin:
-                Intent intent = new Intent(this, SignupActivity.class);
-                startActivity(intent);
+                if (!sessionToken.isEmpty()) {
+                    Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
+                    startActivity(intentUpdateProfile);
+
+                } else {
+                    Intent intent = new Intent(this, SignupActivity.class);
+                    startActivity(intent);
+                }
                 return true;
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
             case android.R.id.home:
                 //mDrawerLayout.openDrawer(GravityCompat.START);
-                Intent categoryIntent = new Intent(this, MainActivity.class);
-                startActivity(categoryIntent);
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                } else {
+                    showFullNavItem();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -171,15 +207,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
+                setNavigationViewListener();
                 break;
             case R.id.nav_category:
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
-            case R.id.nav_product:
-                Intent intentProduct = new Intent(this, DetailsActivity.class);
-                startActivity(intentProduct);
-                break;
+
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
@@ -221,7 +255,19 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
+                AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
+                sessionToken = "";
+                session.setusertoken("");
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                }
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
                 break;
         }
         return false;
@@ -401,11 +447,11 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             params.put("product_id", pid);
             return params;
         }
-
         };
 
         queue.add(stringRequest);
     }
+
 }
 
 

@@ -25,8 +25,8 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
     private int mColorResourceId;
     //private static final String LOG_TAG = GuideAdapter.class.getSimpleName();
 
-    public GuideAdapter(Activity activity, ArrayList<Guide> temples, int colorResourceId) {
-        super(activity, 0, temples);
+    public GuideAdapter(Context context, ArrayList<Guide> temples, int colorResourceId) {
+        super(context, 0, temples);
         mColorResourceId = colorResourceId;
     }
 

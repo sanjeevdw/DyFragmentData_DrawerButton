@@ -1,6 +1,8 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,6 +34,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.firebase.ui.auth.AuthUI;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -58,6 +61,9 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private int dotscount;
     private ImageView[] dots;
     int currentPage = 0;
+    private Session session;
+    private String sessionToken;
+    private NavigationView navigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +76,9 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         temples = new ArrayList<Guide>();
         // listView.setNestedScrollingEnabled(true);
         setNavigationViewListener();
+        session = new Session(this);
+        sessionToken = session.getusertoken();
+      //  hideNavItem();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -83,6 +92,16 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+             if (sessionToken.isEmpty()) {
+                 navigationView = findViewById(R.id.nav_view);
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.drawer_view_without_login);
+        }
+
+        if (!sessionToken.isEmpty()) {
+            showFullNavItem();
+        }
 
         // Create an ArrayList of badgujar objects
         ArrayList<GridCategory> gridCategories = new ArrayList<GridCategory>();
@@ -171,9 +190,16 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             }
         }, 2000, 2000);
 
+
         }
 
-    private void setupTabIcons() {
+        private void showFullNavItem() {
+            navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.drawer_view);
+        }
+
+        private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
@@ -184,9 +210,9 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     // NavigationView click events
     private void setNavigationViewListener() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-    }
+        }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -203,14 +229,29 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 AuthUI.getInstance().signOut(this);
                 return true; */
             case R.id.action_drawer_signin:
-                Intent intent = new Intent(this, SignupActivity.class);
-                startActivity(intent);
+                if (!sessionToken.isEmpty()) {
+                    Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
+                    startActivity(intentUpdateProfile);
+
+                } else {
+                    Intent intent = new Intent(this, SignupActivity.class);
+                    startActivity(intent);
+                }
                 return true;
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
+                return true;
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                } else {
+                    showFullNavItem();
+                }
+              //  setNavigationViewListener();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -238,20 +279,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
-            case R.id.nav_product:
-                Intent intentProduct = new Intent(this, DetailsActivity.class);
-                startActivity(intentProduct);
-                break;
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
-
                 break;
             case R.id.nav_register:
                 Intent intentRegister = new Intent(this, SignupActivity.class);
                 startActivity(intentRegister);
-
                 break;
+
             case R.id.nav_profile:
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
@@ -268,9 +304,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-                case R.id.nav_about_industry:
+            case R.id.nav_about_industry:
                 Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
                 break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
@@ -281,7 +316,19 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:
+                AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
+                sessionToken = "";
+                session.setusertoken("");
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                }
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
                 break;
         }
         return false;

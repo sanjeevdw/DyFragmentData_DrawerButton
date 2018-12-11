@@ -1,5 +1,6 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -114,7 +115,7 @@ public class TemplesFragment extends Fragment {
                                     Guide currentGuide = new Guide(prodID, productName, productPrice, imageUrl, productRating, productWishlist);
                                     temples.add(currentGuide);
 
-                                    adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
+                                    adapter = new GuideAdapter(getContext(), temples, R.color.temples_category);
                                     listView = (ListView) rootView.findViewById(R.id.list);
                                     listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
                                     listView.setAdapter(adapter);

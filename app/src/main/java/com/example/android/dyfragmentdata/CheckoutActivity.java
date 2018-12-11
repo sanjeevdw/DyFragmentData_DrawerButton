@@ -1,6 +1,8 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,9 +19,15 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+
 public class CheckoutActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
+    private Session session;
+    private String sessionToken;
+    private NavigationView navigationView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,6 +39,8 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         ActionBar actionbar = getSupportActionBar();
+        session = new Session(this);
+        sessionToken = session.getusertoken();
 
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
@@ -38,6 +48,17 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        if (sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.getMenu().clear();
+            navigationView.inflateMenu(R.menu.drawer_view_without_login);
+        }
+
+        if (!sessionToken.isEmpty()) {
+            showFullNavItem();
+        }
+
         setNavigationViewListener();
 
         Button reviewOrderTopButton = (Button) findViewById(R.id.review_order_button);
@@ -69,11 +90,17 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
 
         }
 
-    // NavigationView click events
-    private void setNavigationViewListener() {
-        NavigationView navigationView = findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+    private void showFullNavItem() {
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.getMenu().clear();
+        navigationView.inflateMenu(R.menu.drawer_view);
     }
+
+        // NavigationView click events
+    private void setNavigationViewListener() {
+        navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+        }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -90,14 +117,27 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                 AuthUI.getInstance().signOut(this);
                 return true; */
             case R.id.action_drawer_signin:
-                Intent intent = new Intent(this, SignupActivity.class);
-                startActivity(intent);
+                if (!sessionToken.isEmpty()) {
+                    Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
+                    startActivity(intentUpdateProfile);
+
+                } else {
+                    Intent intent = new Intent(this, SignupActivity.class);
+                    startActivity(intent);
+                }
                 return true;
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                } else {
+                    showFullNavItem();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -120,16 +160,13 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
+                setNavigationViewListener();
                 break;
             case R.id.nav_category:
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
-            case R.id.nav_product:
-                Intent intentProduct = new Intent(this, DetailsActivity.class);
-                startActivity(intentProduct);
-                break;
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -154,10 +191,10 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intentWishlist);
                 break;
 
-                case R.id.nav_about_industry:
+            case R.id.nav_about_industry:
                 Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
                 break;
+
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
@@ -166,8 +203,21 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                 Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+
             case R.id.sign_out_menu:
+                AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
+                sessionToken = "";
+                session.setusertoken("");
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                }
+                SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
                 break;
         }
         return false;

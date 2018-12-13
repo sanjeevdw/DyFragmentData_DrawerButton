@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -19,13 +20,36 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GetTokenResult;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private DrawerLayout mDrawerLayout;
     private Session session;
     private String sessionToken;
     private NavigationView navigationView;
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
+    private static final String LOG_TAG = CartActivity.class.getSimpleName();
+    private String usernameGoogle;
+    private String sessionGoogleEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,22 +65,61 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
         session = new Session(this);
         sessionToken = session.getusertoken();
 
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            usernameGoogle = account.getDisplayName();
+         //   sessionToken = usernameGoogle;
+            sessionGoogleEmail = account.getEmail();
+            registerNetworkRequest(usernameGoogle, sessionGoogleEmail);
+            if (sessionToken.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            }
+
+            if (!sessionToken.isEmpty()) {
+                showFullNavItem();
+            }
+            }
+
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    //   email = user.getEmail();
+                    //   uidFirebase = user.getUid();
+                    user.getIdToken(true)
+                            .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<GetTokenResult> task) {
+                                    if (task.isSuccessful()) {
+                                        //   sessionToken = task.getResult().getToken();
+                                        //      session.setusertoken(sessionToken);
+                                    } else {
+                                        Log.d(LOG_TAG, "Id token error message", task.getException());
+                                    }
+                                }
+                            });
+                }
+            }
+        };
+        updateNavItems();
+
+        // Intent userIdIntent = getIntent();
+       // Bundle bundle = userIdIntent.getExtras();
+
+       // if (bundle != null) {
+       //     sessionToken = (String) bundle.get("sessionToken");
+       // }
+
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
-
-        if (sessionToken.isEmpty()) {
-            navigationView = findViewById(R.id.nav_view);
-            navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.drawer_view_without_login);
-        }
-
-        if (!sessionToken.isEmpty()) {
-            showFullNavItem();
-        }
 
         setNavigationViewListener();
 
@@ -68,6 +131,19 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intentCheckout);
             }
         });
+    }
+
+    private void updateNavItems() {
+        FirebaseUser user = mFirebaseAuth.getCurrentUser();
+        if (user != null) {
+            if (!sessionToken.isEmpty()) {
+                showFullNavItem();
+            } else {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            }
+        }
     }
 
     private void showFullNavItem() {
@@ -199,5 +275,53 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 break;
         }
         return false;
+    }
+
+    private void registerNetworkRequest(String name, String emailG) {
+
+        final String nameGoogle = name;
+        final String emailGoogle = emailG;
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/gmail.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            sessionToken = jsonObject.getString("message");
+                            session.setusertoken(sessionToken);
+                            if (!sessionToken.isEmpty()) {
+                                showFullNavItem();
+                            } else {
+                                navigationView = findViewById(R.id.nav_view);
+                                navigationView.getMenu().clear();
+                                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                            }
+
+                            Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("name", nameGoogle);
+            params.put("email", emailGoogle);
+            return params;
+        }
+            };
+        queue.add(stringRequest);
     }
 }

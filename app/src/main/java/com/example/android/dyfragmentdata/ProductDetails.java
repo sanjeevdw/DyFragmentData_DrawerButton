@@ -11,18 +11,24 @@ public class ProductDetails {
     private String mImageUrl;
     private String mRating;
     private String mWishlist;
+    private String mSku;
+    private String mAttributeName;
+    private String mAttributeValue;
 
     // created constructor with two parameters templeName and templeLocation
 
-    public ProductDetails(String productId, String productName, String discountPrice, String mImageUrl) {
+    public ProductDetails(String productId, String productName, String productDescription, String discountPrice, String mImageUrl, String sku, String attributeName, String attributeValue) {
 
         // Variable initial values
 
         mProductId = productId;
         mProductName = productName;
-     //   mProductDescription = productDescription;
+        mProductDescription = productDescription;
         mDiscountPrice = discountPrice;
         this.mImageUrl = mImageUrl;
+        mSku = sku;
+        mAttributeName = attributeName;
+        mAttributeValue = attributeValue;
 
         }
 
@@ -38,9 +44,9 @@ public class ProductDetails {
 
     // Get method to return temple location
 
-  //  public String getProductDescription() {
-   //     return mProductDescription;
-   // }
+    public String getProductDescription() {
+       return mProductDescription;
+    }
 
     public String getDiscountPrice() {
         return mDiscountPrice;

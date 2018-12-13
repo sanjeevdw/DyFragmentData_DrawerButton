@@ -27,6 +27,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import org.json.JSONObject;
 
@@ -40,6 +42,11 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private String sessionToken;
     private String userId;
     private NavigationView navigationView;
+    private String usernameGoogle;
+    private String sessionGoogleEmil;
+    private EditText nameEditText;
+    private EditText emailEditText;
+    private EditText mobileEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +58,13 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         if (bundle != null) {
             userId = (String) bundle.get("sessionToken");
         }
+
         setNavigationViewListener();
-       // profileNetworkRequest(userId);
+
+       nameEditText = (EditText) findViewById(R.id.first_name_et);
+       mobileEditText = (EditText) findViewById(R.id.mobile_et);
+       emailEditText = (EditText) findViewById(R.id.email_et);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
@@ -61,14 +73,32 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         session = new Session(this);
         sessionToken = session.getusertoken();
 
-        loginNetworkRequest(sessionToken);
-       // userSession = session.getusename();
+        if (!sessionToken.isEmpty()) {
+            loginNetworkRequest(sessionToken);
+        }
+
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            usernameGoogle = account.getDisplayName();
+            sessionToken = usernameGoogle;
+            sessionGoogleEmil = account.getEmail();
+            if (sessionToken.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            }
+
+            if (!sessionToken.isEmpty()) {
+                showFullNavItem();
+            }
+        }
 
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);
@@ -86,6 +116,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             public void onClick(View v) {
                 Intent intentforgotPassword = new Intent(ProfileActivity.this, ForgotPasswordActivity.class);
                 startActivity(intentforgotPassword);
+            }
+        });
+
+        Button updateProfileButton = (Button) findViewById(R.id.submit_button_update_profile);
+        updateProfileButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateProfileRequest(sessionToken);
             }
         });
     }
@@ -288,7 +326,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
 
             }
 
@@ -296,6 +334,63 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
             params.put("userid", USERID);
+            return params;
+        }
+
+        };
+        queue.add(stringRequest);
+    }
+
+    private void updateProfileRequest(String UserID) {
+
+        final String nameUpdated = nameEditText.getText().toString().trim();
+        final String emailUpdated = emailEditText.getText().toString().trim();
+        final String mobileUpdated = mobileEditText.getText().toString().trim();
+
+        final String USERID = UserID;
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/update_profile.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                            String userId = dataJsonObject.getString("id");
+                            String userName = dataJsonObject.getString("name");
+                            String userEmail = dataJsonObject.getString("email");
+                            String userMobile = dataJsonObject.getString("mobile");
+
+                            EditText firstName = (EditText) findViewById(R.id.first_name_et);
+                            firstName.setText(userName);
+
+                            EditText mobileNumber = (EditText) findViewById(R.id.mobile_et);
+                            mobileNumber.setText(userMobile);
+
+                            EditText email = (EditText) findViewById(R.id.email_et);
+                            email.setText(userEmail);
+
+                            }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", USERID);
+            params.put("name", nameUpdated);
+            params.put("email", emailUpdated);
+            params.put("mobile", mobileUpdated);
             return params;
         }
 

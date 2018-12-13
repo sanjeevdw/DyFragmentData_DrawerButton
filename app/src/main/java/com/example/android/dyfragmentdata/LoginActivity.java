@@ -67,7 +67,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     private DrawerLayout mDrawerLayout;
     private EditText userEmail;
     private EditText userPassword;
-    // private String username;
     private String userToken;
     private Session session;
     private static final int RC_SIGN_IN = 6;
@@ -90,6 +89,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     private static final String EMAIL = "email";
     private String sessionToken;
     private NavigationView navigationView;
+    private String usernameGoogle;
+    private String sessionGoogleEmil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         setContentView(R.layout.login_activity);
         session = new Session(this);
         sessionToken = session.getusertoken();
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            usernameGoogle = account.getDisplayName();
+            sessionGoogleEmil = account.getEmail();
+            registerNetworkRequest(usernameGoogle, sessionGoogleEmil);
+        }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -149,11 +157,14 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
+                    showFullNavItem();
+                    username = user.getDisplayName();
+                    email = user.getEmail();
+                    registerNetworkRequest(username, email);
                     Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
                     startActivity(intentHomepage);
                     onSignedInInitialize(user.getDisplayName());
-                 //   email = user.getEmail();
-                 //   uidFirebase = user.getUid();
+
                     user.getIdToken(true)
                             .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                                 @Override
@@ -166,7 +177,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                     }
                                 }
                             });
-                    // sendNetworkRequest(email);
+
                 } else {
                     onSignedOutCleanUp();
                     startActivityForResult(
@@ -198,7 +209,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 }
             }
         });
-        // signInButton.setSize(signInButton.SIZE_STANDARD);
 
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = findViewById(R.id.login_button);
@@ -227,11 +237,9 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 request.executeAsync();
 
                 Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-            //    if (!isHomepageActivityStarted) {
+
                     startActivity(intentHomepage);
-                //    isHomepageActivityStarted = true;
-              //  }
-                handleFacebookAccessToken(loginResult.getAccessToken());
+                    handleFacebookAccessToken(loginResult.getAccessToken());
                 }
 
             @Override
@@ -268,8 +276,9 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == RC_SIGN_IN && resultCode == RESULT_OK) {
-            Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-            startActivity(intentHomepage);
+            showFullNavItem();
+            Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
+            startActivity(intentCart);
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
             Toast.makeText(this, "Signed In.", Toast.LENGTH_SHORT).show();
@@ -335,17 +344,18 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                         }
                     }
                 });
-
-    }
+        }
 
     public void updateUI(Object o) {
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
    //         Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
     //        startActivity(intentHomepage);
-          //  username = user.getDisplayName();
+            username = user.getDisplayName();
+            email = user.getEmail();
           //  session.setusename(username);
           //  String commonUsername = session.getusename();
+            registerNetworkRequest(username, email);
             user.getIdToken(true)
                     .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
                         @Override
@@ -359,11 +369,19 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             //    Log.d(TAG, "userSession" + userSession);
                                // Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
                            //     startActivity(intentHomepage);
+                                showFullNavItem();
+
                             } else {
                                 Log.d(LOG_TAG, "Id token error message", task.getException());
                             }
                         }
                     });
+        } else {
+            if (sessionToken.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            }
         }
     }
 
@@ -387,15 +405,14 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     protected void onResume() {
         super.onResume();
         // mFirebaseAuth.addAuthStateListener(mAuthStateListener);
-
-        }
+    }
 
     @Override
     protected void onStart() {
         super.onStart();
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
-             String usernameGoogle = account.getDisplayName();
+             usernameGoogle = account.getDisplayName();
          //   String personEmail = account.getEmail();
           //  String personId = account.getId();
           //  userToken = account.getIdToken();
@@ -404,7 +421,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
          //   String sessionGoogleToken = session.getusertoken();
           //  String sessionGoogleUsername = session.getusename();
           //  String sessionGooglePersonId = account.getId();
-            String sessionGoogleEmil = account.getEmail();
+            sessionGoogleEmil = account.getEmail();
          //   Log.d(TAG, "sessionGoogleToken" + userToken);
          //   Log.d(TAG, "sessionGoogleUsername" + sessionGoogleUsername);
          //   Log.d(TAG, "sessionGoogleEmil" + sessionGoogleEmil);
@@ -414,7 +431,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         updateUI(account);
                 FirebaseUser currentFacebookUser = mFirebaseAuth.getCurrentUser();
         updateUI(currentFacebookUser);
-
         }
 
     @Override
@@ -475,7 +491,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
-                setNavigationViewListener();
                 break;
             case R.id.nav_category:
                 Intent intentCategory = new Intent(this, MainActivity.class);
@@ -587,10 +602,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         queue.add(stringRequest);
     }
 
-    private void registerNetworkRequest(String name, String email) {
+    private void registerNetworkRequest(String name, String emailG) {
 
         final String nameGoogle = name;
-        final String emailGoogle = email;
+        final String emailGoogle = emailG;
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://www.godprice.com/api/gmail.php";
@@ -611,9 +626,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 navigationView.getMenu().clear();
                                 navigationView.inflateMenu(R.menu.drawer_view_without_login);
                             }
-                       // String sessionToken = session.getusertoken();
-                            Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-                            startActivity(intentHomepage);
+
+                            Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
+                            intentCart.putExtra("sessionTokenGmail", sessionToken);
+                            startActivity(intentCart);
+                            Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
+                            intentProfile.putExtra("sessionTokenGmail", sessionToken);
+                            startActivity(intentProfile);
                         Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -622,19 +641,11 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
 
             }
 
-        }) { @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("name", nameGoogle);
-            params.put("email", emailGoogle);
-            return params;
-        }
-        };
-
+        });
         queue.add(stringRequest);
     }
 
@@ -662,9 +673,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 navigationView.getMenu().clear();
                                 navigationView.inflateMenu(R.menu.drawer_view_without_login);
                             }
-                           // String sessionToken = session.getusertoken();
-                            Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-                            startActivity(intentHomepage);
+
+                            Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
+                            intentCart.putExtra("sessionToken", sessionToken);
+                            startActivity(intentCart);
                             Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
                         } catch(Exception e) {
                             e.printStackTrace();
@@ -673,7 +685,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
 
             }
 

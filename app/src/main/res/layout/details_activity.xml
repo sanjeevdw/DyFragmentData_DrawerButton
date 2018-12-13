@@ -23,6 +23,7 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             android:elevation="4dp"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+
 <android.support.v4.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/scroll_bar"
@@ -58,6 +59,7 @@
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:orientation="horizontal" android:layout_width="match_parent"
         android:layout_marginTop="20dp"
+        android:id="@+id/thumbnail_image_container"
         android:layout_height="wrap_content">
         <ImageButton
         android:id="@+id/thumbnail_image_one"
@@ -160,6 +162,7 @@ android:orientation="vertical">
         android:layout_height="wrap_content"/>
         </LinearLayout>
 </LinearLayout>
+
     <LinearLayout
         android:id="@+id/text_color_container"
         android:layout_width="match_parent"
@@ -170,7 +173,7 @@ android:orientation="vertical">
         android:orientation="horizontal"
         >
         <TextView
-            android:id="@+id/color_text_view"
+            android:id="@+id/attribute_label_text_view"
             android:layout_width="wrap_content"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#424242"
@@ -181,120 +184,58 @@ android:orientation="vertical">
             android:layout_marginStart="10dp"
             android:textSize="14sp"
             android:fontFamily="sans-serif"
-            android:text="@string/color_text"
             android:layout_height="wrap_content"/>
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/green_text"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:textAlignment="center"
-                android:background="@drawable/rectangle_shape"
-                />
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textAlignment="center"
-                android:text="@string/red_color_text"
-                android:background="@drawable/rectangle_shape"
-                />
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:textAlignment="center"
-                android:text="@string/blue_color_text"
-                android:background="@drawable/rectangle_shape"
-                />
+        <TextView
+            android:id="@+id/attribute_value_text_view"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="#424242"
+            android:gravity="bottom"
+            android:textStyle="bold"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/text_size_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:layout_marginTop="15dp"
+        android:background="@drawable/rectangle_shape"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/attribute_size_label_text_view"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="#424242"
+            android:gravity="bottom"
+            android:textStyle="bold"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/attribute_size_value_text_view"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="#424242"
+            android:gravity="bottom"
+            android:textStyle="bold"
+            android:layout_marginTop="9dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginStart="10dp"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/text_size_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="start"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/rectangle_shape"
-            android:orientation="horizontal"
-            >
-        <TextView
-            android:id="@+id/size_text_view"
-            android:layout_width="wrap_content"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#424242"
-            android:gravity="bottom"
-            android:textStyle="bold"
-            android:layout_marginTop="9dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="10dp"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif"
-            android:text="@string/size_text"
-            android:layout_height="wrap_content"/>
-
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/small_size_text"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:textAlignment="center"
-                android:background="@drawable/rectangle_shape"
-                />
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textAlignment="center"
-                android:text="@string/medium_color_text"
-                android:background="@drawable/rectangle_shape"
-                />
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:textAlignment="center"
-                android:text="@string/large_text"
-                android:background="@drawable/rectangle_shape"
-                />
-            <TextView
-                android:layout_width="40dp"
-                android:layout_height="25dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:textSize="11sp"
-                android:textColor="#424242"
-                android:textAlignment="center"
-                android:text="@string/xtra_large_text"
-                android:background="@drawable/rectangle_shape"
-                />
-        </LinearLayout>
     <LinearLayout
         android:id="@+id/product_description_container"
         android:layout_width="match_parent"
@@ -303,7 +244,7 @@ android:orientation="vertical">
         android:background="@drawable/rectangle_shape"
         android:orientation="vertical">
         <TextView
-            android:id="@+id/heading_count"
+            android:id="@+id/description"
             android:layout_width="wrap_content"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#424242"
@@ -330,7 +271,7 @@ android:orientation="vertical">
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#202020"
             android:layout_marginTop="6dp"
-            android:layout_marginStart="5dp"
+            android:layout_marginStart="10dp"
             android:textSize="12sp"
             android:layout_marginEnd="8dp"
             android:gravity="top"

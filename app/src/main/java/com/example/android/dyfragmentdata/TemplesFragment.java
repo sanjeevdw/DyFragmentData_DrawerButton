@@ -58,6 +58,7 @@ public class TemplesFragment extends Fragment {
                                  Bundle savedInstanceState) {
             rootView = inflater.inflate(R.layout.guide_list, container, false);
           temples = new ArrayList<Guide>();
+        adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
         //  adapter = new GuideAdapter(getActivity(), temples,  R.color.temples_category);
         //  ListView listView = (ListView) rootView.findViewById(R.id.list);
         //  listView.setAdapter(adapter);

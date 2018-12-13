@@ -18,12 +18,16 @@ import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 public class ForgotPasswordActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private Session session;
     private String sessionToken;
     private NavigationView navigationView;
+    private String usernameGoogle;
+    private String sessionGoogleEmil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +61,22 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
             showFullNavItem();
         }
 
-    }
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            usernameGoogle = account.getDisplayName();
+            sessionToken = usernameGoogle;
+            sessionGoogleEmil = account.getEmail();
+            if (sessionToken.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            }
+
+            if (!sessionToken.isEmpty()) {
+                showFullNavItem();
+            }
+        }
+        }
 
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
@@ -86,12 +105,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 AuthUI.getInstance().signOut(this);
                 return true; */
             case R.id.action_drawer_signin:
-                if (sessionToken.isEmpty()) {
-                    navigationView = findViewById(R.id.nav_view);
-                    navigationView.getMenu().clear();
-                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                if (!sessionToken.isEmpty()) {
+                    Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
+                    startActivity(intentUpdateProfile);
+
                 } else {
-                    showFullNavItem();
+                    Intent intent = new Intent(this, SignupActivity.class);
+                    startActivity(intent);
                 }
                 return true;
             case R.id.action_drawer_cart:
@@ -133,10 +153,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 Intent intentCategory = new Intent(this, MainActivity.class);
                 startActivity(intentCategory);
                 break;
-                case R.id.nav_login:
+            case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
-
                 break;
             case R.id.nav_register:
                 Intent intentRegister = new Intent(this, SignupActivity.class);

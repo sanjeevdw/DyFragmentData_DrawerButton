@@ -27,6 +27,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,8 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
     private Session session;
     private String sessionToken;
     private NavigationView navigationView;
+    private String usernameGoogle;
+    private String sessionGoogleEmil;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +66,22 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
         }
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
+
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
+        if (account != null) {
+            usernameGoogle = account.getDisplayName();
+            sessionToken = usernameGoogle;
+            sessionGoogleEmil = account.getEmail();
+            if (sessionToken.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.getMenu().clear();
+                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            }
+
+            if (!sessionToken.isEmpty()) {
+                showFullNavItem();
+            }
+        }
 
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);

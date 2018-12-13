@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -52,6 +54,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private Session session;
     private String sessionToken;
     private NavigationView navigationView;
+    private String usernameGoogle;
+    private String sessionGoogleEmil;
+    private String currentAttributeColor;
+    private String attributeColorValue;
+    private String currentAttributeSize;
+    private String attributeSizeValue;
+    private String galleryThumbnail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +84,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         products = new ArrayList<ProductDetails>();
         listView.setNestedScrollingEnabled(true);
         productsDetailsRequest();
-
-        //  listView.setAdapter(adapter);
-
         setNavigationViewListener();
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
@@ -88,7 +93,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
-            actionbar.setDisplayShowHomeEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.back_arrow);
         }
 
@@ -177,14 +181,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
             case android.R.id.home:
+                Intent templesIntent = new Intent(DetailsActivity.this, MainActivity.class);
+                startActivity(templesIntent);
                 //mDrawerLayout.openDrawer(GravityCompat.START);
-                if (sessionToken.isEmpty()) {
-                    navigationView = findViewById(R.id.nav_view);
-                    navigationView.getMenu().clear();
-                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
-                } else {
-                    showFullNavItem();
-                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -244,7 +243,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 break;
             case R.id.nav_about_industry:
                 Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
                 break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
@@ -353,8 +351,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
     private void productsDetailsRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/products.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        final Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("www.godprice.com")
+                .appendPath("api")
+                .appendPath("products.php")
+                .appendQueryParameter("product_id", "92");
+        String myUrl = builder.build().toString();
+        String url = myUrl;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -379,13 +384,78 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     map.put("Category name", "Category name : " + currentProductDetail.getString("productsname"));
 
                                     String productId = currentProductDetail.getString("product_id");
+                                    String productSku = currentProductDetail.getString("skucode");
                                     String productName = currentProductDetail.getString("productsname");
-                                    // String productDescription = e.getString("description");
+                                    String productDescription = currentProductDetail.getString("description");
                                     String productPrice = currentProductDetail.getString("discount_percent");
-                                    String imageUrl = currentProductDetail.getString("image");
+                                    String imageUrl = currentProductDetail.getString("featured_image");
+                                    JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
+                                    if (galleryThumbnailArray.length() > 0) {
+                                        //Loop the Array
+                                        for (int b = 0; b < galleryThumbnailArray.length(); b++) {
+                                            JSONObject galleryObject = galleryThumbnailArray.getJSONObject(b);
+                                            galleryThumbnail = galleryObject.getString("gallery_image");
+                                            LinearLayout imageLayout = (LinearLayout) findViewById(R.id.thumbnail_image_container);
+                                            for(int a=0;a<galleryThumbnailArray.length();a++)
+                                            {
+                                                ImageView image = new ImageView(DetailsActivity.this);
+                                                image.setLayoutParams(new android.view.ViewGroup.LayoutParams(80,60));
+                                                image.setMaxHeight(20);
+                                                image.setMaxWidth(20);
+                                                Glide.with(image.getContext())
+                                                        .load(galleryThumbnail)
+                                                        .into(image);
+
+                                                // Adds the view to the layout
+                                                imageLayout.addView(image);
+                                            }
+                                            }
+                                    }
+                                    JSONObject attributeObject = currentObject.getJSONObject("attribute");
+                                    StringBuilder stringBuilder = new StringBuilder();
+                                    StringBuilder stringBuilderValue = new StringBuilder();
+
+                                    JSONObject currentObjectColor = attributeObject.getJSONObject("Color");
+                                    currentAttributeColor = currentObjectColor.getString("attribute_name");
+
+                                    TextView attributeColorLabelView = (TextView) findViewById(R.id.attribute_label_text_view);
+                                    attributeColorLabelView.setText(currentAttributeColor);
+                                    JSONArray attributeValueArrayColor = currentObjectColor.getJSONArray("attribute_value");
+
+                                    if (attributeValueArrayColor.length() > 0) {
+                                        //Loop the Array
+                                        for (int k = 0; k < attributeValueArrayColor.length(); k++) {
+                                            JSONObject currentObjectValueColor = attributeValueArrayColor.getJSONObject(k);
+                                            attributeColorValue = currentObjectValueColor.getString("attribute_val");
+                                            stringBuilder.append(attributeColorValue);
+                                            stringBuilder.append(" ");
+                                            TextView attributeValueView = (TextView) findViewById(R.id.attribute_value_text_view);
+                                            attributeValueView.setText(stringBuilder.toString());
+                                        }
+                                    }
+
+                                    JSONObject currentObjectSize = attributeObject.getJSONObject("Size");
+                                    currentAttributeSize = currentObjectSize.getString("attribute_name");
+                                    //  stringBuilderValue.append(currentAttributeSize);
+                                    //  stringBuilderValue.append(System.getProperty("line.separator"));
+                                    //  stringBuilderValue.append(System.getProperty("line.separator"));
+                                    TextView attributeSizeLabelView = (TextView) findViewById(R.id.attribute_size_label_text_view);
+                                    attributeSizeLabelView.setText(currentAttributeSize);
+                                    JSONArray attributeValueArraySize = currentObjectSize.getJSONArray("attribute_value");
+                                    if (attributeValueArraySize.length() > 0) {
+                                        //Loop the Array
+                                        for (int m = 0; m < attributeValueArraySize.length(); m++) {
+                                            JSONObject currentObjectValueSize = attributeValueArraySize.getJSONObject(m);
+                                            attributeSizeValue = currentObjectValueSize.getString("attribute_val");
+                                            TextView attributeSizeValueView = (TextView) findViewById(R.id.attribute_size_value_text_view);
+                                            stringBuilderValue.append(attributeSizeValue);
+                                            stringBuilderValue.append(" ");
+                                            attributeSizeValueView.setText(stringBuilderValue.toString());
+                                        }
+                                        }
 
                                     TextView productIdView = (TextView) findViewById(R.id.sku);
-                                    productIdView.setText(productId);
+                                    productIdView.setText(productSku);
 
                                     TextView productNameView = (TextView) findViewById(R.id.product_name_view);
                                     productNameView.setText(productName);
@@ -393,18 +463,14 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     TextView discountPriceView = (TextView) findViewById(R.id.product_price_view);
                                     discountPriceView.setText(productPrice);
 
+                                    TextView descriptionView = (TextView) findViewById(R.id.description_tv);
+                                    descriptionView.setText(productDescription);
+
                                     ImageView productImageView = (ImageView) findViewById(R.id.main_image);
 
                                     Glide.with(productImageView.getContext())
                                             .load(imageUrl)
                                             .into(productImageView);
-
-                                    //  ProductDetails currentProduct = new ProductDetails(productId, productName, productPrice, imageUrl);
-                                    //   products.add(currentProduct);
-                                    //   productAdapter = new ProductAdapter(DetailsActivity.this, products);
-
-                                    //   listView.setAdapter(productAdapter);
-                                    //    productAdapter.notifyDataSetChanged();
 
                                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
@@ -440,18 +506,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
             }
 
-        })
-        { @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("product_id", pid);
-            return params;
-        }
-        };
-
+        })        ;
         queue.add(stringRequest);
     }
-
 }
+
 
 

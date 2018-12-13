@@ -8,12 +8,6 @@
             android:id="@+id/nav_category"
             android:title="@string/category_item_drawer_menu"/>
         <item
-            android:id="@+id/nav_login"
-            android:title="@string/login"/>
-        <item
-            android:id="@+id/nav_register"
-            android:title="@string/register"/>
-        <item
             android:id="@+id/nav_profile"
             android:title="@string/profile"/>
         <item

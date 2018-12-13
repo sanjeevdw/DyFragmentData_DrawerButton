@@ -10,12 +10,14 @@
         android:supportsRtl="true"
         android:windowSoftInputMode="stateHidden"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
         <activity android:name=".MainActivity"
             android:windowSoftInputMode="stateHidden">
 
         </activity>
+
         <activity android:name=".DetailsActivity"
-            android:parentActivityName=".TemplesActivity"
+            android:parentActivityName=".MainActivity"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

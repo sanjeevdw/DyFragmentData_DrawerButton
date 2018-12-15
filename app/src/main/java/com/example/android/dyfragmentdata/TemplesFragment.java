@@ -38,6 +38,7 @@ public class TemplesFragment extends Fragment {
     private GuideAdapter adapter;
     private ListView listView;
     private String sessionToken;
+    private int childIndex;
    // private String productID;
 
     /**
@@ -72,6 +73,18 @@ public class TemplesFragment extends Fragment {
 
         return rootView;
         }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+            }
+    }
 
         private void categoryNetworkRequest() {
     RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
@@ -121,29 +134,31 @@ public class TemplesFragment extends Fragment {
                                     listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
                                     listView.setAdapter(adapter);
                                     adapter.notifyDataSetChanged();
-                                   // TextView productIdtv = (TextView) listView.findViewById(R.id.product_id);
-                                   // productIdtv.setVisibility(View.GONE);
 
                                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             long viewId = view.getId();
+                                            getViewByPosition(position,listView);
 
                                             if (viewId == R.id.button_details_two) {
                                                 String productId = listView.getItemAtPosition(position).toString().trim();
                                                 //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
 
-                                                TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                                String productID = PPid.getText().toString().trim();
 
-                                                Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
-                                                intent.putExtra("ProductId", productID);
+                                            //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                 String productID = PPid.getText().toString().trim();
+
+                                               Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
+                                               intent.putExtra("ProductId", productID);
                                                 startActivity(intent);
                                             }
                                         }
                                     });
 
-                                   /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                                    /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             long viewId = view.getId();
@@ -213,9 +228,7 @@ public class TemplesFragment extends Fragment {
                         // with the message from the exception.
                         //     Log.e("Volley", "Problem parsing the category JSON results", e);
                     }
-
-
-                }
+                    }
             }, new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError error) {

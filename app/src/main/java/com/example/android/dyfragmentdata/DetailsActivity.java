@@ -17,7 +17,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -61,6 +63,11 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private String currentAttributeSize;
     private String attributeSizeValue;
     private String galleryThumbnail;
+    private String colorButtonText;
+    private String sizeButtonText;
+    private int k;
+    private int m;
+    private ArrayList<String> ColorButtonText = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -356,7 +363,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 .authority("www.godprice.com")
                 .appendPath("api")
                 .appendPath("products.php")
-                .appendQueryParameter("product_id", "92");
+                .appendQueryParameter("product_id", pid);
         String myUrl = builder.build().toString();
         String url = myUrl;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -383,14 +390,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     map.put("cid", "cid :" + currentProductDetail.getString("product_id"));
                                     map.put("Category name", "Category name : " + currentProductDetail.getString("productsname"));
 
-                                    String productId = currentProductDetail.getString("product_id");
-                                    String productSku = currentProductDetail.getString("skucode");
-                                    String productName = currentProductDetail.getString("productsname");
-                                    String productDescription = currentProductDetail.getString("description");
-                                    String productPrice = currentProductDetail.getString("discount_percent");
-                                    String imageUrl = currentProductDetail.getString("featured_image");
-                                    JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
-                                    if (galleryThumbnailArray.length() > 0) {
+                                    String ProductDetailsId = currentProductDetail.getString("product_id");
+                                    String productDetailsSku = currentProductDetail.getString("skucode");
+                                    String productDetailsName = currentProductDetail.getString("productsname");
+                                    String productDetailsDescription = currentProductDetail.getString("description");
+                                    String productDetailsPrice = currentProductDetail.getString("discount_percent");
+                                    String imageUrlDetails = currentProductDetail.getString("featured_image");
+
+                                 //   JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
+                                /*    if (galleryThumbnailArray.length() > 0) {
                                         //Loop the Array
                                         for (int b = 0; b < galleryThumbnailArray.length(); b++) {
                                             JSONObject galleryObject = galleryThumbnailArray.getJSONObject(b);
@@ -410,7 +418,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 imageLayout.addView(image);
                                             }
                                             }
-                                    }
+                                    } */
+
                                     JSONObject attributeObject = currentObject.getJSONObject("attribute");
                                     StringBuilder stringBuilder = new StringBuilder();
                                     StringBuilder stringBuilderValue = new StringBuilder();
@@ -424,52 +433,91 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
                                     if (attributeValueArrayColor.length() > 0) {
                                         //Loop the Array
-                                        for (int k = 0; k < attributeValueArrayColor.length(); k++) {
+                                        for (k = 0; k < attributeValueArrayColor.length(); k++) {
                                             JSONObject currentObjectValueColor = attributeValueArrayColor.getJSONObject(k);
                                             attributeColorValue = currentObjectValueColor.getString("attribute_val");
                                             stringBuilder.append(attributeColorValue);
                                             stringBuilder.append(" ");
-                                            TextView attributeValueView = (TextView) findViewById(R.id.attribute_value_text_view);
-                                            attributeValueView.setText(stringBuilder.toString());
+                                            LinearLayout colorLayout = (LinearLayout) findViewById(R.id.text_color_container);
+                                            final Button button = new Button(DetailsActivity.this);
+                                            button.setId(k+1);
+                                            button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                            button.setText(attributeColorValue);
+                                            final int index = k;
+                                            button.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                  //  colorButtonText = button.getText().toString();
+
+                                                    Toast.makeText(DetailsActivity.this, "Index" + index, Toast.LENGTH_SHORT).show();
+                                                }
+                                            });
+                                            colorLayout.addView(button);
+                                          //  for (int l=0; l<attributeValueArrayColor.length(); l++) {
+                                            //  }
+                                         //   TextView attributeValueView = (TextView) findViewById(R.id.attribute_value_text_view);
+                                          //  attributeValueView.setText(stringBuilder.toString());
+                                          //  attributeValueView.setOnClickListener(new View.OnClickListener() {
+                                            //    @Override
+                                              //  public void onClick(View view) {
+                                              //      Toast.makeText(DetailsActivity.this, "Color clicked", Toast.LENGTH_SHORT).show();
+                                            //    }
+                                          //  });
                                         }
                                     }
 
                                     JSONObject currentObjectSize = attributeObject.getJSONObject("Size");
                                     currentAttributeSize = currentObjectSize.getString("attribute_name");
-                                    //  stringBuilderValue.append(currentAttributeSize);
-                                    //  stringBuilderValue.append(System.getProperty("line.separator"));
-                                    //  stringBuilderValue.append(System.getProperty("line.separator"));
+
                                     TextView attributeSizeLabelView = (TextView) findViewById(R.id.attribute_size_label_text_view);
                                     attributeSizeLabelView.setText(currentAttributeSize);
                                     JSONArray attributeValueArraySize = currentObjectSize.getJSONArray("attribute_value");
                                     if (attributeValueArraySize.length() > 0) {
                                         //Loop the Array
-                                        for (int m = 0; m < attributeValueArraySize.length(); m++) {
+                                        for (m = 0; m < attributeValueArraySize.length(); m++) {
                                             JSONObject currentObjectValueSize = attributeValueArraySize.getJSONObject(m);
                                             attributeSizeValue = currentObjectValueSize.getString("attribute_val");
-                                            TextView attributeSizeValueView = (TextView) findViewById(R.id.attribute_size_value_text_view);
-                                            stringBuilderValue.append(attributeSizeValue);
-                                            stringBuilderValue.append(" ");
-                                            attributeSizeValueView.setText(stringBuilderValue.toString());
+                                         //   TextView attributeSizeValueView = (TextView) findViewById(R.id.attribute_size_value_text_view);
+                                            LinearLayout sizeLayout = (LinearLayout) findViewById(R.id.text_size_container);
+                                            final Button buttonSize = new Button(DetailsActivity.this);
+                                            buttonSize.setId(m+1);
+                                            buttonSize.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                            buttonSize.setText(attributeSizeValue);
+                                            final int index = m;
+                                            buttonSize.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    sizeButtonText = buttonSize.getText().toString();
+                                                    Toast.makeText(DetailsActivity.this, "Index" + index, Toast.LENGTH_SHORT).show();
+                                                    productsAttributesRequest();
+                                                }
+                                            });
+                                            sizeLayout.addView(buttonSize);
+                                          //  stringBuilderValue.append(attributeSizeValue);
+                                          //  stringBuilderValue.append(" ");
+                                          //  attributeSizeValueView.setText(stringBuilderValue.toString());
                                         }
                                         }
 
-                                    TextView productIdView = (TextView) findViewById(R.id.sku);
-                                    productIdView.setText(productSku);
+                                        TextView productIdView = (TextView) findViewById(R.id.product_id);
+                                    productIdView.setText(ProductDetailsId);
+
+                                    TextView productSkuView = (TextView) findViewById(R.id.sku);
+                                    productSkuView.setText(productDetailsSku);
 
                                     TextView productNameView = (TextView) findViewById(R.id.product_name_view);
-                                    productNameView.setText(productName);
+                                    productNameView.setText(productDetailsName);
 
                                     TextView discountPriceView = (TextView) findViewById(R.id.product_price_view);
-                                    discountPriceView.setText(productPrice);
+                                    discountPriceView.setText(productDetailsPrice);
 
                                     TextView descriptionView = (TextView) findViewById(R.id.description_tv);
-                                    descriptionView.setText(productDescription);
+                                    descriptionView.setText(productDetailsDescription);
 
                                     ImageView productImageView = (ImageView) findViewById(R.id.main_image);
 
                                     Glide.with(productImageView.getContext())
-                                            .load(imageUrl)
+                                            .load(imageUrlDetails)
                                             .into(productImageView);
 
                                     listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -507,6 +555,46 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             }
 
         })        ;
+        queue.add(stringRequest);
+    }
+
+
+    private void productsAttributesRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        final Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("www.godprice.com")
+                .appendPath("api")
+                .appendPath("products.php")
+                .appendQueryParameter("product_id", pid)
+                .appendQueryParameter("att1", colorButtonText)
+                .appendQueryParameter("att2", sizeButtonText);
+        String myUrl = builder.build().toString();
+        String url = myUrl;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            Toast.makeText(DetailsActivity.this, "Attribute response", Toast.LENGTH_SHORT).show();
+                            } catch (Exception e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                        // Return the list of earthquakes
+                        // return categories;
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        });
         queue.add(stringRequest);
     }
 }

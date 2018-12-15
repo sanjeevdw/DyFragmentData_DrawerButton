@@ -68,6 +68,14 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private int k;
     private int m;
     private ArrayList<String> ColorButtonText = new ArrayList<String>();
+    private String attributeIdColor;
+    private String isSelectedColor;
+    private String isAttAvailableColor;
+    private String attributeIdSize;
+    private String isSelectedSize;
+    private String isAttAvailableSize;
+    private String colorClickedAttribute;
+    private String sizeClickedAttribute;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -420,86 +428,115 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                             }
                                     } */
 
-                                    JSONObject attributeObject = currentObject.getJSONObject("attribute");
+                                    JSONArray attributeObject = currentObject.getJSONArray("attribute");
+                                    for (int c = 0; c < attributeObject.length(); c++) {
+                                        JSONObject currentObjectValue = attributeObject.getJSONObject(c);
+                                        JSONObject currentObjectOne = currentObjectValue.getJSONObject("1");
+                                        currentAttributeColor = currentObjectOne.getString("attribute_name");
+
+                                        TextView attributeColorLabelView = (TextView) findViewById(R.id.attribute_label_text_view);
+                                        attributeColorLabelView.setText(currentAttributeColor);
+                                        JSONArray attributeValueArrayColor = currentObjectOne.getJSONArray("attribute_value");
+                                        if (attributeValueArrayColor.length() > 0) {
+                                            //Loop the Array
+                                            for (k = 0; k < attributeValueArrayColor.length(); k++) {
+                                                JSONObject currentObjectValueOne = attributeValueArrayColor.getJSONObject(k);
+                                                attributeColorValue = currentObjectValueOne.getString("attribute_val");
+                                                attributeIdColor = currentObjectValueOne.getString("attribute_id");
+                                                isSelectedColor = currentObjectValueOne.getString("is_selected");
+                                                isAttAvailableColor = currentObjectValueOne.getString("is_att_availble");
+                                                final String attributeOne  = currentObjectValueOne.getString("att1");
+                                                int colorNonSelectedId = Integer.parseInt(isAttAvailableColor);
+                                               // stringBuilder.append(attributeColorValue);
+                                             //   stringBuilder.append(" ");
+                                                LinearLayout colorLayout = (LinearLayout) findViewById(R.id.text_color_container);
+                                                final Button button = new Button(DetailsActivity.this);
+                                                button.setId(k+1);
+                                                button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                                button.setText(attributeColorValue);
+                                                int colorSelectedId = Integer.parseInt(isSelectedColor);
+                                                if (colorSelectedId == 1) {
+                                                    button.setBackgroundColor(Color.YELLOW);
+                                                } else if (colorSelectedId == 0) {
+                                                    button.setBackgroundColor(Color.GRAY);
+                                                }
+                                                else if (colorNonSelectedId == 1) {
+                                                    button.setBackgroundColor(Color.GRAY);
+                                                }  else if (colorNonSelectedId == 0) {
+                                                    button.setBackgroundColor(Color.WHITE);
+                                                }
+                                                final int index = k;
+                                                button.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        colorButtonText = button.getText().toString();
+                                                        colorClickedAttribute = attributeOne;
+                                                        Toast.makeText(DetailsActivity.this, "Index" + index, Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                                colorLayout.addView(button);
+                                            }
+                                        }
+
+                                        JSONObject currentObjectSize = currentObjectValue.getJSONObject("2");
+                                        currentAttributeSize = currentObjectSize.getString("attribute_name");
+
+                                        TextView attributeSizeLabelView = (TextView) findViewById(R.id.attribute_size_label_text_view);
+                                        attributeSizeLabelView.setText(currentAttributeSize);
+                                        JSONArray attributeValueArraySize = currentObjectSize.getJSONArray("attribute_value");
+                                        if (attributeValueArraySize.length() > 0) {
+                                            //Loop the Array
+                                            for (m = 0; m < attributeValueArraySize.length(); m++) {
+                                                JSONObject currentObjectValueSize = attributeValueArraySize.getJSONObject(m);
+                                                attributeSizeValue = currentObjectValueSize.getString("attribute_val");
+                                                attributeIdSize = currentObjectValueSize.getString("attribute_id");
+                                                isSelectedSize = currentObjectValueSize.getString("is_selected");
+                                                isAttAvailableSize = currentObjectValueSize.getString("is_att_availble");
+                                                final String attributeTwo  = currentObjectValueSize.getString("att2");
+
+                                                //   TextView attributeSizeValueView = (TextView) findViewById(R.id.attribute_size_value_text_view);
+                                                LinearLayout sizeLayout = (LinearLayout) findViewById(R.id.text_size_container);
+                                                final Button buttonSize = new Button(DetailsActivity.this);
+                                                buttonSize.setId(m+1);
+                                                buttonSize.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                                buttonSize.setText(attributeSizeValue);
+                                                int sizeNonSelectedId = Integer.parseInt(isAttAvailableSize);
+                                                int sizeSelectedId = Integer.parseInt(isSelectedSize);
+                                                if (sizeSelectedId == 1) {
+                                                    buttonSize.setBackgroundColor(Color.YELLOW);
+                                                } else if (sizeSelectedId == 0) {
+                                                    buttonSize.setBackgroundColor(Color.GRAY);
+                                                }
+                                                else if (sizeNonSelectedId == 1) {
+                                                    buttonSize.setBackgroundColor(Color.GRAY);
+                                                }  else if (sizeNonSelectedId == 0) {
+                                                    buttonSize.setBackgroundColor(Color.WHITE);
+                                                }
+                                                final int index = m;
+                                                buttonSize.setOnClickListener(new View.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(View view) {
+                                                        sizeButtonText = buttonSize.getText().toString();
+                                                        sizeClickedAttribute = attributeTwo;
+                                                        Toast.makeText(DetailsActivity.this, "Index" + index, Toast.LENGTH_SHORT).show();
+                                                        productsAttributesRequest();
+                                                    }
+                                                });
+                                                sizeLayout.addView(buttonSize);
+                                            }
+                                        }
+
+                                    }
                                     StringBuilder stringBuilder = new StringBuilder();
                                     StringBuilder stringBuilderValue = new StringBuilder();
 
-                                    JSONObject currentObjectColor = attributeObject.getJSONObject("Color");
-                                    currentAttributeColor = currentObjectColor.getString("attribute_name");
+                                    JSONObject currentObjectCart = currentObject.getJSONObject("cart_parameter");
+                                    String productIdCart = currentObjectCart.getString("pid");
+                                    String proQuantityIdCart = currentObjectCart.getString("pro_qty_id");
+                                    String priceCart = currentObjectCart.getString("price");
+                                    String currentQuantityCart = currentObjectCart.getString("current_qty");
 
-                                    TextView attributeColorLabelView = (TextView) findViewById(R.id.attribute_label_text_view);
-                                    attributeColorLabelView.setText(currentAttributeColor);
-                                    JSONArray attributeValueArrayColor = currentObjectColor.getJSONArray("attribute_value");
-
-                                    if (attributeValueArrayColor.length() > 0) {
-                                        //Loop the Array
-                                        for (k = 0; k < attributeValueArrayColor.length(); k++) {
-                                            JSONObject currentObjectValueColor = attributeValueArrayColor.getJSONObject(k);
-                                            attributeColorValue = currentObjectValueColor.getString("attribute_val");
-                                            stringBuilder.append(attributeColorValue);
-                                            stringBuilder.append(" ");
-                                            LinearLayout colorLayout = (LinearLayout) findViewById(R.id.text_color_container);
-                                            final Button button = new Button(DetailsActivity.this);
-                                            button.setId(k+1);
-                                            button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                            button.setText(attributeColorValue);
-                                            final int index = k;
-                                            button.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                  //  colorButtonText = button.getText().toString();
-
-                                                    Toast.makeText(DetailsActivity.this, "Index" + index, Toast.LENGTH_SHORT).show();
-                                                }
-                                            });
-                                            colorLayout.addView(button);
-                                          //  for (int l=0; l<attributeValueArrayColor.length(); l++) {
-                                            //  }
-                                         //   TextView attributeValueView = (TextView) findViewById(R.id.attribute_value_text_view);
-                                          //  attributeValueView.setText(stringBuilder.toString());
-                                          //  attributeValueView.setOnClickListener(new View.OnClickListener() {
-                                            //    @Override
-                                              //  public void onClick(View view) {
-                                              //      Toast.makeText(DetailsActivity.this, "Color clicked", Toast.LENGTH_SHORT).show();
-                                            //    }
-                                          //  });
-                                        }
-                                    }
-
-                                    JSONObject currentObjectSize = attributeObject.getJSONObject("Size");
-                                    currentAttributeSize = currentObjectSize.getString("attribute_name");
-
-                                    TextView attributeSizeLabelView = (TextView) findViewById(R.id.attribute_size_label_text_view);
-                                    attributeSizeLabelView.setText(currentAttributeSize);
-                                    JSONArray attributeValueArraySize = currentObjectSize.getJSONArray("attribute_value");
-                                    if (attributeValueArraySize.length() > 0) {
-                                        //Loop the Array
-                                        for (m = 0; m < attributeValueArraySize.length(); m++) {
-                                            JSONObject currentObjectValueSize = attributeValueArraySize.getJSONObject(m);
-                                            attributeSizeValue = currentObjectValueSize.getString("attribute_val");
-                                         //   TextView attributeSizeValueView = (TextView) findViewById(R.id.attribute_size_value_text_view);
-                                            LinearLayout sizeLayout = (LinearLayout) findViewById(R.id.text_size_container);
-                                            final Button buttonSize = new Button(DetailsActivity.this);
-                                            buttonSize.setId(m+1);
-                                            buttonSize.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                            buttonSize.setText(attributeSizeValue);
-                                            final int index = m;
-                                            buttonSize.setOnClickListener(new View.OnClickListener() {
-                                                @Override
-                                                public void onClick(View view) {
-                                                    sizeButtonText = buttonSize.getText().toString();
-                                                    Toast.makeText(DetailsActivity.this, "Index" + index, Toast.LENGTH_SHORT).show();
-                                                    productsAttributesRequest();
-                                                }
-                                            });
-                                            sizeLayout.addView(buttonSize);
-                                          //  stringBuilderValue.append(attributeSizeValue);
-                                          //  stringBuilderValue.append(" ");
-                                          //  attributeSizeValueView.setText(stringBuilderValue.toString());
-                                        }
-                                        }
-
-                                        TextView productIdView = (TextView) findViewById(R.id.product_id);
+                                    TextView productIdView = (TextView) findViewById(R.id.product_id);
                                     productIdView.setText(ProductDetailsId);
 
                                     TextView productSkuView = (TextView) findViewById(R.id.sku);
@@ -532,9 +569,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                             }
                                         }
                                     });
-
-                                    //     }
-                                }
+                                    }
                             }
 
                         } catch (JSONException e) {
@@ -543,10 +578,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                             // with the message from the exception.
                             //     Log.e("Volley", "Problem parsing the category JSON results", e);
                         }
-                        // Return the list of earthquakes
-                        // return categories;
 
-                    }
+                        }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
@@ -558,7 +591,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         queue.add(stringRequest);
     }
 
-
     private void productsAttributesRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
         final Uri.Builder builder = new Uri.Builder();
@@ -567,8 +599,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 .appendPath("api")
                 .appendPath("products.php")
                 .appendQueryParameter("product_id", pid)
-                .appendQueryParameter("att1", colorButtonText)
-                .appendQueryParameter("att2", sizeButtonText);
+                .appendQueryParameter("att1", colorClickedAttribute)
+                .appendQueryParameter("att2", sizeClickedAttribute);
         String myUrl = builder.build().toString();
         String url = myUrl;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -584,17 +616,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                             // with the message from the exception.
                             //     Log.e("Volley", "Problem parsing the category JSON results", e);
                         }
-                        // Return the list of earthquakes
-                        // return categories;
-                    }
+                        }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-
             }
-
-        });
+            });
         queue.add(stringRequest);
     }
 }

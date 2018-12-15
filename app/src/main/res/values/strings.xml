@@ -130,6 +130,7 @@
     <string name="order_cancelled">Cancelled</string>
     <string name="order_delivered">Delivered</string>
     <string name="order_view_invoice">View Invoice</string>
+    <string name="quantity_text">Quantity:</string>
     <string name="bt_google_signin">Sign in with Google</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>

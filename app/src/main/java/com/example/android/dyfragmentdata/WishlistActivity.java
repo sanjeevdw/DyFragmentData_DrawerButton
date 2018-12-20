@@ -66,6 +66,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
+
         session = new Session(this);
         sessionToken = session.getusertoken();
         wishlistNetworkRequest(sessionToken);

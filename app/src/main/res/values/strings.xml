@@ -132,6 +132,14 @@
     <string name="order_view_invoice">View Invoice</string>
     <string name="quantity_text">Quantity:</string>
     <string name="bt_google_signin">Sign in with Google</string>
+    <string name="cart_subtotal">Cart Subtotal</string>
+    <string name="cart_items">items</string>
+    <string name="cart_total_amount">Total amount</string>
+    <string name="cart_update">Update</string>
+    <string name="cart_delete">Delete</string>
+    <string name="price_dollar_detail">$</string>
+    <string name="product_sku_detail">SKU:</string>
+    <string name="cart_id">Id:</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb336835236870096</string>

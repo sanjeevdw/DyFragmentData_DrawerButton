@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -17,7 +18,12 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -35,10 +41,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GetTokenResult;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class CartActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     private DrawerLayout mDrawerLayout;
@@ -50,6 +60,15 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
     private static final String LOG_TAG = CartActivity.class.getSimpleName();
     private String usernameGoogle;
     private String sessionGoogleEmail;
+    private String android_id;
+    private ListView listView;
+    private ArrayList<CartData> cartItems;
+    private CartAdapter cartAdapter;
+    private String cartQuantityUpdated;
+    private String cartIDUpdated;
+    private String cartIDDelete;
+    private int cartIDDeleteInt;
+    private int childIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,13 +76,19 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
 
         // Set the content of the activity to use the activity_category.xml layout file
         setContentView(R.layout.cart_activity);
+        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
+
+        cartItems = new ArrayList<CartData>();
+
         ActionBar actionbar = getSupportActionBar();
         session = new Session(this);
         sessionToken = session.getusertoken();
+        cartRequest();
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
@@ -133,6 +158,18 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
         });
     }
 
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
+
     private void updateNavItems() {
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
@@ -185,6 +222,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
+                return true;
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 if (sessionToken.isEmpty()) {
@@ -302,7 +340,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                                 navigationView.inflateMenu(R.menu.drawer_view_without_login);
                             }
 
-                            Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
@@ -324,4 +362,217 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
             };
         queue.add(stringRequest);
     }
+
+    private void cartRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "https://www.godprice.com/api/cart.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject currentObject = data.getJSONObject(i);
+                                JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
+                                for (int j = 0; j < currentCartDetail.length(); j++) {
+                                    JSONObject currentObjectCart = currentCartDetail.getJSONObject(j);
+                                    String productCartId = currentObjectCart.getString("cart_id");
+                                    String productImageCart = currentObjectCart.getString("pro_image");
+                                    String productId = currentObjectCart.getString("pid");
+                                    String productNameCart = currentObjectCart.getString("product_name");
+                                    String productCartQuantity = currentObjectCart.getString("quantity");
+                                    String productPriceCart = currentObjectCart.getString("price");
+                                    CartData currentData = new CartData(productId, productCartId, productNameCart, productCartQuantity, productPriceCart, productImageCart);
+                                    cartItems.add(currentData);
+                                    cartAdapter = new CartAdapter(CartActivity.this, cartItems);
+                             //   Toast.makeText(CartActivity.this, "Cart response", LENGTH_SHORT).show();
+                                }
+
+                                listView = (ListView) findViewById(R.id.cart_list);
+                                listView.setNestedScrollingEnabled(true);
+                                JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
+                                String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
+                                String cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
+                                noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
+
+                                TextView totalAmountCart = (TextView) findViewById(R.id.header_text_total_amount);
+                                totalAmountCart.setText(cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
+                                listView.setAdapter(cartAdapter);
+                                cartAdapter.notifyDataSetChanged();
+
+                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        long viewId = view.getId();
+                                        getViewByPosition(position,listView);
+                                        if (viewId == R.id.button_update) {
+                                            EditText quantityView = (EditText) listView.getChildAt(childIndex).findViewById(R.id.editText_Quantity);
+                                            cartQuantityUpdated = quantityView.getText().toString().trim();
+
+                                            TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
+                                            cartIDUpdated = cardIdView.getText().toString().trim();
+
+                                            cartUpdateRequest();
+                                           // String productId = listView.getItemAtPosition(position).toString().trim();
+                                            //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                            //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                           // TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                           // String productID = PPid.getText().toString().trim();
+                                        } else if (viewId == R.id.button_delete) {
+                                            TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
+                                            cartIDDelete = cardIdView.getText().toString().trim();
+                                           // cartIDDeleteInt = Integer.parseInt(cartIDDelete);
+                                            cartDeleteRequest();
+                                            }
+                                    }
+                                });
+
+                            } } catch (Exception e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        })
+        { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("device_id", android_id);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void cartUpdateRequest() {
+        cartAdapter.clear();
+      //  LinearLayout cartHeaderViews = (LinearLayout) findViewById(R.id.header);
+      //  cartHeaderViews.removeAllViews();
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "https://www.godprice.com/api/cart_update.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                         /*   String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject currentObject = data.getJSONObject(i);
+                                JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
+                                for (int j = 0; j < currentCartDetail.length(); j++) {
+                                    JSONObject currentObjectCart = currentCartDetail.getJSONObject(j);
+                                    String productCartId = currentObjectCart.getString("cart_id");
+                                    String productImageCart = currentObjectCart.getString("pro_image");
+                                    String productId = currentObjectCart.getString("pid");
+                                    String productNameCart = currentObjectCart.getString("product_name");
+                                    String productCartQuantity = currentObjectCart.getString("quantity");
+                                    String productPriceCart = currentObjectCart.getString("price");
+                                    CartData currentData = new CartData(productId, productCartId, productNameCart, productCartQuantity, productPriceCart, productImageCart);
+                                    cartItems.add(currentData);
+                                    cartAdapter = new CartAdapter(CartActivity.this, cartItems);
+                                    //   Toast.makeText(CartActivity.this, "Cart response", LENGTH_SHORT).show();
+                                }
+
+                                listView = (ListView) findViewById(R.id.cart_list);
+                                listView.setNestedScrollingEnabled(true);
+                                JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
+                                String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
+                                String cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                LinearLayout cartHeaderViews = (LinearLayout) findViewById(R.id.header);
+                                cartHeaderViews.setVisibility(View.VISIBLE);
+                                TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
+                                noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
+
+                                TextView totalAmountCart = (TextView) findViewById(R.id.header_text_total_amount);
+                                totalAmountCart.setText(cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount)); */
+                              //  listView.setAdapter(cartAdapter);
+                            //
+                            cartRequest();
+                          //  cartAdapter.notifyDataSetChanged();
+                                Toast.makeText(CartActivity.this, "Cart updated successfully", LENGTH_SHORT).show();
+
+                        } catch (Exception e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        })
+        { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("device_id", android_id);
+            params.put("cart_id", cartIDUpdated);
+            params.put("qty", cartQuantityUpdated);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void cartDeleteRequest() {
+
+        cartAdapter.clear();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "https://godprice.com/api/cart_delete.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            cartRequest();
+
+                            } catch (Exception e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        })
+        { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("device_id", android_id);
+            params.put("cart_id", cartIDDelete);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
 }
+       

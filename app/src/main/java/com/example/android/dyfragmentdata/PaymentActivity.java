@@ -17,6 +17,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
@@ -30,6 +32,8 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private String amountToPay;
+    private int amountToPayInt;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +49,29 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
         session = new Session(this);
         sessionToken = session.getusertoken();
 
-        if (actionbar !=null) {
+        Intent amountToPayIntent = getIntent();
+        Bundle bundle = amountToPayIntent.getExtras();
+
+        if (bundle != null) {
+            amountToPay = (String) bundle.get("amountToPay");
+        }
+
+        String amountPay = String.valueOf(amountToPay);
+
+        if (!amountPay.equals("NA")) {
+                TextView paymentMessageTextView = (TextView) findViewById(R.id.payment_message);
+                paymentMessageTextView.setText(getResources().getString(R.string.payment_done));
+                ImageView paymentMessageImageView = (ImageView) findViewById(R.id.payment_done_image);
+                paymentMessageImageView.setImageResource(R.drawable.payment_done_image);
+
+            } else if (amountPay.equals("NA")) {
+                TextView paymentMessageTextView = (TextView) findViewById(R.id.payment_message);
+                paymentMessageTextView.setText(getResources().getString(R.string.wallet_payment_not));
+                ImageView paymentMessageImageView = (ImageView) findViewById(R.id.payment_done_image);
+                paymentMessageImageView.setImageResource(R.drawable.payment_not_done);
+            }
+
+            if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }

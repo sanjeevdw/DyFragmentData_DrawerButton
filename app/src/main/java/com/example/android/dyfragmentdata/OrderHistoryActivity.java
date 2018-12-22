@@ -15,11 +15,23 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class OrderHistoryActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -42,6 +54,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements Navigatio
         ActionBar actionbar = getSupportActionBar();
         session = new Session(this);
         sessionToken = session.getusertoken();
+        orderHistoryNetworkRequest();
 
         if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
@@ -214,5 +227,35 @@ public class OrderHistoryActivity extends AppCompatActivity implements Navigatio
                 break;
         }
         return false;
+    }
+
+    private void orderHistoryNetworkRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/orderhistory.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            Toast.makeText(OrderHistoryActivity.this, "Order history response.", Toast.LENGTH_SHORT).show();
+                            } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(OrderHistoryActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
     }
 }

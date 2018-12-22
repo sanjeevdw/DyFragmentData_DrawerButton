@@ -18,8 +18,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -65,6 +68,9 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
     private int addressIdInt;
     private int checkedAddressId;
     private String android_id;
+    private String cartTotalAmount;
+    private int cartAmountInt;
+    private TextView totalAmountCart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,9 +86,12 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
         session = new Session(this);
         sessionToken = session.getusertoken();
         getAddressesNetworkRequest();
+        cartRequest();
         myAccountNetworkRequest();
+
         android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+
         if (actionbar !=null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
@@ -449,6 +458,55 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
         queue.add(stringRequest);
     }
 
+    private void cartRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "https://www.godprice.com/api/cart.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+
+                            for (int i = 0; i < data.length(); i++) {
+                                JSONObject currentObject = data.getJSONObject(i);
+                                // JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
+
+                                JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
+                                String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
+                                cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                cartAmountInt = Integer.parseInt(cartTotalAmount);
+                                totalAmountCart = (TextView) findViewById(R.id.cart_price);
+                                totalAmountCart.setText(cartTotalAmount);
+                                } } catch (Exception e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        })
+        { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("device_id", android_id);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
     private void myAccountNetworkRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -463,11 +521,25 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                             JSONObject jsonObject = new JSONObject(jsonResponse);
                             JSONObject data = jsonObject.getJSONObject("data");
                             String walletAmount = data.getString("wallet_amount");
+                            int walletAmountInt = Integer.parseInt(walletAmount);
                             Toast.makeText(CheckoutActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
 
                             TextView walletAmountTextView = (TextView) findViewById(R.id.wallet_amount_price);
-                            walletAmountTextView.setText(getResources().getString(R.string.price_dollar_detail) + walletAmount);
-                        } catch(Exception e) {
+                            walletAmountTextView.setText(walletAmount);
+                            String cartAmount = totalAmountCart.getText().toString();
+                            int cartAmountInt = Integer.parseInt(cartAmount);
+                            int amountToPay = cartAmountInt - walletAmountInt;
+                            String amountToPayString = String.valueOf(amountToPay);
+                            if (cartAmountInt <= walletAmountInt) {
+                                TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
+                                amountToPayTextView.setText(amountToPayString);
+                            } else {
+                                String noWalletAmount = "NA";
+                                TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
+                                amountToPayTextView.setText(noWalletAmount);
+                            }
+
+                            } catch(Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -475,8 +547,7 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(CheckoutActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
-
-            }
+                }
 
         }) { @Override
         protected Map<String, String> getParams() {

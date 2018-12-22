@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,7 +57,9 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
     private TextView totalAmountCartSummary;
     private int cartTotalAmountInt;
     private int walletAmountInt;
-    private int amountToPay;
+    private int cartTotalAmountIntButton;
+    private int cartAmountInt;
+    private String cartTotalAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +73,7 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         ActionBar actionbar = getSupportActionBar();
         cartRequest();
+        myAccountNetworkRequest();
 
         android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -138,8 +142,9 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
             public void onClick(View v) {
 
                 TextView cartPriceTextView = (TextView) findViewById(R.id.cart_price);
+
                 String cartAmount = cartPriceTextView.getText().toString().trim();
-                int cartTotalAmountIntButton = Integer.parseInt(cartAmount);
+
                 TextView walletTextView = (TextView) findViewById(R.id.wallet_amount_price);
                 String walletAmount = walletTextView.getText().toString().trim();
                 int walletTotalAmountIntButton = Integer.parseInt(walletAmount);
@@ -147,21 +152,18 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
                 String amountToPay = amountToPayTextView.getText().toString().trim();
 
-                if (cartTotalAmountIntButton <= walletTotalAmountIntButton) {
-                    TextView paymentMessageTextView = (TextView) findViewById(R.id.payment_message);
-                    paymentMessageTextView.setText(getResources().getString(R.string.payment_done));
+                if (!amountToPay.isEmpty()) {
+                    if (cartAmountInt >=0) {
                     Intent intentPayment = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
-                    startActivity(intentPayment);
-                } else {
-                    TextView paymentMessageTextView = (TextView) findViewById(R.id.payment_message);
-                    paymentMessageTextView.setText(getResources().getString(R.string.wallet_payment_not));
-                    Intent intentPayment = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
+                    intentPayment.putExtra("amountToPay", amountToPay);
                     startActivity(intentPayment);
 
+                    } else  {
+                    Intent intentPayment = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
+                    startActivity(intentPayment);
+                    }
                 }
-
-
-            }
+                    }
         });
 
         Button paymentButton = (Button) findViewById(R.id.payment_button);
@@ -345,12 +347,10 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
 
                                 JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
                                 String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
-                                String cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                cartTotalAmount = currentCartTotalDetail.getString("total_amount");
                                 cartTotalAmountInt = Integer.parseInt(cartTotalAmount);
-
-
                                 totalAmountCartSummary = (TextView) findViewById(R.id.cart_price);
-                                totalAmountCartSummary.setText(getResources().getString(R.string.price_dollar_detail) + cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
+                                totalAmountCartSummary.setText(cartTotalAmount);
 
                                 TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
                                 noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
@@ -398,15 +398,19 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                             walletAmountInt = Integer.parseInt(walletAmount);
                             Toast.makeText(ReviewOrderActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
                             TextView walletAmountTextView = (TextView) findViewById(R.id.wallet_amount_price);
-                            walletAmountTextView.setText(getResources().getString(R.string.price_dollar_detail) + walletAmount);
+                            walletAmountTextView.setText(walletAmount);
 
-                            if (cartTotalAmountInt <= walletAmountInt) {
-                                amountToPay = cartTotalAmountInt - walletAmountInt;
+                            String cartAmount = totalAmountCartSummary.getText().toString();
+                            int cartAmountInt = Integer.parseInt(cartAmount);
+                            int amountToPay = cartAmountInt - walletAmountInt;
+                            String amountToPayString = String.valueOf(amountToPay);
+                            if (cartAmountInt <= walletAmountInt) {
                                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
-                            amountToPayTextView.setText(getResources().getString(R.string.price_dollar_detail) + amountToPay);
+                                amountToPayTextView.setText(amountToPayString);
                             } else {
+                                String noWalletAmount = "NA";
                                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
-                                amountToPayTextView.setText(getResources().getString(R.string.price_dollar_detail) + cartTotalAmountInt);
+                                amountToPayTextView.setText(noWalletAmount);
                             }
                         } catch(Exception e) {
                             e.printStackTrace();

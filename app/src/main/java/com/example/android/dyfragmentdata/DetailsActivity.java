@@ -328,6 +328,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Intent intentCart = new Intent(this, LoginActivity.class);
+                startActivity(intentCart);
                 break;
         }
         return false;
@@ -913,6 +915,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                     public void onResponse(String response) {
 
                         try {
+                            Intent intentCart = new Intent(DetailsActivity.this, CartActivity.class);
+                            startActivity(intentCart);
                             Toast.makeText(DetailsActivity.this, "Added to cart successfully", LENGTH_SHORT).show();
                         } catch (Exception e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,

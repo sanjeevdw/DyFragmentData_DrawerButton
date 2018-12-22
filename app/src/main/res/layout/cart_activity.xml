@@ -37,42 +37,42 @@
         tools:layout_editor_absoluteY="0dp">
 
         <LinearLayout
-            android:id="@+id/header"
-            android:layout_width="match_parent"
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center"
+        android:background="#FFF"
+        android:gravity="left"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/header_text_cart"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_gravity="center"
-            android:background="#FFF"
-            android:gravity="left"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/header_text_cart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/cart_subtotal"
-                android:textColor="#5b5a5a"
-                android:textSize="16sp"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="5dp"
-                />
-            <TextView
-                android:id="@+id/header_no_cart_items"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:textColor="#5b5a5a"
-                android:textSize="16sp"
-                android:layout_marginTop="10dp"/>
-            <TextView
-                android:id="@+id/header_text_total_amount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:textColor="#5b5a5a"
-                android:textSize="16sp"
-                android:layout_marginTop="10dp"/>
+            android:text="@string/cart_subtotal"
+            android:textColor="#5b5a5a"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="5dp"
+            />
+        <TextView
+            android:id="@+id/header_no_cart_items"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textColor="#5b5a5a"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"/>
+        <TextView
+            android:id="@+id/header_text_total_amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:textColor="#5b5a5a"
+            android:textSize="16sp"
+            android:layout_marginTop="10dp"/>
 
-        </LinearLayout>
+    </LinearLayout>
 
         <RelativeLayout
             android:id="@+id/footer"

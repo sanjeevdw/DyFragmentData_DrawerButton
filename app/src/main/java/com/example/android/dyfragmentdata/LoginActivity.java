@@ -549,6 +549,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Intent intentCart = new Intent(this, LoginActivity.class);
+                startActivity(intentCart);
                 break;
         }
         return false;

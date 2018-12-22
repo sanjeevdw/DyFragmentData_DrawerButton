@@ -152,8 +152,15 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
         checkoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentCheckout = new Intent(CartActivity.this, CheckoutActivity.class);
-                startActivity(intentCheckout);
+                if (!sessionToken.isEmpty()) {
+                    Intent intentCheckout = new Intent(CartActivity.this, CheckoutActivity.class);
+                    startActivity(intentCheckout);
+                } else if (sessionToken.isEmpty()) {
+                    Toast.makeText(CartActivity.this, "Please login to continue", Toast.LENGTH_SHORT).show();
+                    Intent intentLogin = new Intent(CartActivity.this, LoginActivity.class);
+                    startActivity(intentLogin);
+                }
+
             }
         });
     }
@@ -310,6 +317,8 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Intent intentCart = new Intent(this, LoginActivity.class);
+                startActivity(intentCart);
                 break;
         }
         return false;
@@ -543,7 +552,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
 
         RequestQueue queue = Volley.newRequestQueue(this);
 
-        String url = "https://godprice.com/api/cart_delete.php";
+        String url = "https://www.godprice.com/api/cart_delete.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override

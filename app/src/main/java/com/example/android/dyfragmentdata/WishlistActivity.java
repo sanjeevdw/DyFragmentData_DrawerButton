@@ -230,6 +230,8 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Intent intentCart = new Intent(this, LoginActivity.class);
+                startActivity(intentCart);
                 break;
         }
         return false;

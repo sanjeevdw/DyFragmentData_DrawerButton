@@ -204,6 +204,8 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Intent intentCart = new Intent(this, LoginActivity.class);
+                startActivity(intentCart);
                 break;
         }
         return false;

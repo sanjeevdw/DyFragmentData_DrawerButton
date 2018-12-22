@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".HomepageActivity">
+    tools:context=".ReviewOrderActivity">
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this)-->
     <FrameLayout
@@ -73,369 +73,54 @@
             android:layout_height="wrap_content"
             android:text="@string/review_order_heading"/>
 
-            <RelativeLayout
+            <LinearLayout
+                android:id="@+id/header"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                tools:layout_editor_absoluteX="16dp"
-                tools:layout_editor_absoluteY="0dp">
-
-                <RelativeLayout
-                    android:id="@+id/header"
-                    android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center"
+                android:background="#FFF"
+                android:gravity="left"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/header_text_cart"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentTop="true"
-                    android:layout_gravity="center"
-                    android:background="#FFF"
-                    android:gravity="left">
-
-                    <TextView
-                        android:id="@+id/header_text"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentEnd="true"
-                        android:layout_marginLeft="10dp"
-                        android:text="Cart Subtotal (5 items) $25,00"
-                        android:textColor="#5b5a5a"
-                        android:textSize="16sp"
-                        android:layout_marginTop="10dp"/>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:id="@+id/footer"
-                    android:layout_width="match_parent"
+                    android:text="@string/cart_subtotal"
+                    android:textColor="#5b5a5a"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="5dp"
+                    />
+                <TextView
+                    android:id="@+id/header_no_cart_items"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:layout_gravity="center"
-                    android:background="#eb9b62"
-                    android:gravity="center">
+                    android:layout_marginLeft="5dp"
+                    android:textColor="#5b5a5a"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"/>
+                <TextView
+                    android:id="@+id/header_text_total_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:textColor="#5b5a5a"
+                    android:textSize="16sp"
+                    android:layout_marginTop="10dp"/>
 
-                    <Button
-                        android:id="@+id/button3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignParentEnd="true"
-                        android:background="#e53935"
-                        android:text="Proceed To Checkout"
-                        android:textColor="#FFF" />
+            </LinearLayout>
 
-                </RelativeLayout>
+            <ListView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/review_order_list"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
-                <LinearLayout
-                        android:id="@+id/myLayout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="#FFFFFF"
-                        android:fillViewport="true"
-                        android:orientation="vertical"
-                        android:visibility="visible">
-
-                        <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginBottom="10dp"
-                            android:background="#c0c0c0" />
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:id="@+id/imageView_product"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:src="@drawable/cart_image_one"
-                                android:layout_marginTop="7dp"
-                                android:layout_marginLeft="10dp"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_title"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginLeft="120dp"
-                                android:text="Alan Jones Men's Cotton Hooded Sweatshirt"
-                                android:textColor="#5b5a5a"
-                                android:textSize="15sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_price"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title"
-                                android:layout_marginTop="50dp"
-                                android:text="$799.00"
-                                android:textColor="@android:color/holo_red_dark"
-                                android:textSize="18sp"/>
-
-                            <TextView
-                                android:id="@+id/textView_quantity_label"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_review_order"
-                                android:textColor="@android:color/holo_green_dark"/>
-                            <TextView
-                                android:id="@+id/textView_quantity_value"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_value"
-                                android:textColor="@android:color/holo_green_dark"/>
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="10dp"
-                            android:background="#c0c0c0"/>
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:id="@+id/imageView_product_two"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:src="@drawable/cart_image_two"
-                                android:layout_marginTop="7dp"
-                                android:layout_marginLeft="10dp"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_title_two"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginLeft="120dp"
-                                android:text="Alan Jones Men's Cotton Hooded Sweatshirt"
-                                android:textColor="#5b5a5a"
-                                android:textSize="15sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_price_two"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_two"
-                                android:layout_marginTop="50dp"
-                                android:text="$799.00"
-                                android:textColor="@android:color/holo_red_dark"
-                                android:textSize="18sp"/>
-
-                            <TextView
-                                android:id="@+id/textView_quantity_label_two"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_two"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_review_order"
-                                android:textColor="@android:color/holo_green_dark"/>
-                            <TextView
-                                android:id="@+id/textView_quantity_value_two"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_two"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_value"
-                                android:textColor="@android:color/holo_green_dark"/>
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="10dp"
-                            android:background="#c0c0c0"/>
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:id="@+id/imageView_product_three"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:src="@drawable/cart_image_three"
-                                android:layout_marginTop="7dp"
-                                android:layout_marginLeft="10dp"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_title_three"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginLeft="120dp"
-                                android:text="Alan Jones Men's Cotton Hooded Sweatshirt"
-                                android:textColor="#5b5a5a"
-                                android:textSize="15sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_price_three"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_three"
-                                android:layout_marginTop="50dp"
-                                android:text="$799.00"
-                                android:textColor="@android:color/holo_red_dark"
-                                android:textSize="18sp"/>
-
-                            <TextView
-                                android:id="@+id/textView_quantity_label_three"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_three"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_review_order"
-                                android:textColor="@android:color/holo_green_dark"/>
-                            <TextView
-                                android:id="@+id/textView_quantity_value_three"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_three"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_value"
-                                android:textColor="@android:color/holo_green_dark"/>
-
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="10dp"
-                            android:background="#c0c0c0"/>
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:id="@+id/imageView_product_four"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:src="@drawable/cart_image_four"
-                                android:layout_marginTop="7dp"
-                                android:layout_marginLeft="10dp"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_title_four"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginLeft="120dp"
-                                android:text="Alan Jones Men's Cotton Hooded Sweatshirt"
-                                android:textColor="#5b5a5a"
-                                android:textSize="15sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_price_four"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_four"
-                                android:layout_marginTop="50dp"
-                                android:text="$799.00"
-                                android:textColor="@android:color/holo_red_dark"
-                                android:textSize="18sp"/>
-
-                            <TextView
-                                android:id="@+id/textView_quantity_label_four"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_four"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_review_order"
-                                android:textColor="@android:color/holo_green_dark"/>
-                            <TextView
-                                android:id="@+id/textView_quantity_value_four"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_four"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_value"
-                                android:textColor="@android:color/holo_green_dark"/>
-                        </RelativeLayout>
-
-                        <View
-                            android:layout_width="fill_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_marginBottom="10dp"
-                            android:background="#c0c0c0"/>
-
-                        <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content">
-
-                            <ImageView
-                                android:id="@+id/imageView_product_five"
-                                android:layout_width="100dp"
-                                android:layout_height="100dp"
-                                android:src="@drawable/cart_image_one"
-                                android:layout_marginTop="7dp"
-                                android:layout_marginLeft="10dp"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_title_five"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentTop="true"
-                                android:layout_marginLeft="120dp"
-                                android:text="Alan Jones Men's Cotton Hooded Sweatshirt"
-                                android:textColor="#5b5a5a"
-                                android:textSize="15sp"
-                                android:textStyle="bold"/>
-
-                            <TextView
-                                android:id="@+id/textView_product_price_five"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_five"
-                                android:layout_marginTop="50dp"
-                                android:text="$799.00"
-                                android:textColor="@android:color/holo_red_dark"
-                                android:textSize="18sp"/>
-
-                            <TextView
-                                android:id="@+id/textView_quantity_label_five"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_five"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_review_order"
-                                android:textColor="@android:color/holo_green_dark"/>
-                            <TextView
-                                android:id="@+id/textView_quantity_value_five"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignStart="@+id/textView_product_title_five"
-                                android:layout_marginStart="0dp"
-                                android:layout_marginTop="75dp"
-                                android:text="@string/quantity_value"
-                                android:textColor="@android:color/holo_green_dark"/>
-
-                        </RelativeLayout>
-
-                        <View
+            <View
                             android:layout_width="fill_parent"
                             android:layout_height="1dp"
                             android:layout_marginTop="5dp"
@@ -489,7 +174,6 @@
                             android:layout_alignParentEnd="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/dollar_sign"
                             />
                     </RelativeLayout>
                     <View
@@ -519,7 +203,6 @@
                             android:layout_alignParentEnd="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/dollar_sign_zero"
                             />
                     </RelativeLayout>
                     <View
@@ -549,7 +232,6 @@
                             android:layout_alignParentEnd="true"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/dollar_sign"
                             />
                     </RelativeLayout>
                     <LinearLayout
@@ -603,10 +285,6 @@
                             android:layout_marginTop="5dp"
                             android:layout_marginBottom="10dp"
                             android:background="#c0c0c0"/>
-
-
-                    </LinearLayout>
-            </RelativeLayout>
         </LinearLayout>
         </ScrollView>
     </FrameLayout>

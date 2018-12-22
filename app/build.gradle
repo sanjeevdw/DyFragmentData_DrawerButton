@@ -41,4 +41,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-core:16.0.4'
 }
 apply plugin: 'com.google.gms.google-services'
-
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true

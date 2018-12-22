@@ -263,6 +263,8 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.clear();
                 editor.commit();
+                Intent intentCart = new Intent(this, LoginActivity.class);
+                startActivity(intentCart);
                 break;
         }
         return false;

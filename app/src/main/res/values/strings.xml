@@ -74,14 +74,14 @@
     <string name="review_order">2. Review Order</string>c
     <string name="payment">3. Payment</string>
     <string name="add_new_address">ADD NEW ADDRESS</string>
-    <string name="full_name_checkout">Full Name</string>
-    <string name="phone_number_checkout">Phone Number</string>
-    <string name="email_address_checkout">E-Mail Address</string>
+    <string name="full_name_checkout">Full Name*</string>
+    <string name="phone_number_checkout">Phone Number*</string>
+    <string name="email_address_checkout">E-Mail Address*</string>
     <string name="alt_phone_no_checkout">Alternative Phone NO.</string>
-    <string name="country_checkout">Country</string>
-    <string name="city_checkout">City</string>
-    <string name="zip_code_checkout">ZIP code</string>
-    <string name="address_two_checkout">Address 2</string>
+    <string name="country_checkout">Country*</string>
+    <string name="city_checkout">City*</string>
+    <string name="zip_code_checkout">ZIP code*</string>
+    <string name="address_two_checkout">Address*</string>
     <string name="order_summary_checkout">Order Summary</string>
     <string name="save_deliver_here_checkout">SAVE AND DELIVER HERE</string>
     <string name="cart_total_checkout">Cart Total:</string>
@@ -97,6 +97,7 @@
     <string name="quantity_value">1</string>
     <string name="review_order_heading">Review Order</string>
     <string name="payment_done">You have successfully placed your order.</string>
+    <string name="wallet_payment_not">You do not have enough amount on your wallet, please contact support.</string>
     <string name="payment_heading">Payment</string>
     <string name="change_password">Change Password</string>
     <string name="current_password">Current Password</string>
@@ -133,12 +134,14 @@
     <string name="quantity_text">Quantity:</string>
     <string name="bt_google_signin">Sign in with Google</string>
     <string name="cart_subtotal">Cart Subtotal</string>
-    <string name="cart_items">items</string>
+    <string name="cart_items">item\'s</string>
     <string name="cart_total_amount">Total amount</string>
     <string name="cart_update">Update</string>
     <string name="cart_delete">Delete</string>
     <string name="price_dollar_detail">$</string>
     <string name="product_sku_detail">SKU:</string>
+    <string name="pirates">Pirates</string>
+    <string name="ninjas">Ninjas</string>
     <string name="cart_id">Id:</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>

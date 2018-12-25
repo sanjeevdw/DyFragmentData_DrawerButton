@@ -143,6 +143,22 @@
     <string name="pirates">Pirates</string>
     <string name="ninjas">Ninjas</string>
     <string name="cart_id">Id:</string>
+    <string name="serial_no">S#</string>
+    <string name="invoice_no">Invoice#</string>
+    <string name="date">Date</string>
+    <string name="total">Total</string>
+    <string name="status">Status</string>
+    <string name="order_history_detail_view">View</string>
+    <string name="full_name">Full name : </string>
+    <string name="email">Email : </string>
+    <string name="mobile">Mobile : </string>
+    <string name="address">Address : </string>
+    <string name="country">Country : </string>
+    <string name="city">City : </string>
+    <string name="zipcode">Zip code : </string>
+    <string name="alternate_contact_no">Alt. Contact No : </string>
+    <string name="total_amount">Total Amount</string>
+    <string name="billing_address_order_detail">Billing Address</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb336835236870096</string>

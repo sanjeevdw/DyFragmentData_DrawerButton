@@ -34,6 +34,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class OrderHistoryActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     private DrawerLayout mDrawerLayout;
     private Session session;
     private String sessionToken;
@@ -200,7 +201,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements Navigatio
                 break;
 
             case R.id.nav_order_history:
-                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
 
@@ -232,8 +233,8 @@ public class OrderHistoryActivity extends AppCompatActivity implements Navigatio
     private void orderHistoryNetworkRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/orderhistory.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        String url = "https://www.godprice.com/api/orderhistory.php?userid="+sessionToken;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -249,13 +250,7 @@ public class OrderHistoryActivity extends AppCompatActivity implements Navigatio
                 Toast.makeText(OrderHistoryActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
             }
 
-        }) { @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", sessionToken);
-            return params;
-        }
-        };
+        });
         queue.add(stringRequest);
     }
 }

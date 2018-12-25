@@ -15,9 +15,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -30,28 +29,43 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-public class SignupActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+import java.util.ArrayList;
+
+public class OrderDetailActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
     private DrawerLayout mDrawerLayout;
-    private EditText userName;
-    private EditText userEmail;
-    private EditText userMobile;
-    private EditText userPassword;
-    private EditText userAddress;
     private Session session;
     private String sessionToken;
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private ListView listView;
+    private ArrayList<OrderDetailData> orderDetailData;
+    private OrderDetailAdapter orderDetailAdapter;
+    private String fullname;
+    private String emailid;
+    private String phoneno;
+    private String address;
+    private String country;
+    private String city;
+    private String zipcode;
+    private String phoneno_alternative;
+    private String productName;
+    private String productSize;
+    private String productColor;
+    private String productQuantity;
+    private String productTotalPrice;
+    private String productPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set the content of the activity to use the activity_category.xml layout file
-        setContentView(R.layout.signup_activity);
+        setContentView(R.layout.activity_order_detail);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
@@ -59,13 +73,13 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
         ActionBar actionbar = getSupportActionBar();
         session = new Session(this);
         sessionToken = session.getusertoken();
+        orderHistoryNetworkRequest();
+        orderDetailData = new ArrayList<OrderDetailData>();
 
-        if (actionbar !=null) {
+        if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
@@ -83,6 +97,7 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
             }
         }
 
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();
@@ -95,42 +110,7 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
 
         setNavigationViewListener();
 
-        userName = (EditText) findViewById(R.id.et_enter_name);
-        userEmail = (EditText) findViewById(R.id.et_enter_email);
-        userMobile = (EditText) findViewById(R.id.et_enter_mobile);
-        userPassword = (EditText) findViewById(R.id.et_enter_password);
-        userAddress = (EditText) findViewById(R.id.et_enter_address);
-
-        Button signupButton = (Button) findViewById(R.id.button_sign_up);
-        signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            //    final String name = userName.getText().toString().trim();
-              //  final String email = userEmail.getText().toString().trim();
-              //  final String mobile = userMobile.getText().toString().trim();
-             //   final String password = userPassword.getText().toString().trim();
-             //   final String address = userAddress.getText().toString().trim();
-
-             //   if (TextUtils.isEmpty(name) && TextUtils.isEmpty(email)  && TextUtils.isEmpty(mobile) && TextUtils.isEmpty(password) && TextUtils.isEmpty(address) || TextUtils.isEmpty(name) || TextUtils.isEmpty(email) || TextUtils.isEmpty(mobile) || TextUtils.isEmpty(password) || TextUtils.isEmpty(address)) {
-
-             //       Toast.makeText(SignupActivity.this, "Please enter the required details", Toast.LENGTH_SHORT).show();
-            //        return;
-            //    } else {
-                    registerNetworkRequest();
-             //   }
-                }
-        });
-
-        Button alreadyAccountSignin = (Button) findViewById(R.id.already_account_sign_in);
-        alreadyAccountSignin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentLogin = new Intent(SignupActivity.this, LoginActivity.class);
-                startActivity(intentLogin);
-            }
-        });
-
-        }
+    }
 
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
@@ -138,12 +118,11 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
         navigationView.inflateMenu(R.menu.drawer_view);
     }
 
-
     // NavigationView click events
     private void setNavigationViewListener() {
-        navigationView = findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -198,7 +177,7 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
         // close drawer when item is tapped
         mDrawerLayout.closeDrawers();
 
-        switch(id) {
+        switch (id) {
 
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
@@ -213,12 +192,10 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
             case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
-
                 break;
             case R.id.nav_register:
                 Intent intentRegister = new Intent(this, SignupActivity.class);
                 startActivity(intentRegister);
-
                 break;
             case R.id.nav_profile:
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
@@ -237,17 +214,19 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
                 startActivity(intentWishlist);
                 break;
 
-            case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
-                break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
                 break;
+
             case R.id.nav_order_history:
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
+                break;
+
+            case R.id.nav_about_industry:
+                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+
                 break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
@@ -270,43 +249,77 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
         return false;
     }
 
-    private void registerNetworkRequest() {
-
-        final String name = userName.getText().toString().trim();
-        final String email = userEmail.getText().toString().trim();
-        final String mobile = userMobile.getText().toString().trim();
-        final String password = userPassword.getText().toString().trim();
-        final String address = userAddress.getText().toString().trim();
+    private void orderHistoryNetworkRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/register.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+        String url = "https://www.godprice.com/api/orderhistory.php?userid="+sessionToken;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int l = 0; l < data.length(); l++) {
+                                    JSONObject currentObject = data.getJSONObject(l);
+                                    JSONArray shippingDetail = currentObject.getJSONArray("shipping_detail");
+                                    if (shippingDetail.length() > 0) {
+                                        //Loop the Array
+                                        for (int m = 0; m < shippingDetail.length(); m++) {
+                                            JSONObject currentShippingDetail = shippingDetail.getJSONObject(m);
+                                            fullname = currentShippingDetail.getString("fullname");
+                                            emailid = currentShippingDetail.getString("emailid");
+                                            phoneno = currentShippingDetail.getString("phoneno");
+                                            address = currentShippingDetail.getString("address");
+                                            country = currentShippingDetail.getString("country");
+                                            city = currentShippingDetail.getString("city");
+                                            zipcode = currentShippingDetail.getString("zipcode");
+                                            phoneno_alternative = currentShippingDetail.getString("phoneno_alternative");
 
+                                            }
+                                    }
+                                    JSONArray orderDetail = currentObject.getJSONArray("orderdetail");
+                                    if (orderDetail.length() > 0) {
+                                        //Loop the Array
+                                        for (int n = 0; n < orderDetail.length(); n++) {
+                                            JSONObject currentOrderDetail = orderDetail.getJSONObject(n);
+                                            productName = currentOrderDetail.getString("products");
+                                            productQuantity = currentOrderDetail.getString("qty");
+                                            productPrice = currentOrderDetail.getString("price");
+                                            productTotalPrice = currentOrderDetail.getString("total_price");
+                                            JSONArray productAttribute = currentOrderDetail.getJSONArray("pro_att");
+                                            //Loop the Array
+                                                for (int j = 0; j < productAttribute.length(); j++) {
+                                                    JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
+                                                    productSize = currentProductAttribute.getString("Size");
+                                                   // productColor = currentProductAttribute.getString("Color");
+                                                    OrderDetailData currentOrderDetailData = new OrderDetailData(fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
+                                                    orderDetailData.add(currentOrderDetailData);
+                                                    orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
+                                                    Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
+                                                    listView = (ListView) findViewById(R.id.order_detail_list);
+                                                    listView.setAdapter(orderDetailAdapter);
+                                                    orderDetailAdapter.notifyDataSetChanged();
+                                                    listView.setNestedScrollingEnabled(true);
+                                                }
+                                                }
+                                        }
+                                        }
+                        }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(OrderDetailActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
             }
-
-        }) { @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("name", name);
-            params.put("email", email);
-            params.put("mobile", mobile);
-            params.put("password", password);
-            params.put("address", address);
-            return params;
-        }
-
-        };
-
+        });
         queue.add(stringRequest);
     }
 }

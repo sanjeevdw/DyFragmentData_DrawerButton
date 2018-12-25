@@ -110,12 +110,12 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             showFullNavItem();
         }
 
-        Button forgotPasswordButton = (Button) findViewById(R.id.change_password_bt);
-        forgotPasswordButton.setOnClickListener(new View.OnClickListener() {
+        Button changePasswordButton = (Button) findViewById(R.id.change_password_bt);
+        changePasswordButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentforgotPassword = new Intent(ProfileActivity.this, ForgotPasswordActivity.class);
-                startActivity(intentforgotPassword);
+                Intent intentChangePassword = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
+                startActivity(intentChangePassword);
             }
         });
 
@@ -168,6 +168,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
+                return true;
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 if (sessionToken.isEmpty()) {
@@ -242,7 +243,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentCheckout);
                 break;
             case R.id.nav_order_history:
-                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:

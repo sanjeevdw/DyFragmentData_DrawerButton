@@ -237,7 +237,7 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentCheckout);
                 break;
             case R.id.nav_order_history:
-                Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
+                Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
             case R.id.sign_out_menu:

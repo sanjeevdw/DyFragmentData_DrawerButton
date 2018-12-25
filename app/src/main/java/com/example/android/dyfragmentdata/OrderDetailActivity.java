@@ -280,7 +280,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                             zipcode = currentShippingDetail.getString("zipcode");
                                             phoneno_alternative = currentShippingDetail.getString("phoneno_alternative");
 
-                                            }
+                                        }
                                     }
                                     JSONArray orderDetail = currentObject.getJSONArray("orderdetail");
                                     if (orderDetail.length() > 0) {
@@ -293,23 +293,23 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                             productTotalPrice = currentOrderDetail.getString("total_price");
                                             JSONArray productAttribute = currentOrderDetail.getJSONArray("pro_att");
                                             //Loop the Array
-                                                for (int j = 0; j < productAttribute.length(); j++) {
-                                                    JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
-                                                    productSize = currentProductAttribute.getString("Size");
-                                                   // productColor = currentProductAttribute.getString("Color");
-                                                    OrderDetailData currentOrderDetailData = new OrderDetailData(fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
-                                                    orderDetailData.add(currentOrderDetailData);
-                                                    orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
-                                                    Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
-                                                    listView = (ListView) findViewById(R.id.order_detail_list);
-                                                    listView.setAdapter(orderDetailAdapter);
-                                                    orderDetailAdapter.notifyDataSetChanged();
-                                                    listView.setNestedScrollingEnabled(true);
-                                                }
-                                                }
+                                            for (int j = 0; j < productAttribute.length(); j++) {
+                                                JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
+                                                productSize = currentProductAttribute.getString("Size");
+                                                // productColor = currentProductAttribute.getString("Color");
+                                                OrderDetailData currentOrderDetailData = new OrderDetailData(fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
+                                                orderDetailData.add(currentOrderDetailData);
+                                                orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
+                                                Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
+                                                listView = (ListView) findViewById(R.id.order_detail_list);
+                                                listView.setAdapter(orderDetailAdapter);
+                                                orderDetailAdapter.notifyDataSetChanged();
+                                                listView.setNestedScrollingEnabled(true);
+                                            }
                                         }
-                                        }
-                        }
+                                    }
+                                }
+                            }
                         } catch(Exception e) {
                             e.printStackTrace();
                         }

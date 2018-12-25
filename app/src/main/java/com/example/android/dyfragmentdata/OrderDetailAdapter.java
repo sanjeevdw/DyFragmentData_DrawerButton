@@ -58,23 +58,23 @@ public class OrderDetailAdapter extends ArrayAdapter<OrderDetailData> {
         TextView phoneNoView = (TextView) itemListView.findViewById(R.id.alternate_contact_no);
         phoneNoView.setText(CurrentOrderDetailData.getPhoneno_alternative());
 
-       /* TextView productNameView = (TextView) itemListView.findViewById(R.id.product_name);
+        TextView productNameView = (TextView) itemListView.findViewById(R.id.product_name);
         productNameView.setText(CurrentOrderDetailData.getProductName());
 
         TextView productSizeView = (TextView) itemListView.findViewById(R.id.product_size);
-        productSizeView.setText(CurrentOrderDetailData.getProductSize());
+        productSizeView.setText(" " + CurrentOrderDetailData.getProductSize());
 
-        TextView productColorView = (TextView) itemListView.findViewById(R.id.product_color);
-        productColorView.setText(CurrentOrderDetailData.getProductColor());
+       // TextView productColorView = (TextView) itemListView.findViewById(R.id.product_color);
+      //  productColorView.setText(CurrentOrderDetailData.getProductColor());
 
-        TextView quantityView = (TextView) itemListView.findViewById(R.id.quantity);
+        TextView quantityView = (TextView) itemListView.findViewById(R.id.quantity_value);
         quantityView.setText(CurrentOrderDetailData.getQuantity());
 
-        TextView subTotalView = (TextView) itemListView.findViewById(R.id.sub_total);
+        TextView subTotalView = (TextView) itemListView.findViewById(R.id.sub_total_value);
         subTotalView.setText(CurrentOrderDetailData.getSubTotal());
 
         TextView totalAmountView = (TextView) itemListView.findViewById(R.id.total_amount_value);
-        totalAmountView.setText(CurrentOrderDetailData.getTotalAmountValue()); */
+        totalAmountView.setText(CurrentOrderDetailData.getTotalAmountValue());
 
         View textContainer = itemListView.findViewById(R.id.text_container);
 

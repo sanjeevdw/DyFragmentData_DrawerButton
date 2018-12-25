@@ -159,6 +159,13 @@
     <string name="alternate_contact_no">Alt. Contact No : </string>
     <string name="total_amount">Total Amount</string>
     <string name="billing_address_order_detail">Billing Address</string>
+    <string name="product_name">Product Name</string>
+    <string name="quantity">Qty</string>
+    <string name="sub_total">Sub Total</string>
+    <string name="color_label">Color: </string>
+    <string name="size_label">Size: </string>
+    <string name="back_label">Back</string>
+    <string name="order_detail_label">Order Detail </string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb336835236870096</string>

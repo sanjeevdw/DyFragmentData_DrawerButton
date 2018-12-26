@@ -34,6 +34,9 @@ public class OrderDetailAdapter extends ArrayAdapter<OrderDetailData> {
 
         OrderDetailData CurrentOrderDetailData = getItem(position);
 
+        TextView invoiceNoView = (TextView) itemListView.findViewById(R.id.invoice_no);
+        invoiceNoView.setText(CurrentOrderDetailData.getInvoiceNo());
+
         TextView fullNameView = (TextView) itemListView.findViewById(R.id.full_name);
         fullNameView.setText(CurrentOrderDetailData.getFullName());
 
@@ -77,6 +80,14 @@ public class OrderDetailAdapter extends ArrayAdapter<OrderDetailData> {
         totalAmountView.setText(CurrentOrderDetailData.getTotalAmountValue());
 
         View textContainer = itemListView.findViewById(R.id.text_container);
+
+        Button buttonBack = (Button) itemListView.findViewById(R.id.back_label);
+        buttonBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) parent).performItemClick(v, position, 0);
+            }
+        });
 
         return itemListView;
     }

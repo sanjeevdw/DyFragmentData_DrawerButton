@@ -47,6 +47,7 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
     private ListView listView;
     private ArrayList<OrderHistoryListingData> orderHistoryItems;
     private OrderHistoryListingAdapter orderHistoryListingAdapter;
+    private int childIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,18 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
 
 
 
+    }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
     private void showFullNavItem() {
@@ -282,8 +295,13 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
                                                     long viewId = view.getId();
 
                                                     if (viewId == R.id.action_view) {
+                                                        getViewByPosition(position,listView);
                                                          Toast.makeText(OrderHistoryListingActivity.this, "View button clicked", Toast.LENGTH_SHORT).show();
-                                                        Intent intent = new Intent(OrderHistoryListingActivity.this, OrderDetailActivity.class);
+                                                        String invoiceNo = listView.getItemAtPosition(position).toString().trim();
+                                                        TextView invoiceTextView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.invoice_no);
+                                                        String invoiceNoClicked = invoiceTextView.getText().toString().trim();
+                                                         Intent intent = new Intent(OrderHistoryListingActivity.this, OrderDetailActivity.class);
+                                                        intent.putExtra("invoiceNoClicked", invoiceNoClicked);
                                                         startActivity(intent);
                                                     }
                                                 }

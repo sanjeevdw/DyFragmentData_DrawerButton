@@ -12,9 +12,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +37,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+import static android.widget.Toast.LENGTH_SHORT;
 
 public class OrderDetailActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -59,6 +65,9 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
     private String productQuantity;
     private String productTotalPrice;
     private String productPrice;
+    private String invoiceno;
+    private int childIndex;
+    private String invoicenoIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +82,15 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
         ActionBar actionbar = getSupportActionBar();
         session = new Session(this);
         sessionToken = session.getusertoken();
-        orderHistoryNetworkRequest();
         orderDetailData = new ArrayList<OrderDetailData>();
+
+        Intent invoiceNoIntent = getIntent();
+        Bundle bundle = invoiceNoIntent.getExtras();
+
+        if (bundle != null) {
+            invoicenoIntent = (String) bundle.get("invoiceNoClicked");
+            orderHistoryNetworkRequest();
+        }
 
         if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
@@ -110,9 +126,8 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
 
         setNavigationViewListener();
 
-    }
-
-    private void showFullNavItem() {
+        }
+        private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.drawer_view);
@@ -252,7 +267,9 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
     private void orderHistoryNetworkRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/orderhistory.php?userid="+sessionToken;
+
+        String url = "https://www.godprice.com/api/orderdetail.php?invoiceno="+invoicenoIntent+"&userid="+sessionToken;
+      //  String url = "https://www.godprice.com/api/orderhistory.php?userid="+sessionToken;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -271,6 +288,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                         //Loop the Array
                                         for (int m = 0; m < shippingDetail.length(); m++) {
                                             JSONObject currentShippingDetail = shippingDetail.getJSONObject(m);
+                                            invoiceno = currentShippingDetail.getString("invoiceno");
                                             fullname = currentShippingDetail.getString("fullname");
                                             emailid = currentShippingDetail.getString("emailid");
                                             phoneno = currentShippingDetail.getString("phoneno");
@@ -296,8 +314,8 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                             for (int j = 0; j < productAttribute.length(); j++) {
                                                 JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
                                                 productSize = currentProductAttribute.getString("Size");
-                                                // productColor = currentProductAttribute.getString("Color");
-                                                OrderDetailData currentOrderDetailData = new OrderDetailData(fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
+                                                 productColor = currentProductAttribute.getString("Color");
+                                                OrderDetailData currentOrderDetailData = new OrderDetailData(invoiceno, fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
                                                 orderDetailData.add(currentOrderDetailData);
                                                 orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
                                                 Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
@@ -305,6 +323,18 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                                 listView.setAdapter(orderDetailAdapter);
                                                 orderDetailAdapter.notifyDataSetChanged();
                                                 listView.setNestedScrollingEnabled(true);
+                                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                        long viewId = view.getId();
+
+                                                        if (viewId == R.id.back_label) {
+                                                            Toast.makeText(OrderDetailActivity.this, "Back button clicked", Toast.LENGTH_SHORT).show();
+                                                            Intent intent = new Intent(OrderDetailActivity.this, OrderHistoryListingActivity.class);
+                                                            startActivity(intent);
+                                                        }
+                                                    }
+                                                });
                                             }
                                         }
                                     }

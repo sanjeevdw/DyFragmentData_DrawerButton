@@ -151,6 +151,11 @@ public class TemplesFragment extends Fragment {
                                                Intent intent = new Intent(getActivity().getApplicationContext(), DetailsActivity.class);
                                                intent.putExtra("ProductId", productID);
                                                 startActivity(intent);
+                                            } else if(viewId == R.id.image_favorite) {
+                                                String productId = listView.getItemAtPosition(position).toString().trim();
+                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                String productID = PPid.getText().toString().trim();
+                                                sendWishlistRequest(productID);
                                             }
                                         }
                                     });
@@ -169,16 +174,14 @@ public class TemplesFragment extends Fragment {
         @Override
         public void onErrorResponse(VolleyError error) {
            // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-
         }
-
-    });
+        });
         queue.add(stringRequest);
     }
 
-    private void sendWishlistRequest(String uid, String pid) {
+    private void sendWishlistRequest(String pid) {
 
-        final String userId = String.valueOf(uid);
+       // final String userId = String.valueOf(uid);
         final String productId = String.valueOf(pid);
 
         RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
@@ -199,13 +202,11 @@ public class TemplesFragment extends Fragment {
         }) { @Override
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", userId);
+            params.put("userid", sessionToken);
             params.put("pid", productId);
             return params;
         }
-
         };
-
         queue.add(stringRequest);
     }
 }

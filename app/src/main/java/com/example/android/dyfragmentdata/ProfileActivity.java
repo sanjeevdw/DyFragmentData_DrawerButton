@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -361,20 +363,31 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                             String jsonResponse = response.toString().trim();
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            JSONObject dataJsonObject = jsonObject.getJSONObject("data");
-                            String userId = dataJsonObject.getString("id");
-                            String userName = dataJsonObject.getString("name");
-                            String userEmail = dataJsonObject.getString("email");
-                            String userMobile = dataJsonObject.getString("mobile");
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            if (statusInt == 200) {
+                                JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                                String userId = dataJsonObject.getString("id");
+                                String userName = dataJsonObject.getString("name");
+                                String userEmail = dataJsonObject.getString("email");
+                                String userMobile = dataJsonObject.getString("mobile");
 
-                            EditText firstName = (EditText) findViewById(R.id.first_name_et);
-                            firstName.setText(userName);
+                                EditText firstName = (EditText) findViewById(R.id.first_name_et);
+                                firstName.setText(userName);
 
-                            EditText mobileNumber = (EditText) findViewById(R.id.mobile_et);
-                            mobileNumber.setText(userMobile);
+                                EditText mobileNumber = (EditText) findViewById(R.id.mobile_et);
+                                mobileNumber.setText(userMobile);
 
-                            EditText email = (EditText) findViewById(R.id.email_et);
-                            email.setText(userEmail);
+                                EditText email = (EditText) findViewById(R.id.email_et);
+                                email.setText(userEmail);
+                            } else if (statusInt == 201) {
+                                String message = jsonObject.getString("message");
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                            }
 
                             }catch(Exception e) {
                             e.printStackTrace();

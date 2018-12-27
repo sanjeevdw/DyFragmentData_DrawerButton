@@ -93,7 +93,7 @@
             android:id="@+id/add_new_address"
             android:layout_width="180dp"
             android:layout_height="wrap_content"
-            android:background="#e53935"
+            android:background="@drawable/submit_button"
             android:textColor="@android:color/white"
             android:text="@string/add_new_address"/>
     </LinearLayout>
@@ -227,6 +227,7 @@
                 android:layout_marginStart="5dp"
                 android:gravity="center"
                 android:text="@string/previous"
+                android:background="@drawable/submit_button"
                 />
         </RelativeLayout>
         <RelativeLayout
@@ -244,7 +245,7 @@
                 android:layout_marginEnd="5dp"
                 android:gravity="center"
                 android:textColor="@android:color/white"
-                android:background="#e53935"
+                android:background="@drawable/submit_button"
                 android:text="@string/next"
                 />
         </RelativeLayout>

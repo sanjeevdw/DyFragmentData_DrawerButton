@@ -21,6 +21,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -572,15 +574,27 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             String jsonResponse = response.toString().trim();
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            String userToken = jsonObject.getString("userid");
-                            session.setusertoken(userToken);
-                            String sessionToken = session.getusertoken();
-                            Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
-                            intentProfile.putExtra("sessionToken", sessionToken);
-                            startActivity(intentProfile);
-                            Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-                            startActivity(intentHomepage);
-                            Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                String userToken = jsonObject.getString("userid");
+                                Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
+                                session.setusertoken(userToken);
+                                String sessionToken = session.getusertoken();
+                                Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
+                                intentProfile.putExtra("sessionToken", sessionToken);
+                                startActivity(intentProfile);
+                                Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
+                                startActivity(intentHomepage);
+                            } else if (statusInt == 201) {
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                            }
+                            // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
                             }catch(Exception e) {
                             e.printStackTrace();
                         }
@@ -589,10 +603,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+                }
+                })
 
-            }
-
-        }) { @Override
+        { @Override
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
             params.put("log_email", email);
@@ -619,23 +633,35 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                         String jsonResponse = response.toString().trim();
                         jsonResponse = jsonResponse.substring(3);
                         JSONObject jsonObject = new JSONObject(jsonResponse);
-                        sessionToken = jsonObject.getString("message");
-                        session.setusertoken(sessionToken);
-                            if (!sessionToken.isEmpty()) {
-                                showFullNavItem();
-                            } else {
-                                navigationView = findViewById(R.id.nav_view);
-                                navigationView.getMenu().clear();
-                                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            //  String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                sessionToken = jsonObject.getString("message");
+                                session.setusertoken(sessionToken);
+                                if (!sessionToken.isEmpty()) {
+                                    showFullNavItem();
+                                } else {
+                                    navigationView = findViewById(R.id.nav_view);
+                                    navigationView.getMenu().clear();
+                                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                                }
+
+                                Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
+                                intentCart.putExtra("sessionTokenGmail", sessionToken);
+                                startActivity(intentCart);
+                                Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
+                                intentProfile.putExtra("sessionTokenGmail", sessionToken);
+                                startActivity(intentProfile);
+                                Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
+                            } else if (statusInt == 201) {
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(sessionToken);
                             }
 
-                            Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
-                            intentCart.putExtra("sessionTokenGmail", sessionToken);
-                            startActivity(intentCart);
-                            Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
-                            intentProfile.putExtra("sessionTokenGmail", sessionToken);
-                            startActivity(intentProfile);
-                        Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
                         } catch(Exception e) {
                             e.printStackTrace();
                         }
@@ -666,20 +692,33 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             String jsonResponse = response.toString().trim();
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            sessionToken = jsonObject.getString("message");
-                            session.setusertoken(sessionToken);
-                            if (!sessionToken.isEmpty()) {
-                                showFullNavItem();
-                            } else {
-                                navigationView = findViewById(R.id.nav_view);
-                                navigationView.getMenu().clear();
-                                navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            //  String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                sessionToken = jsonObject.getString("message");
+                                session.setusertoken(sessionToken);
+                                if (!sessionToken.isEmpty()) {
+                                    showFullNavItem();
+                                } else {
+                                    navigationView = findViewById(R.id.nav_view);
+                                    navigationView.getMenu().clear();
+                                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                                }
+
+                                Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
+                                intentCart.putExtra("sessionToken", sessionToken);
+                                startActivity(intentCart);
+                                Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
+                            }
+                            else if (statusInt == 201) {
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(sessionToken);
                             }
 
-                            Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
-                            intentCart.putExtra("sessionToken", sessionToken);
-                            startActivity(intentCart);
-                            Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_SHORT).show();
                         } catch(Exception e) {
                             e.printStackTrace();
                         }

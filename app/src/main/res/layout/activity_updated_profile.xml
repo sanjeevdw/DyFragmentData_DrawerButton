@@ -98,7 +98,7 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_gravity="start"
-        android:background="#e53935"
+        android:background="@drawable/submit_button"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:layout_marginStart="5dp"
@@ -114,16 +114,38 @@
         android:textStyle="bold"
         android:text="@string/deactivate_account"
         />
+    <LinearLayout
+        android:id="@+id/response_message_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:visibility="gone"
+        android:background="@drawable/message_response_shape"
+        >
+        <TextView
+            android:id="@+id/response_message_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="#ffffff"
+            />
+    </LinearLayout>
     <Button
         android:id="@+id/submit_button_update_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="#e53935"
         android:layout_marginTop="8dp"
         android:text="@string/update"
         android:textColor="@android:color/white"
+        android:background="@drawable/submit_button"
         android:layout_marginBottom="8dp"
         android:layout_gravity="center"/>
+
 </LinearLayout>
         </ScrollView>
     </FrameLayout>

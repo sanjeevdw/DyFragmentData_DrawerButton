@@ -18,6 +18,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -29,6 +31,8 @@ import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -284,8 +288,27 @@ public class SignupActivity extends AppCompatActivity implements NavigationView.
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                              String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
+                            } else if (statusInt == 201) {
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
 
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                            }
+                            }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override

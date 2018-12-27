@@ -44,6 +44,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -99,6 +100,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private LinearLayout colorLayout;
     private String galleryThumbnailNew;
     private LinearLayout imageLayout;
+    private int childIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -190,11 +192,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             public void onClick(View view) {
                 quantityCart = editTextQuantity.getText().toString();
                 if (TextUtils.isEmpty(quantityCart)) {
-                    Toast.makeText(DetailsActivity.this, "Please enter the quantity", LENGTH_SHORT).show();
+                    Toast.makeText(DetailsActivity.this, "Please enter the quantity", Toast.LENGTH_LONG).show();
                 }
                 else if (!TextUtils.isEmpty(quantityCart)) {
                     cartQuantity = Integer.parseInt(quantityCart);
                     if (cartQuantity > quantityProInt) {
+
+                        if (quantityProInt == 0) {
+                            Toast.makeText(DetailsActivity.this, "Out of Stock", Toast.LENGTH_LONG).show();
+                        }
                     Toast.makeText(DetailsActivity.this, "Please enter quantity less than "+ quantityProInt, LENGTH_SHORT).show();
                     }
                     addToCartRequest();
@@ -203,6 +209,19 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         });
 
         }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
+
         private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
@@ -640,10 +659,23 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             long viewId = view.getId();
 
+                                            getViewByPosition(position,listView);
+
                                             if (viewId == R.id.button_details_two) {
-                                                // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                String productId = listView.getItemAtPosition(position).toString().trim();
+                                                //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                String productID = PPid.getText().toString().trim();
+
                                                 Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                intent.putExtra("ProductId", productID);
                                                 startActivity(intent);
+                                            } else if(viewId == R.id.image_favorite) {
+                                                String productId = listView.getItemAtPosition(position).toString().trim();
+                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                String productID = PPid.getText().toString().trim();
+                                                sendWishlistRequest(productID);
                                             }
                                         }
                                     });
@@ -939,6 +971,37 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             params.put("pro_qty_id", proQuantityIdCart);
             params.put("qty", finalquantityCart);
             params.put("price", priceCart);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void sendWishlistRequest(String pid) {
+
+        // final String userId = String.valueOf(uid);
+        final String productId = String.valueOf(pid);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist_add.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(DetailsActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(DetailsActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
+            params.put("pid", productId);
             return params;
         }
         };

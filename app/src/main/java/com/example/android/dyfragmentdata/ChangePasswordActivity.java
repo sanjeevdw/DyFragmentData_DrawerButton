@@ -15,11 +15,27 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChangePasswordActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -29,6 +45,8 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private EditText confirmPasswordEditText;
+    private EditText newPasswordEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +95,19 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
         }
         setNavigationViewListener();
 
-        }
+        newPasswordEditText = (EditText) findViewById(R.id.new_password_et);
+       confirmPasswordEditText = (EditText) findViewById(R.id.confirm_password_et);
+
+
+       Button updateButton = (Button) findViewById(R.id.submit_button);
+        updateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changePasswordNetworkRequest();
+            }
+        });
+
+    }
 
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
@@ -211,6 +241,61 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
                 break;
         }
         return false;
+    }
+
+    private void changePasswordNetworkRequest() {
+
+        final String newPassword = newPasswordEditText.getText().toString().trim();
+        final String currentPassword = confirmPasswordEditText.getText().toString().trim();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        // String url = "https://cc25ce62-a12e-42ca-9093-a1193ca754cb.mock.pstmn.io/";
+        String url = "https://www.godprice.com/api/change_pass.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
+
+                            } else if (statusInt == 201) {
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                            }
+                            // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        })
+
+        { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("password_con", currentPassword);
+            params.put("password_new", newPassword);
+            params.put("userid", sessionToken);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
     }
 }
 

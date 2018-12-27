@@ -14,6 +14,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -80,14 +82,14 @@ public class AddAddressActivity extends AppCompatActivity {
               String city = cityEditText.getText().toString();
               String zipCode = zipCodeEditText.getText().toString();
               String address = addressEditText.getText().toString();
-
-              if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(country) || TextUtils.isEmpty(city) || TextUtils.isEmpty(zipCode) || TextUtils.isEmpty(address))
+                addAddressNetworkRequest();
+            /*  if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(country) || TextUtils.isEmpty(city) || TextUtils.isEmpty(zipCode) || TextUtils.isEmpty(address))
               {
               Toast.makeText(AddAddressActivity.this, "Please enter all the required details", Toast.LENGTH_SHORT).show();
 
               } else {
                   addAddressNetworkRequest();
-              }
+              } */
               }
         });
         }
@@ -137,10 +139,19 @@ public class AddAddressActivity extends AppCompatActivity {
                             String jsonResponse = response.toString().trim();
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            String addressId = jsonObject.getString("addressid");
-                            Intent intentAddAddress = new Intent(AddAddressActivity.this, CheckoutActivity.class);
-                            startActivity(intentAddAddress);
-                            Toast.makeText(getApplicationContext(), "Address registered successfully.", Toast.LENGTH_SHORT).show();
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                String addressId = jsonObject.getString("addressid");
+                                Toast.makeText(getApplicationContext(), "Address registered successfully.", Toast.LENGTH_LONG).show();
+                            } else if (statusInt == 201) {
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                            }
+
                         } catch(Exception e) {
                             e.printStackTrace();
                         }

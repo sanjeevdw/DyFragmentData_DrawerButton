@@ -287,5 +287,4 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         };
         queue.add(stringRequest);
     }
-
 }

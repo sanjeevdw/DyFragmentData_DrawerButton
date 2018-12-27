@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -68,6 +69,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private int childIndex;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,9 +212,19 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 handler.post(update);
             }
         }, 2000, 2000);
-
-
         }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
 
         private void showFullNavItem() {
             navigationView = findViewById(R.id.nav_view);
@@ -403,21 +415,49 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                 long viewId = view.getId();
 
+                                                getViewByPosition(position,listView);
+
                                                 if (viewId == R.id.button_details_two) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+
                                                     Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    intent.putExtra("ProductId", productID);
                                                     startActivity(intent);
+                                                } else if(viewId == R.id.image_favorite) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+                                                    sendWishlistRequest(productID);
                                                 }
-                                            }
-                                        });
+                                                }
+                                                });
 
                                         listViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                 long viewId = view.getId();
 
+                                                getViewByPosition(position,listView);
+
                                                 if (viewId == R.id.button_details_two) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+
                                                     Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    intent.putExtra("ProductId", productID);
                                                     startActivity(intent);
+                                                } else if(viewId == R.id.image_favorite) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+                                                    sendWishlistRequest(productID);
                                                 }
                                             }
                                         });
@@ -426,9 +466,23 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                 long viewId = view.getId();
 
+                                                getViewByPosition(position,listView);
+
                                                 if (viewId == R.id.button_details_two) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+
                                                     Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    intent.putExtra("ProductId", productID);
                                                     startActivity(intent);
+                                                } else if(viewId == R.id.image_favorite) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+                                                    sendWishlistRequest(productID);
                                                 }
                                             }
                                         });
@@ -452,4 +506,36 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         });
         queue.add(stringRequest);
     }
+
+    private void sendWishlistRequest(String pid) {
+
+        // final String userId = String.valueOf(uid);
+        final String productId = String.valueOf(pid);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist_add.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Toast.makeText(HomepageActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomepageActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
+            params.put("pid", productId);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
 }
+

@@ -100,7 +100,7 @@
     <string name="wallet_payment_not">You do not have enough amount on your wallet, please contact support.</string>
     <string name="payment_heading">Payment</string>
     <string name="change_password">Change Password</string>
-    <string name="current_password">Current Password</string>
+    <string name="confirm_password">Confirm Password</string>
     <string name="new_password">New Password</string>
     <string name="wishlist_heading">Wishlist</string>
     <string name="wishlist_remove_product_icon">X</string>

@@ -82,7 +82,7 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
             wishlistImage.setImageResource(R.drawable.red_wishlist);
         }
 
-      /*  wishlistImage.setOnClickListener(new View.OnClickListener() {
+        wishlistImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 ((ListView) parent).performItemClick(v, position, 0);
@@ -91,7 +91,7 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
                 //  long id = getItemId(position);
                 //  ((CatalogActivity) context).onButtonClick(id);
             }
-        }); */
+        });
 
         ImageView ratingView = (ImageView) itemListView.findViewById(R.id.image_rating);
         int reviewRating = Integer.parseInt(currentGuide.getRating());

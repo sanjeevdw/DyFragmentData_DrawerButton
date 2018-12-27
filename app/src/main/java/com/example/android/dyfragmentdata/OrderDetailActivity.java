@@ -309,12 +309,12 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                             productQuantity = currentOrderDetail.getString("qty");
                                             productPrice = currentOrderDetail.getString("price");
                                             productTotalPrice = currentOrderDetail.getString("total_price");
-                                            JSONArray productAttribute = currentOrderDetail.getJSONArray("pro_att");
+                                          //  JSONArray productAttribute = currentOrderDetail.getJSONArray("pro_att");
                                             //Loop the Array
-                                            for (int j = 0; j < productAttribute.length(); j++) {
-                                                JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
-                                                productSize = currentProductAttribute.getString("Size");
-                                                 productColor = currentProductAttribute.getString("Color");
+                                          //  for (int j = 0; j < productAttribute.length(); j++) {
+                                           //     JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
+                                           //     productSize = currentProductAttribute.getString("Size");
+                                              //   productColor = currentProductAttribute.getString("Color");
                                                 OrderDetailData currentOrderDetailData = new OrderDetailData(invoiceno, fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
                                                 orderDetailData.add(currentOrderDetailData);
                                                 orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
@@ -335,7 +335,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                                         }
                                                     }
                                                 });
-                                            }
+                                           // }
                                         }
                                     }
                                 }

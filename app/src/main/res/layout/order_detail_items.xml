@@ -121,7 +121,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="14sp"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="8dp"
             />
         <TextView
             android:id="@+id/mobile"
@@ -257,18 +257,7 @@
                 />
         </LinearLayout>
     </LinearLayout>
-        <LinearLayout
-            android:orientation="vertical" android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="5dp"
-            android:layout_marginTop="5dp"
-            >
-            <TextView
-                android:id="@+id/product_size"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
-        </LinearLayout>
+
     </LinearLayout>
     <ImageView
         android:layout_width="match_parent"

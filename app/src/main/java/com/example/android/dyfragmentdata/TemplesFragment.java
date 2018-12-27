@@ -39,6 +39,7 @@ public class TemplesFragment extends Fragment {
     private ListView listView;
     private String sessionToken;
     private int childIndex;
+
    // private String productID;
 
     /**
@@ -117,8 +118,6 @@ public class TemplesFragment extends Fragment {
                                     Log.e("Message", "loop");
                                     HashMap<String, String> map = new HashMap<String, String>();
                                     JSONObject e = currentProductDetail.getJSONObject(j);
-                                    map.put("cid", "cid :" + e.getString("product_id"));
-                                    map.put("Category name", "Category name : " + e.getString("productsname"));
 
                                     String prodID = e.getString("product_id");
                                     String productName = e.getString("productsname");
@@ -145,9 +144,7 @@ public class TemplesFragment extends Fragment {
                                             if (viewId == R.id.button_details_two) {
                                                 String productId = listView.getItemAtPosition(position).toString().trim();
                                                 //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-
-
-                                            //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
                                                 TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                  String productID = PPid.getText().toString().trim();
 
@@ -158,68 +155,7 @@ public class TemplesFragment extends Fragment {
                                         }
                                     });
 
-                                    /* listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            long viewId = view.getId();
-                                            String productId = listView.getItemAtPosition(position).toString().trim();
-                                       //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-
-                                            TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                          String productID = PPid.getText().toString().trim();
-                                            if (viewId == R.id.image_favorite) {
-                                                ImageView wishlistImage = (ImageView) view.findViewById(R.id.image_favorite);
-                                                wishlistImage.setImageResource(R.drawable.red_wishlist);
-
-                                                Drawable drawable = wishlistImage.getDrawable();
-                                                Drawable drawable1 = getActivity().getApplicationContext().getDrawable(R.drawable.red_wishlist);
-                                                if (drawable.equals(drawable1)) {
-                                                    wishlistImage.setImageResource(R.drawable.favorite_icon);
-                                                }
-                                                /// String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    sendWishlistRequest(sessionToken, productID);
-                                                    //     final String text = ((TextView) text.findViewById(R.id.product_id)).getText().toString();
-                                             //   TextView Pid = (TextView) view.findViewById(R.id.product_id);
-                                             //   String productId = Pid.getText().toString().trim();
-                                                // String productId = ((TextView) view.findViewById(R.id.product_id)).getText().toString();
-
-                                            }
-
-                                        /*    if (viewId == R.id.image_favorite) {
-                                                ImageView wishlistImage = (ImageView) view.findViewById(R.id.image_favorite);
-                                                wishlistImage.setImageResource(R.drawable.red_wishlist);
-
-                                                Drawable drawable = wishlistImage.getDrawable();
-                                                Drawable drawable1 = getActivity().getApplicationContext().getDrawable(R.drawable.red_wishlist);
-                                                if (drawable.equals(drawable1)) {
-                                                    wishlistImage.setImageResource(R.drawable.favorite_icon);
-                                                }
-
-                                                /// String productId = listView.getItemAtPosition(position).toString().trim();
-                                            } */
-
-
-                                    //    }
-                                //    }); */
-
-                                  /*  listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> c, View view, int position, long id) {
-
-                                          //  if (id == R.id.product_id) {
-                                            String productId = listView.getItemAtPosition(position).toString().trim();
-                                            TextView Pid = (TextView) view.findViewById(R.id.product_id);
-                                               productID = Pid.getText().toString().trim();
-                                            // String productId = ((TextView) view.findViewById(R.id.product_id)).getText().toString();
-                                          //  }
-                                        //    long viewId = view.getId();
-                                         //   if (viewId == R.id.image_favorite) {
-                                        //        sendWishlistRequest(sessionToken, productID);
-                                       //         }
-                                        }
-                                    }); */
-
-                                }
+                                    }
                                 }
                         }
                     } catch (JSONException e) {

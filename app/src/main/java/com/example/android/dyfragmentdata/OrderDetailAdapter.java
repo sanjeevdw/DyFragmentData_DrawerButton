@@ -64,8 +64,8 @@ public class OrderDetailAdapter extends ArrayAdapter<OrderDetailData> {
         TextView productNameView = (TextView) itemListView.findViewById(R.id.product_name);
         productNameView.setText(CurrentOrderDetailData.getProductName());
 
-        TextView productSizeView = (TextView) itemListView.findViewById(R.id.product_size);
-        productSizeView.setText(" " + CurrentOrderDetailData.getProductSize());
+      //  TextView productSizeView = (TextView) itemListView.findViewById(R.id.product_size);
+     //   productSizeView.setText(" " + CurrentOrderDetailData.getProductSize());
 
        // TextView productColorView = (TextView) itemListView.findViewById(R.id.product_color);
       //  productColorView.setText(CurrentOrderDetailData.getProductColor());

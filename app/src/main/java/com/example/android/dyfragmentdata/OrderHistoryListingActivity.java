@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -264,53 +265,65 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
                             String trimResponse = response.substring(3);
                             String trimmedResponse = trimResponse.trim();
                             JSONObject jsonObject = new JSONObject(trimmedResponse);
-                            JSONArray data = jsonObject.getJSONArray("data");
-                            if (data.length() > 0) {
-                                //Loop the Array
-                                for (int l = 0; l < data.length(); l++) {
-                                    JSONObject currentObject = data.getJSONObject(l);
-                                    JSONArray shippingDetail = currentObject.getJSONArray("shipping_detail");
-                                    if (shippingDetail.length() > 0) {
-                                        //Loop the Array
-                                        for (int m = 0; m < shippingDetail.length(); m++) {
-                                            JSONObject currentShippingDetail = shippingDetail.getJSONObject(m);
-                                            String invoiceNo = currentShippingDetail.getString("invoiceno");
-                                            String totalAmount = currentShippingDetail.getString("totalamount");
-                                            String status = currentShippingDetail.getString("status");
-                                            String createAt = currentShippingDetail.getString("create_at");
-                                            TextView serialNo = (TextView) findViewById(R.id.serial_no);
-                                            String indexserialNo = String.valueOf(m+1);
+                            String statusResponse = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(statusResponse);
+                            String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int l = 0; l < data.length(); l++) {
+                                        JSONObject currentObject = data.getJSONObject(l);
+                                        JSONArray shippingDetail = currentObject.getJSONArray("shipping_detail");
+                                        if (shippingDetail.length() > 0) {
+                                            //Loop the Array
+                                            for (int m = 0; m < shippingDetail.length(); m++) {
+                                                JSONObject currentShippingDetail = shippingDetail.getJSONObject(m);
+                                                String invoiceNo = currentShippingDetail.getString("invoiceno");
+                                                String totalAmount = currentShippingDetail.getString("totalamount");
+                                                String status = currentShippingDetail.getString("status");
+                                                String createAt = currentShippingDetail.getString("create_at");
+                                                TextView serialNo = (TextView) findViewById(R.id.serial_no);
+                                                String indexserialNo = String.valueOf(m+1);
 
-                                             OrderHistoryListingData currentOrderHistoryListingData = new OrderHistoryListingData(indexserialNo, invoiceNo, createAt, totalAmount, status);
-                                             orderHistoryItems.add(currentOrderHistoryListingData);
-                                             orderHistoryListingAdapter = new OrderHistoryListingAdapter(OrderHistoryListingActivity.this, orderHistoryItems);
-                                             listView = (ListView) findViewById(R.id.order_list);
-                                             listView.setAdapter(orderHistoryListingAdapter);
-                                             orderHistoryListingAdapter.notifyDataSetChanged();
-                                             listView.setNestedScrollingEnabled(true);
+                                                OrderHistoryListingData currentOrderHistoryListingData = new OrderHistoryListingData(indexserialNo, invoiceNo, createAt, totalAmount, status);
+                                                orderHistoryItems.add(currentOrderHistoryListingData);
+                                                orderHistoryListingAdapter = new OrderHistoryListingAdapter(OrderHistoryListingActivity.this, orderHistoryItems);
+                                                listView = (ListView) findViewById(R.id.order_list);
+                                                listView.setAdapter(orderHistoryListingAdapter);
+                                                orderHistoryListingAdapter.notifyDataSetChanged();
+                                                listView.setNestedScrollingEnabled(true);
 
-                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    long viewId = view.getId();
+                                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                        long viewId = view.getId();
 
-                                                    if (viewId == R.id.action_view) {
-                                                        getViewByPosition(position,listView);
-                                                         Toast.makeText(OrderHistoryListingActivity.this, "View button clicked", Toast.LENGTH_SHORT).show();
-                                                        String invoiceNo = listView.getItemAtPosition(position).toString().trim();
-                                                        TextView invoiceTextView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.invoice_no);
-                                                        String invoiceNoClicked = invoiceTextView.getText().toString().trim();
-                                                         Intent intent = new Intent(OrderHistoryListingActivity.this, OrderDetailActivity.class);
-                                                        intent.putExtra("invoiceNoClicked", invoiceNoClicked);
-                                                        startActivity(intent);
+                                                        if (viewId == R.id.action_view) {
+                                                            getViewByPosition(position,listView);
+                                                            Toast.makeText(OrderHistoryListingActivity.this, "View button clicked", Toast.LENGTH_SHORT).show();
+                                                            String invoiceNo = listView.getItemAtPosition(position).toString().trim();
+                                                            TextView invoiceTextView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.invoice_no);
+                                                            String invoiceNoClicked = invoiceTextView.getText().toString().trim();
+                                                            Intent intent = new Intent(OrderHistoryListingActivity.this, OrderDetailActivity.class);
+                                                            intent.putExtra("invoiceNoClicked", invoiceNoClicked);
+                                                            startActivity(intent);
+                                                        }
                                                     }
-                                                }
-                                            });
+                                                });
                                             }
-                                             }
+                                        }
+                                    }
                                 }
+                                } else if (statusInt == 201) {
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
                             }
-                            Toast.makeText(OrderHistoryListingActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
+
+                          //  Toast.makeText(OrderHistoryListingActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
                             } catch(Exception e) {
                             e.printStackTrace();
                         }

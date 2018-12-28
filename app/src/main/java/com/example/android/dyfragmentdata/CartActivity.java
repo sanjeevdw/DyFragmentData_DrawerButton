@@ -381,71 +381,88 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-
                         try {
                             String jsonResponse = response.toString().trim();
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            JSONArray data = jsonObject.getJSONArray("data");
-
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject currentObject = data.getJSONObject(i);
-                                JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
-                                for (int j = 0; j < currentCartDetail.length(); j++) {
-                                    JSONObject currentObjectCart = currentCartDetail.getJSONObject(j);
-                                    String productCartId = currentObjectCart.getString("cart_id");
-                                    String productImageCart = currentObjectCart.getString("pro_image");
-                                    String productId = currentObjectCart.getString("pid");
-                                    String productNameCart = currentObjectCart.getString("product_name");
-                                    String productCartQuantity = currentObjectCart.getString("quantity");
-                                    String productPriceCart = currentObjectCart.getString("price");
-                                    CartData currentData = new CartData(productId, productCartId, productNameCart, productCartQuantity, productPriceCart, productImageCart);
-                                    cartItems.add(currentData);
-                                    cartAdapter = new CartAdapter(CartActivity.this, cartItems);
-                             //   Toast.makeText(CartActivity.this, "Cart response", LENGTH_SHORT).show();
-                                }
-
-                                listView = (ListView) findViewById(R.id.cart_list);
-                                listView.setNestedScrollingEnabled(true);
-                                JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
-                                String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
-                                String cartTotalAmount = currentCartTotalDetail.getString("total_amount");
-                                TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
-                                noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
-
-                                TextView totalAmountCart = (TextView) findViewById(R.id.header_text_total_amount);
-                                totalAmountCart.setText(cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
-                                listView.setAdapter(cartAdapter);
-                                cartAdapter.notifyDataSetChanged();
-
-                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                        long viewId = view.getId();
-                                        getViewByPosition(position,listView);
-                                        if (viewId == R.id.button_update) {
-                                            EditText quantityView = (EditText) listView.getChildAt(childIndex).findViewById(R.id.editText_Quantity);
-                                            cartQuantityUpdated = quantityView.getText().toString().trim();
-
-                                            TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
-                                            cartIDUpdated = cardIdView.getText().toString().trim();
-
-                                            cartUpdateRequest();
-                                           // String productId = listView.getItemAtPosition(position).toString().trim();
-                                            //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                            //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                           // TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                           // String productID = PPid.getText().toString().trim();
-                                        } else if (viewId == R.id.button_delete) {
-                                            TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
-                                            cartIDDelete = cardIdView.getText().toString().trim();
-                                           // cartIDDeleteInt = Integer.parseInt(cartIDDelete);
-                                            cartDeleteRequest();
-                                            }
+                            String statusResponse = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(statusResponse);
+                          //  String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
+                                    for (int j = 0; j < currentCartDetail.length(); j++) {
+                                        JSONObject currentObjectCart = currentCartDetail.getJSONObject(j);
+                                        String productCartId = currentObjectCart.getString("cart_id");
+                                        String productImageCart = currentObjectCart.getString("pro_image");
+                                        String productId = currentObjectCart.getString("pid");
+                                        String productNameCart = currentObjectCart.getString("product_name");
+                                        String productCartQuantity = currentObjectCart.getString("quantity");
+                                        String productPriceCart = currentObjectCart.getString("price");
+                                        CartData currentData = new CartData(productId, productCartId, productNameCart, productCartQuantity, productPriceCart, productImageCart);
+                                        cartItems.add(currentData);
+                                        cartAdapter = new CartAdapter(CartActivity.this, cartItems);
+                                        //   Toast.makeText(CartActivity.this, "Cart response", LENGTH_SHORT).show();
                                     }
-                                });
 
-                            } } catch (Exception e) {
+                                    listView = (ListView) findViewById(R.id.cart_list);
+                                    listView.setNestedScrollingEnabled(true);
+                                    JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
+                                    String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
+                                    String cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                    TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
+                                    noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
+
+                                    TextView totalAmountCart = (TextView) findViewById(R.id.header_text_total_amount);
+                                    totalAmountCart.setText(cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
+                                    listView.setAdapter(cartAdapter);
+                                    cartAdapter.notifyDataSetChanged();
+
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+                                            getViewByPosition(position,listView);
+                                            if (viewId == R.id.button_update) {
+                                                EditText quantityView = (EditText) listView.getChildAt(childIndex).findViewById(R.id.editText_Quantity);
+                                                cartQuantityUpdated = quantityView.getText().toString().trim();
+
+                                                TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
+                                                cartIDUpdated = cardIdView.getText().toString().trim();
+
+                                                cartUpdateRequest();
+                                                // String productId = listView.getItemAtPosition(position).toString().trim();
+                                                //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                // TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                // String productID = PPid.getText().toString().trim();
+                                            } else if (viewId == R.id.button_delete) {
+                                                TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
+                                                cartIDDelete = cardIdView.getText().toString().trim();
+                                                // cartIDDeleteInt = Integer.parseInt(cartIDDelete);
+                                                cartDeleteRequest();
+                                            }
+                                        }
+                                    });
+                                    }
+                            }
+                            else if (statusInt == 201) {
+                                String message = jsonObject.getString("message");
+                                LinearLayout linearLayoutHeader = (LinearLayout) findViewById(R.id.header);
+                                linearLayoutHeader.setVisibility(View.GONE);
+
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(getResources().getString(R.string.cart_empty));
+
+                                Button checkoutButton = (Button) findViewById(R.id.checkout_button);
+                                checkoutButton.setVisibility(View.GONE);
+                            }
+                            } catch (Exception e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,
                             // catch the exception here, so the app doesn't crash. Print a log message
                             // with the message from the exception.

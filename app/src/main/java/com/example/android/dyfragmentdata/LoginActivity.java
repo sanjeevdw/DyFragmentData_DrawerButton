@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -579,14 +580,26 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             String message = jsonObject.getString("message");
                             if (statusInt == 200) {
                                 String userToken = jsonObject.getString("userid");
-                                Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear_success);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
+                                TextView responseTextViewSuccess = (TextView) findViewById(R.id.response_message_two_success);
+                                responseTextViewSuccess.setText(message);
+
+                            //  Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
                                 session.setusertoken(userToken);
-                                String sessionToken = session.getusertoken();
-                                Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
-                                intentProfile.putExtra("sessionToken", sessionToken);
-                                startActivity(intentProfile);
-                                Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-                                startActivity(intentHomepage);
+                                final String sessionToken = session.getusertoken();
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
+                                        intentProfile.putExtra("sessionToken", sessionToken);
+                                        startActivity(intentProfile);
+                                        Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
+                                        startActivity(intentHomepage);
+                                    }
+                                }, 2000);
+
                             } else if (statusInt == 201) {
                                 //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
@@ -635,8 +648,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                         JSONObject jsonObject = new JSONObject(jsonResponse);
                             String status = jsonObject.getString("status");
                             int statusInt = Integer.parseInt(status);
-                            //  String message = jsonObject.getString("message");
+                              String message = jsonObject.getString("message");
                             if (statusInt == 200) {
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
                                 sessionToken = jsonObject.getString("message");
                                 session.setusertoken(sessionToken);
                                 if (!sessionToken.isEmpty()) {
@@ -653,13 +671,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 Intent intentProfile = new Intent(LoginActivity.this, ProfileActivity.class);
                                 intentProfile.putExtra("sessionTokenGmail", sessionToken);
                                 startActivity(intentProfile);
-                                Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
+                             //   Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
                             } else if (statusInt == 201) {
                                 //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
                                 linearLayout.setVisibility(View.VISIBLE);
                                 TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(sessionToken);
+                                responseTextViewTwo.setText(message);
                             }
 
                         } catch(Exception e) {
@@ -694,8 +712,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             JSONObject jsonObject = new JSONObject(jsonResponse);
                             String status = jsonObject.getString("status");
                             int statusInt = Integer.parseInt(status);
-                            //  String message = jsonObject.getString("message");
+                              String message = jsonObject.getString("message");
                             if (statusInt == 200) {
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
                                 sessionToken = jsonObject.getString("message");
                                 session.setusertoken(sessionToken);
                                 if (!sessionToken.isEmpty()) {
@@ -716,7 +739,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
                                 linearLayout.setVisibility(View.VISIBLE);
                                 TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(sessionToken);
+                                responseTextViewTwo.setText(message);
                             }
 
                         } catch(Exception e) {
@@ -724,6 +747,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                         }
                     }
                 }, new Response.ErrorListener() {
+
+
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();

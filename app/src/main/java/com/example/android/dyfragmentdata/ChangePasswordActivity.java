@@ -98,16 +98,14 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
         newPasswordEditText = (EditText) findViewById(R.id.new_password_et);
        confirmPasswordEditText = (EditText) findViewById(R.id.confirm_password_et);
 
-
        Button updateButton = (Button) findViewById(R.id.submit_button);
         updateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 changePasswordNetworkRequest();
-            }
+                }
         });
-
-    }
+        }
 
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
@@ -263,17 +261,18 @@ public class ChangePasswordActivity extends AppCompatActivity implements Navigat
                             int statusInt = Integer.parseInt(status);
                             String message = jsonObject.getString("message");
                             if (statusInt == 200) {
-                                Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
-
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
                             } else if (statusInt == 201) {
-                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
                                 linearLayout.setVisibility(View.VISIBLE);
                                 TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
                                 responseTextViewTwo.setText(message);
                             }
-                            // Toast.makeText(getApplicationContext(), response, Toast.LENGTH_LONG).show();
-                        }catch(Exception e) {
+                            }catch(Exception e) {
                             e.printStackTrace();
                         }
                     }

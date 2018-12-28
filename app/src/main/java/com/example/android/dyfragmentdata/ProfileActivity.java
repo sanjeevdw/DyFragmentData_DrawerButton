@@ -323,8 +323,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                             EditText email = (EditText) findViewById(R.id.email_et);
                             email.setText(userEmail);
 
-                      //      Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                        }catch(Exception e) {
+                            }
+                            catch(Exception e) {
                             e.printStackTrace();
                         }
                     }
@@ -365,7 +365,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                             JSONObject jsonObject = new JSONObject(jsonResponse);
                             String status = jsonObject.getString("status");
                             int statusInt = Integer.parseInt(status);
+                            String message = jsonObject.getString("message");
                             if (statusInt == 200) {
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+
                                 JSONObject dataJsonObject = jsonObject.getJSONObject("data");
                                 String userId = dataJsonObject.getString("id");
                                 String userName = dataJsonObject.getString("name");
@@ -380,8 +387,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
 
                                 EditText email = (EditText) findViewById(R.id.email_et);
                                 email.setText(userEmail);
+
                             } else if (statusInt == 201) {
-                                String message = jsonObject.getString("message");
                                 //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
                                 linearLayout.setVisibility(View.VISIBLE);

@@ -65,39 +65,6 @@
         android:layout_marginTop="20dp"
         android:id="@+id/thumbnail_image_container"
         android:layout_height="wrap_content">
-        <ImageButton
-        android:id="@+id/thumbnail_image_one"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-            android:clickable="true"
-            android:focusable="true"
-            android:layout_gravity="center"
-        android:layout_marginStart="15dp"
-        android:background="@drawable/rectangle_shape"
-        android:src="@drawable/product_image"
-        />
-    <ImageButton
-        android:id="@+id/thumbnail_image_two"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/rectangle_shape"
-        android:clickable="true"
-        android:focusable="true"
-        android:src="@drawable/product_image_two"
-        />
-        <ImageButton
-        android:id="@+id/thumbnail_image_three"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center"
-        android:layout_marginStart="8dp"
-            android:clickable="true"
-            android:focusable="true"
-        android:background="@drawable/rectangle_shape"
-        android:src="@drawable/product_image_three"
-        />
     </LinearLayout>
     </HorizontalScrollView>
     <LinearLayout

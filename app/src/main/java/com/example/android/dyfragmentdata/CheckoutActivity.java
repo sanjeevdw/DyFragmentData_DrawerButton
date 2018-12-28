@@ -137,28 +137,30 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
         }); */
 
 
-        Button reviewOrderTopButton = (Button) findViewById(R.id.review_order_button);
+     /*   Button reviewOrderTopButton = (Button) findViewById(R.id.review_order_button);
         reviewOrderTopButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentCart = new Intent(CheckoutActivity.this, ReviewOrderActivity.class);
                 startActivity(intentCart);
             }
-        });
+        }); */
 
-        Button reviewOrderButton = (Button) findViewById(R.id.forward_arrow_button);
-        reviewOrderButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                checkoutNetworkRequest();
-                }
-        });
 
-        Button cartButton = (Button) findViewById(R.id.back_arrow_button);
+     Button cartButton = (Button) findViewById(R.id.back_arrow_button);
         cartButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentCart = new Intent(CheckoutActivity.this, CartActivity.class);
+                startActivity(intentCart);
+            }
+        });
+
+        Button AddAddressButton = (Button) findViewById(R.id.add_new_address);
+        AddAddressButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentCart = new Intent(CheckoutActivity.this, AddAddressActivity.class);
                 startActivity(intentCart);
             }
         });
@@ -176,6 +178,21 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intentAddAddress);
                 }
                     break;
+            case R.id.radio_button:
+                if (checked) {
+                    Button reviewOrderButton = (Button) findViewById(R.id.forward_arrow_button);
+                    reviewOrderButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intentCart = new Intent(CheckoutActivity.this, ReviewOrderActivity.class);
+                            startActivity(intentCart);
+                            //  checkoutNetworkRequest();
+                        }
+                    });
+                } else {
+                    Toast.makeText(this, "Please select address.", Toast.LENGTH_SHORT).show();
+                }
+                break;
         }
     }
 
@@ -472,19 +489,29 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                             String jsonResponse = response.toString().trim();
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
-                            JSONArray data = jsonObject.getJSONArray("data");
+                            String statusResponse = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(statusResponse);
+                            if (statusInt == 200) {
+                                JSONArray data = jsonObject.getJSONArray("data");
 
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject currentObject = data.getJSONObject(i);
-                                // JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
-
-                                JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
-                                String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
-                                cartTotalAmount = currentCartTotalDetail.getString("total_amount");
-                                cartAmountInt = Integer.parseInt(cartTotalAmount);
-                                totalAmountCart = (TextView) findViewById(R.id.cart_price);
-                                totalAmountCart.setText(cartTotalAmount);
-                                } } catch (Exception e) {
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    // JSONArray currentCartDetail = currentObject.getJSONArray("product_detail");
+                                    JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
+                                    String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
+                                    cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                    cartAmountInt = Integer.parseInt(cartTotalAmount);
+                                    totalAmountCart = (TextView) findViewById(R.id.cart_price);
+                                    totalAmountCart.setText(cartTotalAmount);
+                                }
+                                }
+                            else if (statusInt == 201) {
+                                String message = jsonObject.getString("message");
+                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                Intent intentCart = new Intent(CheckoutActivity.this, CartActivity.class);
+                                startActivity(intentCart);
+                            }
+                            } catch (Exception e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,
                             // catch the exception here, so the app doesn't crash. Print a log message
                             // with the message from the exception.
@@ -522,8 +549,19 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                             JSONObject data = jsonObject.getJSONObject("data");
                             String walletAmount = data.getString("wallet_amount");
                             int walletAmountInt = Integer.parseInt(walletAmount);
-                            Toast.makeText(CheckoutActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
 
+                            if (walletAmountInt <= 0) {
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(getResources().getString(R.string.wallet_not_sufficient));
+
+                                Button nextButton = (Button) findViewById(R.id.forward_arrow_button);
+                                nextButton.setVisibility(View.GONE);
+                            }
+
+                            Toast.makeText(CheckoutActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
+                            cartRequest();
                             TextView walletAmountTextView = (TextView) findViewById(R.id.wallet_amount_price);
                             walletAmountTextView.setText(walletAmount);
                             String cartAmount = totalAmountCart.getText().toString();

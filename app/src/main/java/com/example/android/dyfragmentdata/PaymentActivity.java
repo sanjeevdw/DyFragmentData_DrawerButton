@@ -106,7 +106,7 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
 
         setNavigationViewListener();
 
-        Button billingAddressButton = (Button) findViewById(R.id.billing_address_button);
+     /*   Button billingAddressButton = (Button) findViewById(R.id.billing_address_button);
         billingAddressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -122,7 +122,7 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
                 Intent intentCart = new Intent(PaymentActivity.this, ReviewOrderActivity.class);
                 startActivity(intentCart);
             }
-        });
+        }); */
     }
 
     private void showFullNavItem() {

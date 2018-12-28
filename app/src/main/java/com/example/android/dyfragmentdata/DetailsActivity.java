@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -152,17 +153,16 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             showFullNavItem();
         }
 
-        mainImageView = (ImageView) findViewById(R.id.main_image);
+      //  mainImageView = (ImageView) findViewById(R.id.main_image);
         // mainImageView.setImageResource(R.drawable.product_image);
 
-        ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
+     /*   ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
         thumbOneImageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainImageView.setImageResource(R.drawable.product_image);
             }
         });
-
 
         ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
         thumbTwoImageView.setOnClickListener(new View.OnClickListener() {
@@ -176,12 +176,11 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         ImageButton thumbThreeImageView = (ImageButton) findViewById(R.id.thumbnail_image_three);
         thumbThreeImageView.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View v) {
                 mainImageView.setImageResource(R.drawable.product_image_three);
             }
-        });
+        }); */
 
         editTextQuantity = (EditText) findViewById(R.id.quantity_et);
 
@@ -457,27 +456,44 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     String productDetailsPrice = currentProductDetail.getString("discount_percent");
                                     String imageUrlDetails = currentProductDetail.getString("featured_image");
 
-                                    JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
+                                    final JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
                                     if (galleryThumbnailArray.length() > 0) {
                                         //Loop the Array
                                         for (int b = 0; b < galleryThumbnailArray.length(); b++) {
                                             JSONObject galleryObject = galleryThumbnailArray.getJSONObject(b);
                                             galleryThumbnail = galleryObject.getString("gallery_image");
                                             imageLayout = (LinearLayout) findViewById(R.id.thumbnail_image_container);
-                                            for(int a=0;a<galleryThumbnailArray.length();a++)
-                                            {
-                                                ImageView image = new ImageView(DetailsActivity.this);
-                                                image.setLayoutParams(new android.view.ViewGroup.LayoutParams(80,60));
-                                                image.setMaxHeight(60);
-                                                image.setMaxWidth(60);
+                                            LinearLayout.LayoutParams imageMargin = new LinearLayout.LayoutParams(100, 100);
+                                            imageMargin.setMargins(15, 0, 0, 0);
+                                            final ImageView image = new ImageView(DetailsActivity.this);
+                                                image.setLayoutParams(new android.view.ViewGroup.LayoutParams(150,150));
+                                                image.setMaxHeight(100);
+                                                image.setMaxWidth(100);
+                                            image.setLayoutParams(imageMargin);
                                                 Glide.with(image.getContext())
                                                         .load(galleryThumbnail)
                                                         .into(image);
+                                            final int index = b;
+                                                image.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
+                                                    Drawable drawable = image.getDrawable();
+                                                    mainImageView = (ImageView) findViewById(R.id.main_image);
+                                                    mainImageView.setImageDrawable(drawable);
+                                                 //   Glide.with(mainImageView.getContext())
+                                                  //          .load(drawable)
+                                                 //           .into(mainImageView);
+                                                   // mainImageView.setImageResource(galleryThumbnail);
+                                                  //  Glide.with(mainImageView.getContext())
+                                                    //        .load(galleryThumbnail)
+                                                     //       .into(mainImageView);
+                                                    Toast.makeText(DetailsActivity.this, "Index " + index, LENGTH_SHORT).show();
+                                                    }
+                                                    });
 
                                                 // Adds the view to the layout
                                                 imageLayout.addView(image);
-                                            }
-                                            }
+                                                }
                                     }
 
                                     JSONArray specObject = currentObject.getJSONArray("specification");
@@ -749,8 +765,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                             galleryThumbnailNew = galleryObject.getString("gallery_image");
                                             imageLayout = (LinearLayout) findViewById(R.id.thumbnail_image_container);
                                             imageLayout.setVisibility(LinearLayout.VISIBLE);
-                                            for(int a=0;a<galleryThumbnailArray.length();a++)
-                                            {
+                                         //   for(int a=0;a<galleryThumbnailArray.length();a++)
+                                        //    {
                                                 ImageView image = new ImageView(DetailsActivity.this);
                                                 image.setLayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
                                                 image.setMaxHeight(100);
@@ -761,7 +777,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
                                                 // Adds the view to the layout
                                                 imageLayout.addView(image);
-                                            }
+                                       //     }
                                         }
                                     }
 

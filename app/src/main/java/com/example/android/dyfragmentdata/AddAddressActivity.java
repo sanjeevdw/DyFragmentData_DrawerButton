@@ -144,7 +144,13 @@ public class AddAddressActivity extends AppCompatActivity {
                             String message = jsonObject.getString("message");
                             if (statusInt == 200) {
                                 String addressId = jsonObject.getString("addressid");
-                                Toast.makeText(getApplicationContext(), "Address registered successfully.", Toast.LENGTH_LONG).show();
+                              //  Toast.makeText(getApplicationContext(), "Address registered successfully.", Toast.LENGTH_LONG).show();
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+
                             } else if (statusInt == 201) {
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
                                 linearLayout.setVisibility(View.VISIBLE);

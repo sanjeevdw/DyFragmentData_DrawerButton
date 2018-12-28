@@ -127,14 +127,14 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
             }
         });
 
-        Button billingAddressButton = (Button) findViewById(R.id.billing_address_button);
+       /* Button billingAddressButton = (Button) findViewById(R.id.billing_address_button);
         billingAddressButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentPayment = new Intent(ReviewOrderActivity.this, CheckoutActivity.class);
                 startActivity(intentPayment);
             }
-        });
+        }); */
 
         Button reviewOrderButton = (Button) findViewById(R.id.forward_arrow_button);
         reviewOrderButton.setOnClickListener(new View.OnClickListener() {
@@ -166,14 +166,14 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                     }
         });
 
-        Button paymentButton = (Button) findViewById(R.id.payment_button);
+       /* Button paymentButton = (Button) findViewById(R.id.payment_button);
         paymentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intentCart = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
                 startActivity(intentCart);
             }
-        });
+        }); */
     }
 
     private void showFullNavItem() {
@@ -400,7 +400,7 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                             JSONObject data = jsonObject.getJSONObject("data");
                             String walletAmount = data.getString("wallet_amount");
                             walletAmountInt = Integer.parseInt(walletAmount);
-                            Toast.makeText(ReviewOrderActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
+                          //  Toast.makeText(ReviewOrderActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
                             TextView walletAmountTextView = (TextView) findViewById(R.id.wallet_amount_price);
                             walletAmountTextView.setText(walletAmount);
 

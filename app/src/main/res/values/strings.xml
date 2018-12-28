@@ -165,6 +165,8 @@
     <string name="color_label">Color: </string>
     <string name="size_label">Size: </string>
     <string name="back_label">Back</string>
+    <string name="cart_empty">Your cart is empty</string>
+    <string name="wallet_not_sufficient">You don\'t have sufficient amount in you wallet</string>
     <string name="order_detail_label">Order Detail </string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>

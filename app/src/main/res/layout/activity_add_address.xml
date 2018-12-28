@@ -185,6 +185,27 @@
                 android:textColor="#ffffff"
                 />
         </LinearLayout>
+        <LinearLayout
+        android:id="@+id/response_message_linear_success"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="15dp"
+        android:visibility="gone"
+        android:background="@drawable/message_response_green"
+        >
+        <TextView
+            android:id="@+id/response_message_two_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="5dp"
+            android:textColor="#ffffff"
+            />
+    </LinearLayout>
         <Button
             android:id="@+id/save_deliver_here_checkout"
             android:layout_width="180dp"

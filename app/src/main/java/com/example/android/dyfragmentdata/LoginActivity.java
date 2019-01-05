@@ -93,7 +93,9 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     private String sessionToken;
     private NavigationView navigationView;
     private String usernameGoogle;
-    private String sessionGoogleEmil;
+    private String sessionGoogleEmail;
+    private String sessionUserName;
+    private String sessionUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,8 +110,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();
-            sessionGoogleEmil = account.getEmail();
-            registerNetworkRequest(usernameGoogle, sessionGoogleEmil);
+            sessionGoogleEmail = account.getEmail();
+            session.setusename(usernameGoogle);
+            session.setUserEmail(sessionGoogleEmail);
+            registerNetworkRequest(usernameGoogle, sessionGoogleEmail);
         }
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -129,29 +133,26 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            View header = navigationView.getHeaderView(0);
+            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+            loggedInUserName.setText(R.string.header_name);
+            loggedInUserEmail.setVisibility(View.GONE);
         }
 
         if (!sessionToken.isEmpty()) {
             showFullNavItem();
-        }
+            }
 
         userEmail = (EditText) findViewById(R.id.et_enter_email);
         userPassword = (EditText) findViewById(R.id.et_enter_password);
+
         Button signinButton = (Button) findViewById(R.id.button_sign_in);
         signinButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // final String email = userEmail.getText().toString().trim();
-                //  final String password = userPassword.getText().toString().trim();
-
-                //  if (TextUtils.isEmpty(email) && TextUtils.isEmpty(password) || TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-
-                //    Toast.makeText(LoginActivity.this, "Please enter the required details", Toast.LENGTH_SHORT).show();
-                //  } else {
                 loginNetworkRequest();
-                //    }
-            }
+                }
         });
 
         mFirebaseAuth = FirebaseAuth.getInstance();
@@ -228,6 +229,16 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                         Log.d("LoginActivity", response.toString());
                         String email = object.optString("email");
                         String name = object.optString("name");
+                        session.setusename(name);
+                        session.setUserEmail(email);
+                        navigationView = findViewById(R.id.nav_view);
+                        View header = navigationView.getHeaderView(0);
+                        TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                        TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                        sessionUserName = session.getusename();
+                        sessionUserEmail = session.getUserEmail();
+                        loggedInUserName.setText(sessionUserName);
+                        loggedInUserEmail.setText(sessionUserEmail);
                         Log.d("LoginActivity", email);
                         String id = object.optString("id");
                         registerFacebookNetworkRequest(name, email);
@@ -266,6 +277,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.drawer_view);
+        View header = navigationView.getHeaderView(0);
+        TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+        TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+        sessionUserName = session.getusename();
+        sessionUserEmail = session.getUserEmail();
+        loggedInUserName.setText(sessionUserName);
+        loggedInUserEmail.setText(sessionUserEmail);
     }
 
         // NavigationView click events
@@ -352,12 +370,18 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     public void updateUI(Object o) {
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
-   //         Intent intentHomepage = new Intent(LoginActivity.this, CartActivity.class);
-    //        startActivity(intentHomepage);
             username = user.getDisplayName();
             email = user.getEmail();
-          //  session.setusename(username);
-          //  String commonUsername = session.getusename();
+            session.setusename(username);
+            session.setUserEmail(email);
+            navigationView = findViewById(R.id.nav_view);
+            View header = navigationView.getHeaderView(0);
+            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+            sessionUserName = session.getusename();
+            sessionUserEmail = session.getUserEmail();
+            loggedInUserName.setText(sessionUserName);
+            loggedInUserEmail.setText(sessionUserEmail);
             registerNetworkRequest(username, email);
             user.getIdToken(true)
                     .addOnCompleteListener(new OnCompleteListener<GetTokenResult>() {
@@ -384,8 +408,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 navigationView = findViewById(R.id.nav_view);
                 navigationView.getMenu().clear();
                 navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                View header = navigationView.getHeaderView(0);
+                TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                loggedInUserName.setText(R.string.header_name);
+                loggedInUserEmail.setVisibility(View.GONE);
             }
-        }
+            }
     }
 
     private void onSignedInInitialize (String username){
@@ -424,12 +453,19 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
          //   String sessionGoogleToken = session.getusertoken();
           //  String sessionGoogleUsername = session.getusename();
           //  String sessionGooglePersonId = account.getId();
-            sessionGoogleEmil = account.getEmail();
-         //   Log.d(TAG, "sessionGoogleToken" + userToken);
-         //   Log.d(TAG, "sessionGoogleUsername" + sessionGoogleUsername);
-         //   Log.d(TAG, "sessionGoogleEmil" + sessionGoogleEmil);
-         //   Log.d(TAG, "sessionGooglePersonId" + sessionGooglePersonId);
-           registerNetworkRequest(usernameGoogle, sessionGoogleEmil);
+            sessionGoogleEmail = account.getEmail();
+            session.setusename(usernameGoogle);
+            session.setUserEmail(sessionGoogleEmail);
+            navigationView = findViewById(R.id.nav_view);
+            View header = navigationView.getHeaderView(0);
+            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+            sessionUserName = session.getusename();
+            sessionUserEmail = session.getUserEmail();
+            loggedInUserName.setText(sessionUserName);
+            loggedInUserEmail.setText(sessionUserEmail);
+
+           registerNetworkRequest(usernameGoogle, sessionGoogleEmail);
             }
         updateUI(account);
                 FirebaseUser currentFacebookUser = mFirebaseAuth.getCurrentUser();
@@ -447,9 +483,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-    /*        case_tab R.id.sign_out_menu:
-                AuthUI.getInstance().signOut(this);
-                return true; */
+
             case R.id.action_drawer_signin:
                 if (!sessionToken.isEmpty()) {
                     Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
@@ -463,12 +497,18 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             case R.id.action_drawer_cart:
                 Intent intentCart = new Intent(this, CartActivity.class);
                 startActivity(intentCart);
+                return true;
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 } else {
                     showFullNavItem();
                 }
@@ -495,12 +535,12 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_category:
-                Intent intentCategory = new Intent(this, MainActivity.class);
-                startActivity(intentCategory);
+            case R.id.nav_master_category:
+                Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
+                startActivity(intentMasterCategory);
                 break;
 
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
 
@@ -543,10 +583,17 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
+                session.setUserEmail("");
+                session.setusename("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -565,7 +612,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         final String password = userPassword.getText().toString().trim();
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        // String url = "https://cc25ce62-a12e-42ca-9093-a1193ca754cb.mock.pstmn.io/";
         String url = "https://www.godprice.com/api/login.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -650,11 +696,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             int statusInt = Integer.parseInt(status);
                               String message = jsonObject.getString("message");
                             if (statusInt == 200) {
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
-                                linearLayout.setVisibility(View.VISIBLE);
-                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
-                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(message);
                                 sessionToken = jsonObject.getString("message");
                                 session.setusertoken(sessionToken);
                                 if (!sessionToken.isEmpty()) {
@@ -673,11 +714,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 startActivity(intentProfile);
                              //   Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
                             } else if (statusInt == 201) {
-                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
-                                linearLayout.setVisibility(View.VISIBLE);
-                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(message);
+
                             }
 
                         } catch(Exception e) {
@@ -714,11 +751,6 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             int statusInt = Integer.parseInt(status);
                               String message = jsonObject.getString("message");
                             if (statusInt == 200) {
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
-                                linearLayout.setVisibility(View.VISIBLE);
-                                linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
-                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(message);
                                 sessionToken = jsonObject.getString("message");
                                 session.setusertoken(sessionToken);
                                 if (!sessionToken.isEmpty()) {
@@ -732,15 +764,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 Intent intentCart = new Intent(LoginActivity.this, CartActivity.class);
                                 intentCart.putExtra("sessionToken", sessionToken);
                                 startActivity(intentCart);
-                                Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
+                            //    Toast.makeText(getApplicationContext(), sessionToken, Toast.LENGTH_LONG).show();
                             }
                             else if (statusInt == 201) {
-                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
-                                linearLayout.setVisibility(View.VISIBLE);
-                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(message);
-                            }
+                                }
 
                         } catch(Exception e) {
                             e.printStackTrace();

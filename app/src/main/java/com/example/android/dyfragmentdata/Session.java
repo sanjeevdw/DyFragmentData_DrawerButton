@@ -20,6 +20,12 @@ public class Session {
 
     }
 
+    public void setUserEmail(String userEmail) {
+
+        prefs.edit().putString("userEmail", userEmail).commit();
+
+    }
+
     public void setusertoken(String userToken) {
 
         prefs.edit().putString("userToken", userToken).commit();
@@ -29,6 +35,12 @@ public class Session {
 
         String usename = prefs.getString("usename", "");
         return usename;
+    }
+
+    public String getUserEmail() {
+
+        String userEmail = prefs.getString("userEmail", "");
+        return userEmail;
     }
 
     public String getusertoken() {

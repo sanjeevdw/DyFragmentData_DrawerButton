@@ -5,8 +5,8 @@
             android:id="@+id/nav_home"
             android:title="@string/home"/>
         <item
-            android:id="@+id/nav_category"
-            android:title="@string/category_item_drawer_menu"/>
+            android:id="@+id/nav_master_category"
+            android:title="@string/master_category"/>
         <item
             android:id="@+id/nav_login"
             android:title="@string/login"/>

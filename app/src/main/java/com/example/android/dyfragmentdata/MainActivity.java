@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -45,6 +47,8 @@ public Bundle bundle;
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private String sessionUserName;
+    private String sessionUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +124,13 @@ public Bundle bundle;
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.drawer_view);
+        View header = navigationView.getHeaderView(0);
+        TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+        TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+        sessionUserName = session.getusename();
+        sessionUserEmail = session.getUserEmail();
+        loggedInUserName.setText(sessionUserName);
+        loggedInUserEmail.setText(sessionUserEmail);
     }
 
     // NavigationView click events
@@ -276,12 +287,11 @@ public Bundle bundle;
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_category:
-                Intent intentCategory = new Intent(this, MainActivity.class);
-                startActivity(intentCategory);
+            case R.id.nav_master_category:
+                Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
+                startActivity(intentMasterCategory);
                 break;
-
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
 
@@ -324,10 +334,17 @@ public Bundle bundle;
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
+                session.setUserEmail("");
+                session.setusename("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();

@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
 public class GridAdapter extends ArrayAdapter<GridCategory> {
@@ -15,10 +17,8 @@ public class GridAdapter extends ArrayAdapter<GridCategory> {
     private Context mContext;
 
         public GridAdapter(Context context, ArrayList<GridCategory> gridCategories) {
-
             super(context, 0, gridCategories);
-
-        }
+            }
 
            // create a new ImageView for each item referenced by the Adapter
         @Override
@@ -34,12 +34,15 @@ public class GridAdapter extends ArrayAdapter<GridCategory> {
                 gridItemView = (View) convertView;
             }
 
-            GridCategory currentBadgujar = getItem(position);
+            GridCategory currentCategory = getItem(position);
+
             gridImageView = (ImageView) gridItemView.findViewById(R.id.gridImageView);
-            gridImageView.setImageResource(currentBadgujar.getGridImageResourceId());
+            Glide.with(gridImageView.getContext())
+                        .load(currentCategory.getGridCategoryImage())
+                      .into(gridImageView);
 
             TextView gridTextView = (TextView) gridItemView.findViewById(R.id.gridTextView);
-            gridTextView.setText(currentBadgujar.getGridNames());
+            gridTextView.setText(currentCategory.getGridCategoryName());
 
             return gridItemView;
         }

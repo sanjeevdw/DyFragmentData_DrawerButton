@@ -2,21 +2,23 @@ package com.example.android.dyfragmentdata;
 
 public class GridCategory {
 
-    private int mGridImageResourceId;
-        private String mGridNames;
+        private String mGridCategoryId;
+        private String mGridCategoryName;
+        private String mGridCategoryImage;
 
-        public GridCategory(int gridImageResourceId, String gridNames) {
+        public GridCategory(String GridCategoryId, String GridCategoryName, String GridCategoryImage) {
 
-            mGridImageResourceId = gridImageResourceId;
-            mGridNames = gridNames;
+            mGridCategoryId = GridCategoryId;
+            mGridCategoryName = GridCategoryName;
+            mGridCategoryImage = GridCategoryImage;
         }
 
-        public int getGridImageResourceId() {
-            return mGridImageResourceId;
+        public String getGridCategoryName() {
+            return mGridCategoryName;
         }
 
-        public String getGridNames() {
-            return mGridNames;
+        public String getGridCategoryImage() {
+            return mGridCategoryImage;
         }
     }
 

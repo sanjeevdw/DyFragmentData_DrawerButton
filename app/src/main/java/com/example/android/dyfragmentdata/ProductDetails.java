@@ -29,7 +29,6 @@ public class ProductDetails {
         mSku = sku;
         mAttributeName = attributeName;
         mAttributeValue = attributeValue;
-
         }
 
     // Get method to return temple name

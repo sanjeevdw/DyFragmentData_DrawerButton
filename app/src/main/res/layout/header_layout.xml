@@ -12,19 +12,17 @@
         android:id="@+id/user_image"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:src="@mipmap/profile_pic"
+        android:src="@drawable/godprice_logo"
         />
     <TextView
         android:id="@+id/header_username_tv"
         android:layout_marginTop="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/header_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
     <TextView
         android:id="@+id/email_address_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="om@omtatsat.com"
         />
 </LinearLayout>

@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -47,17 +48,19 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import com.onesignal.OneSignal;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
     private ArrayList<Guide> temples;
-   private GuideAdapter adapter;
+    private GuideAdapter adapter;
     private ListView listView;
     private ListView listViewTwo;
     private ListView listViewThree;
-   private GridAdapter gridAdapter;
-   private int[] tabIcons = {R.drawable.shoes, R.drawable.mensjeans, R.drawable.casecase, R.drawable.accessories, R.drawable.wallet};
+    private GridAdapter gridAdapter;
+    private ArrayList<GridCategory> gridCategories;
+    private int[] tabIcons = {R.drawable.shoes, R.drawable.mensjeans, R.drawable.casecase, R.drawable.accessories, R.drawable.wallet};
     private TabLayout tabLayout;
     CustomViewPager imageViewPager;
     LinearLayout sliderDotspanel;
@@ -70,20 +73,42 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private String usernameGoogle;
     private String sessionGoogleEmil;
     private int childIndex;
+    private String android_id;
+    private SliderData sliderData;
+    private ArrayList<SliderData> sliderDataItems;
+    private String sessionUserName;
+    private String sessionUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.homepage);
+
+        // OneSignal Initialization
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+        sendSliderRequest();
         dealsProductsNetworkRequest();
+        recommendedProductsNetworkRequest();
+        trendingProductsNetworkRequest();
+        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
         listView = (ListView) findViewById(R.id.list);
         listViewTwo = (ListView) findViewById(R.id.list_two);
         listViewThree = (ListView) findViewById(R.id.list_three);
         temples = new ArrayList<Guide>();
+        sliderDataItems = new ArrayList<SliderData>();
         // listView.setNestedScrollingEnabled(true);
         setNavigationViewListener();
         session = new Session(this);
         sessionToken = session.getusertoken();
+        sessionUserName = session.getusename();
+        sessionUserEmail = session.getUserEmail();
+        sendGridTopCategoryRequest();
+
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();
@@ -93,15 +118,17 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 navigationView = findViewById(R.id.nav_view);
                 navigationView.getMenu().clear();
                 navigationView.inflateMenu(R.menu.drawer_view_without_login);
-            }
+                View header = navigationView.getHeaderView(0);
+                TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                loggedInUserName.setText(R.string.header_name);
+                loggedInUserEmail.setVisibility(View.GONE);
+                }
 
             if (!sessionToken.isEmpty()) {
                 showFullNavItem();
-            }
+                }
         }
-
-
-      //  hideNavItem();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -120,31 +147,36 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                  navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                 View header = navigationView.getHeaderView(0);
+                 TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                 TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                 loggedInUserName.setText(R.string.header_name);
+                 loggedInUserEmail.setVisibility(View.GONE);
         }
 
         if (!sessionToken.isEmpty()) {
             showFullNavItem();
-        }
+            }
 
         // Create an ArrayList of badgujar objects
-        ArrayList<GridCategory> gridCategories = new ArrayList<GridCategory>();
+        gridCategories = new ArrayList<GridCategory>();
 
-        {
+     /*   {
             gridCategories.add(new GridCategory(R.drawable.grid_image_one, "Voice control your world"));
             gridCategories.add(new GridCategory(R.drawable.grid_image_two, "Stream November 16"));
             gridCategories.add(new GridCategory(R.drawable.grid_image_three, "Thinner, Lighter"));
             gridCategories.add(new GridCategory(R.drawable.grid_image_four, "With Voice Remote"));
-            }
+            } */
 
-        gridAdapter = new GridAdapter(HomepageActivity.this, gridCategories);
+     //  gridAdapter = new GridAdapter(HomepageActivity.this, gridCategories);
 
         // Get a reference to the GridView, and attach the adapter to the gridView.
-        GridView gridView = (GridView) findViewById(R.id.gridView);
+      /*  GridView gridView = (GridView) findViewById(R.id.gridView);
         GridView gridViewTwo = (GridView) findViewById(R.id.gridView_two);
         GridView gridViewThree = (GridView) findViewById(R.id.gridView_three);
         gridView.setAdapter(gridAdapter);
         gridViewTwo.setAdapter(gridAdapter);
-        gridViewThree.setAdapter(gridAdapter);
+        gridViewThree.setAdapter(gridAdapter); */
 
         TextView seeMoreTv = findViewById(R.id.see_more_tv);
         TextView seeMoreTvTwo = findViewById(R.id.see_more_tv_two);
@@ -188,8 +220,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         setupTabIcons();
 
         imageViewPager = (CustomViewPager) findViewById(R.id.viewPager);
-        ViewPagerApdater viewPagerAdapter = new ViewPagerApdater(this);
-        imageViewPager.setAdapter(viewPagerAdapter);
+       // ViewPagerApdater viewPagerAdapter = new ViewPagerApdater(this);
+       // imageViewPager.setAdapter(viewPagerAdapter);
 
         // Auto start of viewpager
 
@@ -230,6 +262,13 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.drawer_view);
+            View header = navigationView.getHeaderView(0);
+            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+            sessionUserName = session.getusename();
+            sessionUserEmail = session.getUserEmail();
+            loggedInUserName.setText(sessionUserName);
+            loggedInUserEmail.setText(sessionUserEmail);
         }
 
         private void setupTabIcons() {
@@ -308,11 +347,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_category:
-                Intent intentCategory = new Intent(this, MainActivity.class);
-                startActivity(intentCategory);
+            case R.id.nav_master_category:
+                Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
+                startActivity(intentMasterCategory);
                 break;
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -353,10 +392,17 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
+                session.setUserEmail("");
+                session.setusename("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -370,6 +416,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     }
 
     private void dealsProductsNetworkRequest() {
+
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://www.godprice.com/api/product_list.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -399,11 +446,12 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                                         String productId = e.getString("product_id");
                                         String productName = e.getString("productsname");
                                         String productPrice = e.getString("price");
+                                        String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
                                         String imageUrl = e.getString("feature_image");
                                         String productRating = e.getString("rating");
                                         String productWishlist = e.getString("is_whishlit");
 
-                                        Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating, productWishlist);
+                                        Guide currentGuide = new Guide(productId, productName, productPriceDollar, imageUrl, productRating, productWishlist);
                                         temples.add(currentGuide);
                                         adapter = new GuideAdapter(HomepageActivity.this, temples, R.color.temples_category);
                                         listView.setAdapter(adapter);
@@ -419,8 +467,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
                                                 if (viewId == R.id.button_details_two) {
                                                     String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+
                                                     TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                     String productID = PPid.getText().toString().trim();
 
@@ -433,8 +480,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                                                     String productID = PPid.getText().toString().trim();
                                                     sendWishlistRequest(productID);
                                                 }
-                                                }
-                                                });
+                                            }
+                                        });
 
                                         listViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
@@ -445,8 +492,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
                                                 if (viewId == R.id.button_details_two) {
                                                     String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
                                                     TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                     String productID = PPid.getText().toString().trim();
 
@@ -461,46 +506,175 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                                                 }
                                             }
                                         });
-                                        listViewThree.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                long viewId = view.getId();
-
-                                                getViewByPosition(position,listView);
-
-                                                if (viewId == R.id.button_details_two) {
-                                                    String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                    String productID = PPid.getText().toString().trim();
-
-                                                    Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
-                                                    intent.putExtra("ProductId", productID);
-                                                    startActivity(intent);
-                                                } else if(viewId == R.id.image_favorite) {
-                                                    String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                    String productID = PPid.getText().toString().trim();
-                                                    sendWishlistRequest(productID);
-                                                }
-                                            }
-                                        });
-                                    }
-
-                                }
+                                        }
+                                        }
                             }
                         } catch (JSONException e) {
                             //     Log.e("Volley", "Problem parsing the category JSON results", e);
                         }
-
-
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                }
+                });
+        queue.add(stringRequest);
+    }
 
+    private void recommendedProductsNetworkRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/home_product.php?deal_of_day=yes";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                              //  Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+                                        for (int j = 0; j < currentProductDetail.length(); j++) {
+                                            JSONObject e = currentProductDetail.getJSONObject(j);
+                                            String productId = e.getString("product_id");
+                                            String productName = e.getString("productsname");
+                                            String productPrice = e.getString("price");
+                                            String imageUrl = e.getString("feature_image");
+                                            String productRating = e.getString("rating");
+                                            String productWishlist = e.getString("is_whishlit");
 
+                                            Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating, productWishlist);
+                                            temples.add(currentGuide);
+                                            adapter = new GuideAdapter(HomepageActivity.this, temples, R.color.temples_category);
+                                            listViewTwo.setAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
+                                            listViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    long viewId = view.getId();
+
+                                                    getViewByPosition(position,listView);
+
+                                                    if (viewId == R.id.button_details_two) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                        //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
+
+                                                        Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                        intent.putExtra("ProductId", productID);
+                                                        startActivity(intent);
+                                                    } else if(viewId == R.id.image_favorite) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
+                                                        sendWishlistRequest(productID);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            } else if (statusInt == 201) {
+                               //
+                                // Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                }
+
+                        } catch (JSONException e) {
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                }
+
+        });
+        queue.add(stringRequest);
+    }
+
+    private void trendingProductsNetworkRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/home_product.php?trending_product=yes";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            String message = jsonObject.getString("message");
+                            if (statusInt == 200) {
+                              //  Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+                                        for (int j = 0; j < currentProductDetail.length(); j++) {
+                                            JSONObject e = currentProductDetail.getJSONObject(j);
+                                            String productId = e.getString("product_id");
+                                            String productName = e.getString("productsname");
+                                            String productPrice = e.getString("price");
+                                            String imageUrl = e.getString("feature_image");
+                                            String productRating = e.getString("rating");
+                                            String productWishlist = e.getString("is_whishlit");
+                                            Guide currentGuide = new Guide(productId, productName, productPrice, imageUrl, productRating, productWishlist);
+                                            temples.add(currentGuide);
+                                            adapter = new GuideAdapter(HomepageActivity.this, temples, R.color.temples_category);
+                                            listViewThree.setAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
+                                            listViewThree.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    long viewId = view.getId();
+
+                                                    getViewByPosition(position,listView);
+
+                                                    if (viewId == R.id.button_details_two) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
+
+                                                        Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                        intent.putExtra("ProductId", productID);
+                                                        startActivity(intent);
+                                                    } else if(viewId == R.id.image_favorite) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
+                                                        sendWishlistRequest(productID);
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                            } else if (statusInt == 201) {
+                             //   Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+                            }
+
+                        } catch (JSONException e) {
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
             }
 
         });
@@ -532,6 +706,109 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             Map<String, String> params = new HashMap<String, String>();
             params.put("userid", sessionToken);
             params.put("pid", productId);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void sendSliderRequest() {
+
+            RequestQueue queue = Volley.newRequestQueue(this);
+            String url = "https://www.godprice.com/api/slider.php";
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            //  Toast.makeText(HomepageActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                            try {
+                                String trimResponse = response.substring(3);
+                                String trimmedResponse = trimResponse.trim();
+                                JSONObject jsonObject = new JSONObject(trimmedResponse);
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        String sliderId = currentObject.getString("id");
+                                        String sliderTitle = currentObject.getString("title");
+                                        String sliderDescription = currentObject.getString("description");
+                                        String sliderImage = currentObject.getString("image");
+                                        SliderData sliderData = new SliderData(sliderId, sliderTitle, sliderDescription, sliderImage);
+                                        sliderDataItems.add(sliderData);
+                                        imageViewPager = (CustomViewPager) findViewById(R.id.viewPager);
+                                        ViewPagerApdater viewPagerAdapter = new ViewPagerApdater(HomepageActivity.this, sliderDataItems);
+                                        imageViewPager.setAdapter(viewPagerAdapter);
+                                        viewPagerAdapter.notifyDataSetChanged();
+                                    }
+                                }
+                            } catch (JSONException e) {
+                                //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                            }
+                        }
+                    }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    Toast.makeText(HomepageActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }) { @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                return params;
+            }
+            };
+            queue.add(stringRequest);
+    }
+
+    private void sendGridTopCategoryRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/home_category.php?top_category=yes";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    String categoryId = currentObject.getString("m_cid");
+                                    String categoryName = currentObject.getString("categoryname");
+                                    String categoryImage = currentObject.getString("categoryimage");
+                                    GridCategory gridCategory = new GridCategory(categoryId, categoryName, categoryImage);
+                                    gridCategories.add(gridCategory);
+                                    gridAdapter = new GridAdapter(HomepageActivity.this, gridCategories);
+                                    // Get a reference to the GridView, and attach the adapter to the gridView.
+                                    GridView gridView = (GridView) findViewById(R.id.gridView);
+                                    gridView.setAdapter(gridAdapter);
+                                    GridView gridViewTwo = (GridView) findViewById(R.id.gridView_two);
+                                    gridViewTwo.setAdapter(gridAdapter);
+                                    GridView gridViewThree = (GridView) findViewById(R.id.gridView_three);
+                                    gridViewThree.setAdapter(gridAdapter);
+                                    gridAdapter.notifyDataSetChanged();
+                                    }
+                            }
+                        } catch (JSONException e) {
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomepageActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
             return params;
         }
         };

@@ -83,12 +83,14 @@ public class AddAddressActivity extends AppCompatActivity {
               String zipCode = zipCodeEditText.getText().toString();
               String address = addressEditText.getText().toString();
                 addAddressNetworkRequest();
+
             /*  if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email) || TextUtils.isEmpty(phoneNumber) || TextUtils.isEmpty(country) || TextUtils.isEmpty(city) || TextUtils.isEmpty(zipCode) || TextUtils.isEmpty(address))
               {
               Toast.makeText(AddAddressActivity.this, "Please enter all the required details", Toast.LENGTH_SHORT).show();
 
               } else {
                   addAddressNetworkRequest();
+
               } */
               }
         });
@@ -108,11 +110,23 @@ public class AddAddressActivity extends AppCompatActivity {
     /*        case_tab R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 return true; */
-
-    case android.R.id.home:
+            case android.R.id.home:
                 Intent checkoutIntent = new Intent(AddAddressActivity.this, CheckoutActivity.class);
                 startActivity(checkoutIntent);
+                return true;
+            case R.id.action_drawer_signin:
+                if (!sessionToken.isEmpty()) {
+                    Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
+                    startActivity(intentUpdateProfile);
 
+                } else {
+                    Intent intent = new Intent(this, SignupActivity.class);
+                    startActivity(intent);
+                }
+                return true;
+            case R.id.action_drawer_cart:
+                Intent intentCart = new Intent(this, CartActivity.class);
+                startActivity(intentCart);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -150,6 +164,8 @@ public class AddAddressActivity extends AppCompatActivity {
                                 linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
                                 TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
                                 responseTextViewTwo.setText(message);
+                                Intent intentCheckout = new Intent(AddAddressActivity.this, CheckoutActivity.class);
+                                startActivity(intentCheckout);
 
                             } else if (statusInt == 201) {
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);

@@ -17,13 +17,12 @@
         </activity>
 
         <activity android:name=".DetailsActivity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".CategoryChildActivity"
             android:windowSoftInputMode="stateHidden">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
-
-    </activity>
+                android:value=".CategoryChildActivity"/>
+        </activity>
         <activity android:name=".HomepageActivity"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
@@ -31,6 +30,15 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".MasterCategoryActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity android:name=".ParentCategoryActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity android:name=".CategoryChildActivity"
+            android:windowSoftInputMode="stateHidden">
         </activity>
         <activity android:name=".SignupActivity"
             android:windowSoftInputMode="stateHidden">

@@ -4,8 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,7 @@ import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class TemplesFragment extends Fragment {
@@ -39,6 +43,7 @@ public class TemplesFragment extends Fragment {
     private ListView listView;
     private String sessionToken;
     private int childIndex;
+    private static final int GUIDE_LOADER_ID = 1;
 
    // private String productID;
 
@@ -50,21 +55,12 @@ public class TemplesFragment extends Fragment {
             // Required empty public constructor
         }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
+        @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             rootView = inflater.inflate(R.layout.guide_list, container, false);
           temples = new ArrayList<Guide>();
-        adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
-        //  adapter = new GuideAdapter(getActivity(), temples,  R.color.temples_category);
-        //  ListView listView = (ListView) rootView.findViewById(R.id.list);
-        //  listView.setAdapter(adapter);
-        categoryNetworkRequest();
+          categoryNetworkRequest();
 
       //  TextView productIdtv = (TextView) listView.findViewById(R.id.product_id);
      //   productIdtv.setVisibility(View.GONE);
@@ -87,7 +83,7 @@ public class TemplesFragment extends Fragment {
             }
     }
 
-        private void categoryNetworkRequest() {
+        public void categoryNetworkRequest() {
     RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
     String url = "https://www.godprice.com/api/product_list.php";
     StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
@@ -129,7 +125,8 @@ public class TemplesFragment extends Fragment {
                                     Guide currentGuide = new Guide(prodID, productName, productPrice, imageUrl, productRating, productWishlist);
                                     temples.add(currentGuide);
 
-                                    adapter = new GuideAdapter(getContext(), temples, R.color.temples_category);
+                                    adapter = new GuideAdapter(getActivity(), temples, R.color.temples_category);
+                                  //  adapter = new GuideAdapter(getContext(), temples, R.color.temples_category);
                                     listView = (ListView) rootView.findViewById(R.id.list);
                                     listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
                                     listView.setAdapter(adapter);
@@ -210,4 +207,5 @@ public class TemplesFragment extends Fragment {
         queue.add(stringRequest);
     }
 }
+
 

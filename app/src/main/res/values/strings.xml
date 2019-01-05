@@ -43,11 +43,15 @@
     <string name="homepage_heading">Fashion picks from emerging brands</string>
     <string name="homepage_heading_two">Your Recommendations</string>
     <string name="listview_homepage_heading">Deals of the Day</string>
+    <string name="listview_homepage_heading_two">Recommended Product</string>
+    <string name="listview_homepage_heading_three">Trending Product</string>
     <string name="see_more">See More</string>
     <string name="less_than_sign">></string>
     <string name="cart_menu_icon">Cart</string>
     <string name="sign_in_menu_icon">Sign In</string>
-    <string name="grid_category_heading">Up To 40% Off: Each Product</string>
+    <string name="grid_category_heading">Top Category</string>
+    <string name="grid_category_heading_two">Recommended Category</string>
+    <string name="grid_category_heading_three">Featured Category</string>
     <string name="please_enter_detail_here">Please Enter Details Here</string>
     <string name="enter_your_name">Enter Your Name*</string>
     <string name="enter_your_email">Enter Your Email*</string>
@@ -90,7 +94,7 @@
     <string name="dollar_sign">$ 100</string>
     <string name="dollar_sign_zero">$ 50</string>
     <string name="checkout">Checkout</string>
-    <string name="billing_address_heading">Billing Address</string>
+    <string name="shipping_address_heading">Shipping Address</string>
     <string name="previous">Previous</string>
     <string name="next">Next</string>
     <string name="quantity_review_order">Quantity: 1</string>
@@ -138,6 +142,7 @@
     <string name="cart_total_amount">Total amount</string>
     <string name="cart_update">Update</string>
     <string name="cart_delete">Delete</string>
+    <string name="view_products">View Products</string>
     <string name="price_dollar_detail">$</string>
     <string name="product_sku_detail">SKU:</string>
     <string name="pirates">Pirates</string>
@@ -165,9 +170,11 @@
     <string name="color_label">Color: </string>
     <string name="size_label">Size: </string>
     <string name="back_label">Back</string>
+    <string name="master_category">Master Category </string>
     <string name="cart_empty">Your cart is empty</string>
     <string name="wallet_not_sufficient">You don\'t have sufficient amount in you wallet</string>
     <string name="order_detail_label">Order Detail </string>
+    <string name="user_email_header">om@omtatsat.com</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb336835236870096</string>

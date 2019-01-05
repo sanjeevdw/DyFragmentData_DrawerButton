@@ -3,7 +3,8 @@ package com.example.android.dyfragmentdata;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-public class TemplesActivity extends AppCompatActivity {
+public class
+TemplesActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

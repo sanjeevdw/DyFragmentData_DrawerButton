@@ -39,8 +39,18 @@ public class WishlistAdapter extends ArrayAdapter<WishlistData> {
 
         WishlistData currentWishlistDetails = getItem(position);
 
+        TextView productIdView = (TextView) itemListView.findViewById(R.id.textView_product_id);
+        productIdView.setText(currentWishlistDetails.getProductId());
+
         TextView productNameView = (TextView) itemListView.findViewById(R.id.textView_product_title);
         productNameView.setText(currentWishlistDetails.getProductName());
+        productNameView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) parent).performItemClick(v, position, 0);
+
+            }
+        });
 
         TextView discountPriceView = (TextView) itemListView.findViewById(R.id.textView_product_price);
         discountPriceView.setText(currentWishlistDetails.getProductPrice());
@@ -53,6 +63,15 @@ public class WishlistAdapter extends ArrayAdapter<WishlistData> {
                      .load(currentWishlistDetails.getImageURL())
                      .into(productImageView);
           }
+
+          Button removeWishlistButton = (Button) itemListView.findViewById(R.id.remove_product_icon);
+        removeWishlistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) parent).performItemClick(v, position, 0);
+
+            }
+        });
 
           return itemListView;
         // return super.getView(position, convertView, parent);

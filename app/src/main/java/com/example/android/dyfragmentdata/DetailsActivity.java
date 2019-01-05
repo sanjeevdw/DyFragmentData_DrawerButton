@@ -102,6 +102,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private String galleryThumbnailNew;
     private LinearLayout imageLayout;
     private int childIndex;
+    private String mCid;
+    private String mPid;
+    private String sessionUserName;
+    private String sessionUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,12 +115,27 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         setContentView(R.layout.details_activity);
         android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Secure.ANDROID_ID);
+
         Intent productIdIntent = getIntent();
         Bundle bundle = productIdIntent.getExtras();
 
         if (bundle != null) {
             pid = (String) bundle.get("ProductId");
         }
+
+        Intent masterCategoryIdIntent = getIntent();
+        Intent parentCategoryIdIntent = getIntent();
+        Bundle bundleMaster = masterCategoryIdIntent.getExtras();
+        Bundle bundleParent = parentCategoryIdIntent.getExtras();
+
+        if (bundleMaster != null) {
+            mCid = (String) bundleMaster.get("masterCategoryId");
+        }
+
+        if (bundleParent != null) {
+            mPid = (String) bundleParent.get("parentCategoryId");
+        }
+
         session = new Session(this);
         sessionToken = session.getusertoken();
 
@@ -225,6 +244,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.drawer_view);
+            View header = navigationView.getHeaderView(0);
+            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+            sessionUserName = session.getusename();
+            sessionUserEmail = session.getUserEmail();
+            loggedInUserName.setText(sessionUserName);
+            loggedInUserEmail.setText(sessionUserEmail);
     }
 
     // NavigationView click events
@@ -261,9 +287,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentCart);
                 return true;
             case android.R.id.home:
-                Intent templesIntent = new Intent(DetailsActivity.this, MainActivity.class);
-                startActivity(templesIntent);
-                //mDrawerLayout.openDrawer(GravityCompat.START);
+                Intent categoryChildIntent = new Intent(DetailsActivity.this, CategoryChildActivity.class);
+                categoryChildIntent.putExtra("parentCategoryId", mPid);
+                categoryChildIntent.putExtra("masterCategoryId", mCid);
+                startActivity(categoryChildIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -288,12 +315,11 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 startActivity(intent);
                 setNavigationViewListener();
                 break;
-            case R.id.nav_category:
-                Intent intentCategory = new Intent(this, MainActivity.class);
-                startActivity(intentCategory);
+            case R.id.nav_master_category:
+                Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
+                startActivity(intentMasterCategory);
                 break;
-
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
 
@@ -337,10 +363,17 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Toast.makeText(this, "Signed out", LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
+                session.setUserEmail("");
+                session.setusename("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();

@@ -41,7 +41,7 @@
         android:textSize="16sp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
-        android:text="@string/billing_address_heading"/>
+        android:text="@string/shipping_address_heading"/>
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

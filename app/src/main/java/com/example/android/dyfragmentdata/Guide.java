@@ -8,7 +8,6 @@ import java.io.Serializable;
 public class Guide {
 
     // Variable declaration
-
     private String mProductId;
     private String mTempleName;
     private String mTempleLocation;

@@ -38,14 +38,14 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
 
         if (itemListView == null) {
 
-            itemListView = LayoutInflater.from(getContext()).inflate(R.layout.list_item, parent, false);
+            itemListView = LayoutInflater.from(getContext()).inflate(R.layout.child_category_list_items, parent, false);
         }
 
         Guide currentGuide = getItem(position);
 
         TextView productIdView = (TextView) itemListView.findViewById(R.id.product_id);
         productIdView.setText(currentGuide.getProductId());
-     //   productIdView.setVisibility(View.GONE);
+        productIdView.setVisibility(View.INVISIBLE);
 
         TextView nameTempleView = (TextView) itemListView.findViewById(R.id.name_view);
         nameTempleView.setText(currentGuide.getTempleName());

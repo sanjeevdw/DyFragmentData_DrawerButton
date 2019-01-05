@@ -15,9 +15,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -48,6 +52,10 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private int childIndex;
+    private String productID;
+    private String sessionUserName;
+    private String sessionUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,12 +108,32 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         }
 
         setNavigationViewListener();
+
+        }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
     }
 
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.drawer_view);
+        View header = navigationView.getHeaderView(0);
+        TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+        TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+        sessionUserName = session.getusename();
+        sessionUserEmail = session.getUserEmail();
+        loggedInUserName.setText(sessionUserName);
+        loggedInUserEmail.setText(sessionUserEmail);
     }
 
     // NavigationView click events
@@ -174,12 +202,11 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
                 setNavigationViewListener();
                 break;
-            case R.id.nav_category:
-                Intent intentCategory = new Intent(this, MainActivity.class);
-                startActivity(intentCategory);
+            case R.id.nav_master_category:
+                Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
+                startActivity(intentMasterCategory);
                 break;
-
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -221,10 +248,17 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
+                session.setUserEmail("");
+                session.setusename("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -255,18 +289,39 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                                     JSONObject currentObject = data.getJSONObject(i);
 
                                     String productId = currentObject.getString("pid");
-
                                     String productName = currentObject.getString("productname");
                                     String productPrice = currentObject.getString("price");
+                                    String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
                                     String productImage = currentObject.getString("image");
-                                    WishlistData currentWishlist = new WishlistData(productId, productName, productPrice, productImage);
+                                    WishlistData currentWishlist = new WishlistData(productId, productName, productPriceDollar, productImage);
                                     wishlistProducts.add(currentWishlist);
                                     wishlistAdapter = new WishlistAdapter(WishlistActivity.this, wishlistProducts);
                                     listView = (ListView) findViewById(R.id.wishlist_list);
                                     listView.setAdapter(wishlistAdapter);
                                     wishlistAdapter.notifyDataSetChanged();
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+                                            getViewByPosition(position, listView);
 
-                                }  //      Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
+                                            if (viewId == R.id.remove_product_icon) {
+                                                String productId = listView.getItemAtPosition(position).toString().trim();
+                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.textView_product_id);
+                                                productID = PPid.getText().toString().trim();
+                                                wishlistProductRemoveRequest(productID);
+                                            } else if (viewId == R.id.textView_product_title) {
+                                                String productId = listView.getItemAtPosition(position).toString().trim();
+                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.textView_product_id);
+                                                String productID = PPid.getText().toString().trim();
+
+                                                Intent intent = new Intent(WishlistActivity.this, DetailsActivity.class);
+                                                intent.putExtra("ProductId", productID);
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    });
+                                    }  //      Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
                         }catch(Exception e) {
                             e.printStackTrace();
                         }
@@ -277,8 +332,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
 
             }
-
-        }) { @Override
+            }) { @Override
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
             params.put("userid", USERID);
@@ -287,4 +341,40 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         };
         queue.add(stringRequest);
     }
+
+    private void wishlistProductRemoveRequest(String productID) {
+        final String ProductID = productID;
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist_delete.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            wishlistAdapter.clear();
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+
+            }
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
+            params.put("pid", ProductID);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
 }
+

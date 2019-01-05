@@ -15,11 +15,31 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class ForgotPasswordActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout mDrawerLayout;
@@ -28,6 +48,9 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
+    private EditText userEmailTextView;
+    private String sessionUserName;
+    private String sessionUserEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +78,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
             navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.drawer_view_without_login);
+            View header = navigationView.getHeaderView(0);
+            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+            loggedInUserName.setText(R.string.header_name);
+            loggedInUserEmail.setVisibility(View.GONE);
         }
 
         if (!sessionToken.isEmpty()) {
@@ -70,18 +98,36 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 navigationView = findViewById(R.id.nav_view);
                 navigationView.getMenu().clear();
                 navigationView.inflateMenu(R.menu.drawer_view_without_login);
-            }
+                }
 
             if (!sessionToken.isEmpty()) {
                 showFullNavItem();
             }
         }
+
+        userEmailTextView = (EditText) findViewById(R.id.et_enter_email);
+
+        Button submitForgotPassword = (Button) findViewById(R.id.button_sign_up);
+        submitForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendForgotPasswordRequest();
+            }
+        });
+
         }
 
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
         navigationView.inflateMenu(R.menu.drawer_view);
+        View header = navigationView.getHeaderView(0);
+        TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+        TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+        sessionUserName = session.getusename();
+        sessionUserEmail = session.getUserEmail();
+        loggedInUserName.setText(sessionUserName);
+        loggedInUserEmail.setText(sessionUserEmail);
     }
 
     // NavigationView click events
@@ -149,11 +195,11 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 Intent intent = new Intent(this, HomepageActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_category:
-                Intent intentCategory = new Intent(this, MainActivity.class);
-                startActivity(intentCategory);
+            case R.id.nav_master_category:
+                Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
+                startActivity(intentMasterCategory);
                 break;
-            case R.id.nav_login:
+                case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -195,10 +241,17 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
+                session.setUserEmail("");
+                session.setusename("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
                     navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
                 }
                 SharedPreferences sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -210,6 +263,52 @@ public class ForgotPasswordActivity extends AppCompatActivity implements Navigat
         }
         return false;
     }
+
+    private void sendForgotPasswordRequest() {
+
+        final String userEmail = userEmailTextView.getText().toString();
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/forgot_password.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                        String jsonResponse = response.toString().trim();
+                        jsonResponse = jsonResponse.substring(3);
+                        JSONObject jsonObject = new JSONObject(jsonResponse);
+                        String statusResponse = jsonObject.getString("status");
+                        int statusInt = Integer.parseInt(statusResponse);
+                        //  String message = jsonObject.getString("message");
+                        if (statusInt == 200) {
+                            String message = jsonObject.getString("message");
+                            Toast.makeText(ForgotPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                        else if (statusInt == 201) {
+                            String message = jsonObject.getString("message");
+                            Toast.makeText(ForgotPasswordActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                            }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(ForgotPasswordActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+                }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("email", userEmail);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
 }
+
 
 

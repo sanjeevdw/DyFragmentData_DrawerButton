@@ -13,6 +13,10 @@ public class GridCategory {
             mGridCategoryImage = GridCategoryImage;
         }
 
+    public String getGridCategoryId() {
+        return mGridCategoryId;
+    }
+
         public String getGridCategoryName() {
             return mGridCategoryName;
         }

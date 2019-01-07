@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -17,11 +18,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -35,6 +39,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -78,6 +83,9 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private ArrayList<SliderData> sliderDataItems;
     private String sessionUserName;
     private String sessionUserEmail;
+    private GridView gridView;
+    private GridView gridViewTwo;
+    private GridView gridViewThree;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,6 +116,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         sessionUserName = session.getusename();
         sessionUserEmail = session.getUserEmail();
         sendGridTopCategoryRequest();
+        sendHeaderCategoriesRequest();
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
@@ -203,21 +212,21 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             }
         });
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+       // ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
         // Create an adapter that knows which fragment should be shown on each page.
 
-        SimpleFragmentPageAdapter adapter = new SimpleFragmentPageAdapter(this, getSupportFragmentManager());
+      //  SimpleFragmentPageAdapter adapter = new SimpleFragmentPageAdapter(this, getSupportFragmentManager());
 
         // Set the adapter onto the view pager.
 
-        viewPager.setAdapter(adapter);
+     //   viewPager.setAdapter(adapter);
 
         // Find the tab layout that shows the tab
-        tabLayout = (TabLayout) findViewById(R.id.tabs);
+     //   tabLayout = (TabLayout) findViewById(R.id.tabs);
 
-        tabLayout.setupWithViewPager(viewPager);
-        setupTabIcons();
+      //  tabLayout.setupWithViewPager(viewPager);
+     //   setupTabIcons();
 
         imageViewPager = (CustomViewPager) findViewById(R.id.viewPager);
        // ViewPagerApdater viewPagerAdapter = new ViewPagerApdater(this);
@@ -258,6 +267,18 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         }
     }
 
+    public View getViewByPositionGrid(int pos, GridView gridView) {
+        final int firstListItemPosition = gridView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + gridView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return gridView.getAdapter().getView(pos, null, gridView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return gridView.getChildAt(childIndex);
+        }
+    }
+
         private void showFullNavItem() {
             navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
@@ -271,14 +292,14 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             loggedInUserEmail.setText(sessionUserEmail);
         }
 
-        private void setupTabIcons() {
+     /*   private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
         tabLayout.getTabAt(1).setIcon(tabIcons[1]);
         tabLayout.getTabAt(2).setIcon(tabIcons[2]);
         tabLayout.getTabAt(3).setIcon(tabIcons[3]);
         tabLayout.getTabAt(4).setIcon(tabIcons[4]);
 
-        }
+        } */
 
     // NavigationView click events
     private void setNavigationViewListener() {
@@ -470,9 +491,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
                                                     TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                     String productID = PPid.getText().toString().trim();
-
+String homepageToDetail = "homepageToDetail";
                                                     Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
                                                     intent.putExtra("ProductId", productID);
+                                                    intent.putExtra("homepageToDetail", homepageToDetail);
                                                     startActivity(intent);
                                                 } else if(viewId == R.id.image_favorite) {
                                                     String productId = listView.getItemAtPosition(position).toString().trim();
@@ -618,7 +640,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                             int statusInt = Integer.parseInt(status);
                             String message = jsonObject.getString("message");
                             if (statusInt == 200) {
-                              //  Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                                 JSONArray data = jsonObject.getJSONArray("data");
                                 if (data.length() > 0) {
                                     //Loop the Array
@@ -683,7 +704,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     private void sendWishlistRequest(String pid) {
 
-        // final String userId = String.valueOf(uid);
         final String productId = String.valueOf(pid);
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -698,8 +718,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             @Override
             public void onErrorResponse(VolleyError error) {
                 Toast.makeText(HomepageActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
-
-            }
+                }
 
         }) { @Override
         protected Map<String, String> getParams() {
@@ -720,7 +739,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            //  Toast.makeText(HomepageActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                             try {
                                 String trimResponse = response.substring(3);
                                 String trimmedResponse = trimResponse.trim();
@@ -786,14 +804,139 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                                     gridCategories.add(gridCategory);
                                     gridAdapter = new GridAdapter(HomepageActivity.this, gridCategories);
                                     // Get a reference to the GridView, and attach the adapter to the gridView.
-                                    GridView gridView = (GridView) findViewById(R.id.gridView);
+                                    gridView = (GridView) findViewById(R.id.gridView);
                                     gridView.setAdapter(gridAdapter);
-                                    GridView gridViewTwo = (GridView) findViewById(R.id.gridView_two);
+                                    gridViewTwo = (GridView) findViewById(R.id.gridView_two);
                                     gridViewTwo.setAdapter(gridAdapter);
-                                    GridView gridViewThree = (GridView) findViewById(R.id.gridView_three);
+                                    gridViewThree = (GridView) findViewById(R.id.gridView_three);
                                     gridViewThree.setAdapter(gridAdapter);
                                     gridAdapter.notifyDataSetChanged();
+                                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+                                            getViewByPositionGrid(position,gridView);
+                                            String productId = gridView.getItemAtPosition(position).toString().trim();
+                                            TextView mCid = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewId);
+                                            String masterCategoryId = mCid.getText().toString().trim();
+
+                                            Intent intent = new Intent(HomepageActivity.this, ParentCategoryActivity.class);
+                                            intent.putExtra("masterCategoryId", masterCategoryId);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                    gridViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+                                            getViewByPositionGrid(position,gridView);
+                                            String productId = gridView.getItemAtPosition(position).toString().trim();
+                                            TextView mCid = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewId);
+                                            String masterCategoryId = mCid.getText().toString().trim();
+
+                                            Intent intent = new Intent(HomepageActivity.this, ParentCategoryActivity.class);
+                                            intent.putExtra("masterCategoryId", masterCategoryId);
+                                            startActivity(intent);
+                                        }
+                                    });
+                                    gridViewThree.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                            long viewId = view.getId();
+                                            getViewByPositionGrid(position,gridView);
+                                            String productId = gridView.getItemAtPosition(position).toString().trim();
+                                            TextView mCid = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewId);
+                                            String masterCategoryId = mCid.getText().toString().trim();
+
+                                            Intent intent = new Intent(HomepageActivity.this, ParentCategoryActivity.class);
+                                            intent.putExtra("masterCategoryId", masterCategoryId);
+                                            startActivity(intent);
+                                        }
+                                    });
                                     }
+                            }
+                        } catch (JSONException e) {
+
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(HomepageActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void sendHeaderCategoriesRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/home_category.php?header_category=yes";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    String categoryId = currentObject.getString("m_cid");
+                                    String categoryName = currentObject.getString("categoryname");
+                                    String categoryImage = currentObject.getString("categoryimage");
+
+                                    LinearLayout headerLayout = (LinearLayout) findViewById(R.id.header_categories_image);
+                                    LinearLayout.LayoutParams imageMargin = new LinearLayout.LayoutParams(150, 100);
+                                    imageMargin.setMargins(15, 0, 0, 0);
+                                    final ImageView imageView = new ImageView(HomepageActivity.this);
+                                    int catId = Integer.parseInt(categoryId);
+                                    imageView.setId(catId);
+                                    imageView.setLayoutParams(new LinearLayout.LayoutParams(150, 100));
+                                    imageView.setLayoutParams(imageMargin);
+                                    imageView.setMaxHeight(40);
+                                    imageView.setMaxWidth(40);
+                                    imageView.setLayoutParams(imageMargin);
+                                    Glide.with(imageView.getContext())
+                                            .load(categoryImage)
+                                            .into(imageView);
+                                    headerLayout.addView(imageView);
+                                    imageView.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            int categoryId = v.getId();
+                                            String masterCategoryId = String.valueOf(categoryId);
+                                            Intent intent = new Intent(HomepageActivity.this, ParentCategoryActivity.class);
+                                            intent.putExtra("masterCategoryId", masterCategoryId);
+                                            startActivity(intent);
+                                            }
+                                    });
+
+                                    LinearLayout headerLayoutText = (LinearLayout) findViewById(R.id.header_categories_text);
+                                    LinearLayout.LayoutParams textMargin = new LinearLayout.LayoutParams(150, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    textMargin.setMargins(15, 0, 0, 0);
+                                    final TextView textView = new TextView(HomepageActivity.this);
+                                    textView.setId(catId);
+                                    textView.setLayoutParams(new LinearLayout.LayoutParams(150, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                    textView.setText(categoryName);
+                                    textView.setTextSize(12);
+                                    textView.setMaxLines(2);
+                                    textView.setGravity(Gravity.CENTER);
+                                    textView.setTextColor(Color.WHITE);
+                                    textView.setLayoutParams(textMargin);
+                                    textView.setTypeface(Typeface.DEFAULT_BOLD);
+                                    headerLayoutText.addView(textView);
+                                }
                             }
                         } catch (JSONException e) {
                             //     Log.e("Volley", "Problem parsing the category JSON results", e);

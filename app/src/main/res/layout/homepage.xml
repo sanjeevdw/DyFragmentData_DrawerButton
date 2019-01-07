@@ -78,24 +78,39 @@
             android:background="#c7c6c6"
             />
     </RelativeLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:background="#e53935"
-            tools:context=".MainActivity">
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
-                style="@style/CategoryTab"
-                app:tabMode="scrollable"
-                app:tabTextColor="#f0ffffff"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
+        <HorizontalScrollView
+            android:id="@+id/horizontalScrollView_Color"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/search_rectangle_shape"
+            >
+            <LinearLayout
+                android:id="@+id/header_categories"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                >
+            <LinearLayout
+                android:id="@+id/header_categories_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                >
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/header_categories_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                >
+            </LinearLayout>
+            </LinearLayout>
+        </HorizontalScrollView>
     <TextView
         android:id="@+id/homepage_heading"
         android:layout_width="match_parent"

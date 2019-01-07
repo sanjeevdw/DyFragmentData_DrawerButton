@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -22,7 +23,7 @@ public class GridAdapter extends ArrayAdapter<GridCategory> {
 
            // create a new ImageView for each item referenced by the Adapter
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, final ViewGroup parent) {
 
             View gridItemView;
             if (convertView == null) {
@@ -40,9 +41,26 @@ public class GridAdapter extends ArrayAdapter<GridCategory> {
             Glide.with(gridImageView.getContext())
                         .load(currentCategory.getGridCategoryImage())
                       .into(gridImageView);
+            gridImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((GridView) parent).performItemClick(v, position, 0);
+                    }
+            });
+
+            TextView gridTextViewId = (TextView) gridItemView.findViewById(R.id.gridTextViewId);
+            gridTextViewId.setText(currentCategory.getGridCategoryId());
+            gridTextViewId.setVisibility(View.INVISIBLE);
 
             TextView gridTextView = (TextView) gridItemView.findViewById(R.id.gridTextView);
             gridTextView.setText(currentCategory.getGridCategoryName());
+            gridTextView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ((GridView) parent).performItemClick(v, position, 0);
+
+                }
+            });
 
             return gridItemView;
         }

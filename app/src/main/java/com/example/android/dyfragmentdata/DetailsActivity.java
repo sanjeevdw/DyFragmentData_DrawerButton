@@ -3,6 +3,7 @@ package com.example.android.dyfragmentdata;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -106,6 +107,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private String mPid;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String homepageInt = "";
+    private Bundle bundleHomepage;
+    private Bundle bundleParent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,6 +131,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         Intent parentCategoryIdIntent = getIntent();
         Bundle bundleMaster = masterCategoryIdIntent.getExtras();
         Bundle bundleParent = parentCategoryIdIntent.getExtras();
+        Intent homepageIntent = getIntent();
+        bundleHomepage = homepageIntent.getExtras();
 
         if (bundleMaster != null) {
             mCid = (String) bundleMaster.get("masterCategoryId");
@@ -134,6 +140,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         if (bundleParent != null) {
             mPid = (String) bundleParent.get("parentCategoryId");
+        }
+
+        if (bundleHomepage != null) {
+            homepageInt = (String) bundleHomepage.get("homepageToDetail");
         }
 
         session = new Session(this);
@@ -291,7 +301,11 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 categoryChildIntent.putExtra("parentCategoryId", mPid);
                 categoryChildIntent.putExtra("masterCategoryId", mCid);
                 startActivity(categoryChildIntent);
-                return true;
+                if (mPid == null){
+                    Intent homepageIntent = new Intent(DetailsActivity.this, HomepageActivity.class);
+                    startActivity(homepageIntent);
+                    }
+                    return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -496,12 +510,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                             JSONObject galleryObject = galleryThumbnailArray.getJSONObject(b);
                                             galleryThumbnail = galleryObject.getString("gallery_image");
                                             imageLayout = (LinearLayout) findViewById(R.id.thumbnail_image_container);
-                                            LinearLayout.LayoutParams imageMargin = new LinearLayout.LayoutParams(100, 100);
+                                            LinearLayout.LayoutParams imageMargin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 250);
                                             imageMargin.setMargins(15, 0, 0, 0);
                                             final ImageView image = new ImageView(DetailsActivity.this);
-                                                image.setLayoutParams(new android.view.ViewGroup.LayoutParams(150,150));
-                                                image.setMaxHeight(100);
-                                                image.setMaxWidth(100);
+                                            image.setId(b+1);
+                                                image.setLayoutParams(new android.view.ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,250));
+                                              //  image.setMaxHeight(100);
+                                             //   image.setMaxWidth(100);
                                             image.setLayoutParams(imageMargin);
                                                 Glide.with(image.getContext())
                                                         .load(galleryThumbnail)
@@ -510,9 +525,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 image.setOnClickListener(new View.OnClickListener() {
                                                 @Override
                                                 public void onClick(View view) {
-                                                    Drawable drawable = image.getDrawable();
+                                                    image.buildDrawingCache();
+                                                    Bitmap bitmap = image.getDrawingCache();
+                                                  //  Drawable drawable = image.getDrawable();
                                                     mainImageView = (ImageView) findViewById(R.id.main_image);
-                                                    mainImageView.setImageDrawable(drawable);
+                                                    mainImageView.setImageBitmap(bitmap);
+                                                  //  mainImageView.setImageDrawable(drawable);
+                                                  //  Glide.with(mainImageView.getContext())
+                                                   //         .load(galleryThumbnail)
+                                                   //         .into(mainImageView);
                                                  //   Glide.with(mainImageView.getContext())
                                                   //          .load(drawable)
                                                  //           .into(mainImageView);
@@ -520,7 +541,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                   //  Glide.with(mainImageView.getContext())
                                                     //        .load(galleryThumbnail)
                                                      //       .into(mainImageView);
-                                                    Toast.makeText(DetailsActivity.this, "Index " + index, LENGTH_SHORT).show();
+                                                 //   Toast.makeText(DetailsActivity.this, "Index " + index, LENGTH_SHORT).show();
                                                     }
                                                     });
 
@@ -603,7 +624,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                         colorClickedAttribute = attributeOne;
                                                         colorLayout.removeAllViews();
                                                       //  imageLayout.removeAllViews();
-                                                         Toast.makeText(DetailsActivity.this, "Index " + index, LENGTH_SHORT).show();
+                                                   //      Toast.makeText(DetailsActivity.this, "Index " + index, LENGTH_SHORT).show();
                                                        productsAttributesRequest();
                                                     }
                                                 });
@@ -664,7 +685,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                     public void onClick(View view) {
                                                         sizeButtonText = buttonSize.getText().toString();
                                                         sizeClickedAttribute = attributeTwo;
-                                                        Toast.makeText(DetailsActivity.this, "Index " + indexTwo, LENGTH_SHORT).show();
+                                                   //     Toast.makeText(DetailsActivity.this, "Index " + indexTwo, LENGTH_SHORT).show();
                                                         productsAttributesRequest();
                                                         sizeLayout.removeAllViews();
                                                        // imageLayout.removeAllViews();
@@ -871,7 +892,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                         colorButtonText = button.getText().toString();
                                                         colorClickedAttribute = attributeOne;
                                                         productsAttributesRequest();
-                                                        Toast.makeText(DetailsActivity.this, "Index" + index, LENGTH_SHORT).show();
+                                                      //  Toast.makeText(DetailsActivity.this, "Index" + index, LENGTH_SHORT).show();
                                                     }
                                                 });
                                                 colorLayout.addView(button);
@@ -930,7 +951,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                     public void onClick(View view) {
                                                         sizeButtonText = buttonSize.getText().toString();
                                                         sizeClickedAttribute = attributeTwo;
-                                                        Toast.makeText(DetailsActivity.this, "Index" + index, LENGTH_SHORT).show();
+                                                      //  Toast.makeText(DetailsActivity.this, "Index" + index, LENGTH_SHORT).show();
                                                         productsAttributesRequest();
                                                     }
                                                 });
@@ -966,10 +987,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     }
                                         }
                                         } catch (Exception e) {
-                            // If an error is thrown when executing any of the above statements in the "try" block,
-                            // catch the exception here, so the app doesn't crash. Print a log message
-                            // with the message from the exception.
-                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+
                         }
                         }
                 }, new Response.ErrorListener() {
@@ -1028,9 +1046,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
     private void sendWishlistRequest(String pid) {
 
-        // final String userId = String.valueOf(uid);
         final String productId = String.valueOf(pid);
-
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://www.godprice.com/api/whishlist_add.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,

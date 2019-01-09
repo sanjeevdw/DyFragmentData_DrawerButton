@@ -230,8 +230,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                             Toast.makeText(DetailsActivity.this, "Out of Stock", Toast.LENGTH_LONG).show();
                         }
                     Toast.makeText(DetailsActivity.this, "Please enter quantity less than "+ quantityProInt, LENGTH_SHORT).show();
-                    }
+                    } else if (cartQuantity == quantityProInt) {
                     addToCartRequest();
+                    }
                 }
                 }
         });
@@ -1001,7 +1002,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
     private void addToCartRequest() {
 
-        if (cartQuantity < quantityProInt) {
+        if (cartQuantity <= quantityProInt) {
             finalquantityCart = editTextQuantity.getText().toString();
         }
 

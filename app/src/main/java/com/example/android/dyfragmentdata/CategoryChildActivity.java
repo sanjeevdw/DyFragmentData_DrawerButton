@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -280,64 +281,77 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                             String trimResponse = response.substring(3);
                             String trimmedResponse = trimResponse.trim();
                             JSONObject jsonObject = new JSONObject(trimmedResponse);
-                            JSONArray data = jsonObject.getJSONArray("data");
-                            if (data.length() > 0) {
-                                //Loop the Array
-                                for (int i = 0; i < data.length(); i++) {
-                                    JSONObject currentObject = data.getJSONObject(i);
-                                    JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            if (statusInt == 200) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
 
-                                    for (int j = 0; j < currentProductDetail.length(); j++) {
-                                        //   JSONArray productDetail = new JSONArray("product_detail");
-                                        Log.e("Message", "loop");
-                                        HashMap<String, String> map = new HashMap<String, String>();
-                                        JSONObject e = currentProductDetail.getJSONObject(j);
+                                        for (int j = 0; j < currentProductDetail.length(); j++) {
+                                            //   JSONArray productDetail = new JSONArray("product_detail");
+                                            Log.e("Message", "loop");
+                                            HashMap<String, String> map = new HashMap<String, String>();
+                                            JSONObject e = currentProductDetail.getJSONObject(j);
 
-                                        String prodID = e.getString("product_id");
-                                        String productName = e.getString("productsname");
-                                        String productPrice = e.getString("price");
-                                        String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
-                                        String imageUrl = e.getString("feature_image");
-                                        String productRating = e.getString("rating");
-                                        String productWishlist = e.getString("is_whishlit");
+                                            String prodID = e.getString("product_id");
+                                            String productName = e.getString("productsname");
+                                            String productPrice = e.getString("price");
+                                            String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
+                                            String imageUrl = e.getString("feature_image");
+                                            String productRating = e.getString("rating");
+                                            String productWishlist = e.getString("is_whishlit");
 
-                                        Guide currentGuide = new Guide(prodID, productName, productPriceDollar, imageUrl, productRating, productWishlist);
-                                        temples.add(currentGuide);
+                                            Guide currentGuide = new Guide(prodID, productName, productPriceDollar, imageUrl, productRating, productWishlist);
+                                            temples.add(currentGuide);
 
-                                        adapter = new GuideAdapter(CategoryChildActivity.this, temples, R.color.temples_category);
-                                        listView = (ListView) findViewById(R.id.child_category_list);
-                                        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-                                        listView.setAdapter(adapter);
-                                        adapter.notifyDataSetChanged();
+                                            adapter = new GuideAdapter(CategoryChildActivity.this, temples, R.color.temples_category);
+                                            listView = (ListView) findViewById(R.id.child_category_list);
+                                            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+                                            listView.setAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
 
-                                        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                long viewId = view.getId();
-                                                getViewByPosition(position,listView);
+                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    long viewId = view.getId();
+                                                    getViewByPosition(position, listView);
 
-                                                if (viewId == R.id.button_details_two) {
-                                                    String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                    //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                    String productID = PPid.getText().toString().trim();
+                                                    if (viewId == R.id.button_details_two) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                        //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
 
-                                                    Intent intent = new Intent(CategoryChildActivity.this, DetailsActivity.class);
-                                                    intent.putExtra("ProductId", productID);
-                                                    intent.putExtra("masterCategoryId", mCid);
-                                                    intent.putExtra("parentCategoryId", mPid);
-                                                    startActivity(intent);
-                                                } else if(viewId == R.id.image_favorite) {
-                                                    String productId = listView.getItemAtPosition(position).toString().trim();
-                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                    String productID = PPid.getText().toString().trim();
+                                                        Intent intent = new Intent(CategoryChildActivity.this, DetailsActivity.class);
+                                                        intent.putExtra("ProductId", productID);
+                                                        intent.putExtra("masterCategoryId", mCid);
+                                                        intent.putExtra("parentCategoryId", mPid);
+                                                        startActivity(intent);
+                                                    } else if (viewId == R.id.image_favorite) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
                                                     }
-                                            }
-                                        });
+                                                }
+                                            });
 
+                                        }
                                     }
                                 }
+                            }
+                            else if (statusInt == 201) {
+                                String message = jsonObject.getString("message");
+                                LinearLayout linearLayoutGrid = (LinearLayout) findViewById(R.id.listview_layout);
+                                linearLayoutGrid.setVisibility(View.GONE);
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
                             }
                         } catch (JSONException e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,

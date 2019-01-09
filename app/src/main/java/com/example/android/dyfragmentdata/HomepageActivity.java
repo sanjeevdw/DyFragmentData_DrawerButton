@@ -187,32 +187,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         gridViewTwo.setAdapter(gridAdapter);
         gridViewThree.setAdapter(gridAdapter); */
 
-        TextView seeMoreTv = findViewById(R.id.see_more_tv);
-        TextView seeMoreTvTwo = findViewById(R.id.see_more_tv_two);
-        TextView seeMoreTvThree = findViewById(R.id.see_more_tv_three);
-        seeMoreTv.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentCategories = new Intent(HomepageActivity.this, MainActivity.class);
-                startActivity(intentCategories);
-            }
-        });
-        seeMoreTvTwo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentCategories = new Intent(HomepageActivity.this, MainActivity.class);
-                startActivity(intentCategories);
-            }
-        });
-        seeMoreTvThree.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentCategories = new Intent(HomepageActivity.this, MainActivity.class);
-                startActivity(intentCategories);
-            }
-        });
-
-       // ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+      // ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
 
         // Create an adapter that knows which fragment should be shown on each page.
 
@@ -491,7 +466,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
                                                     TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                     String productID = PPid.getText().toString().trim();
-String homepageToDetail = "homepageToDetail";
+                                                    String homepageToDetail = "homepageToDetail";
                                                     Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
                                                     intent.putExtra("ProductId", productID);
                                                     intent.putExtra("homepageToDetail", homepageToDetail);
@@ -506,6 +481,30 @@ String homepageToDetail = "homepageToDetail";
                                         });
 
                                         listViewTwo.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+
+                                                getViewByPosition(position,listView);
+
+                                                if (viewId == R.id.button_details_two) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+
+                                                    Intent intent = new Intent(HomepageActivity.this, DetailsActivity.class);
+                                                    intent.putExtra("ProductId", productID);
+                                                    startActivity(intent);
+                                                } else if(viewId == R.id.image_favorite) {
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
+                                                    sendWishlistRequest(productID);
+                                                }
+                                            }
+                                        });
+
+                                        listViewThree.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                 long viewId = view.getId();
@@ -668,6 +667,8 @@ String homepageToDetail = "homepageToDetail";
 
                                                     if (viewId == R.id.button_details_two) {
                                                         String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                        //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
                                                         TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                         String productID = PPid.getText().toString().trim();
 

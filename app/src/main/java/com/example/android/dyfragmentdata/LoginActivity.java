@@ -273,6 +273,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
+
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();

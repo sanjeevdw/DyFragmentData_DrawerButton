@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -273,42 +274,54 @@ public class ParentCategoryActivity extends AppCompatActivity implements Navigat
                             String trimResponse = response.substring(3);
                             String trimmedResponse = trimResponse.trim();
                             JSONObject jsonObject = new JSONObject(trimmedResponse);
-                            JSONArray data = jsonObject.getJSONArray("data");
-                            if (data.length() > 0) {
-                                //Loop the Array
-                                for (int i = 0; i < data.length(); i++) {
-                                    JSONObject currentObject = data.getJSONObject(i);
-                                    String parentCategoryId = currentObject.getString("p_cid");
-                                    String categoryId = currentObject.getString("m_cid");
-                                    String categoryName = currentObject.getString("categoryname");
-                                    String categoryImage = currentObject.getString("categoryimage");
-                                    parentCategory = new ParentCategory(parentCategoryId, categoryId, categoryName, categoryImage);
-                                    gridParentCategories.add(parentCategory);
-                                    gridParentAdapter = new GridParentAdapter(ParentCategoryActivity.this, gridParentCategories);
-                                    // Get a reference to the GridView, and attach the adapter to the gridView.
-                                    gridView = (GridView) findViewById(R.id.gridView);
-                                    gridView.setAdapter(gridParentAdapter);
-                                    gridParentAdapter.notifyDataSetChanged();
-                                    gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            long viewId = view.getId();
-                                            getViewByPosition(position,gridView);
-                                            String productId = gridView.getItemAtPosition(position).toString().trim();
-                                            TextView parentCategoryIdClicked = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewParentId);
-                                            String parentCategoryId = parentCategoryIdClicked.getText().toString().trim();
-                                            TextView mCid = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewCategoryId);
-                                            String masterCategoryId = mCid.getText().toString().trim();
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            if (statusInt == 1) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        String parentCategoryId = currentObject.getString("p_cid");
+                                        String categoryId = currentObject.getString("m_cid");
+                                        String categoryName = currentObject.getString("categoryname");
+                                        String categoryImage = currentObject.getString("categoryimage");
+                                        parentCategory = new ParentCategory(parentCategoryId, categoryId, categoryName, categoryImage);
+                                        gridParentCategories.add(parentCategory);
+                                        gridParentAdapter = new GridParentAdapter(ParentCategoryActivity.this, gridParentCategories);
+                                        // Get a reference to the GridView, and attach the adapter to the gridView.
+                                        gridView = (GridView) findViewById(R.id.gridView);
+                                        gridView.setAdapter(gridParentAdapter);
+                                        gridParentAdapter.notifyDataSetChanged();
+                                        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                long viewId = view.getId();
+                                                getViewByPosition(position,gridView);
+                                                String productId = gridView.getItemAtPosition(position).toString().trim();
+                                                TextView parentCategoryIdClicked = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewParentId);
+                                                String parentCategoryId = parentCategoryIdClicked.getText().toString().trim();
+                                                TextView mCid = (TextView) gridView.getChildAt(childIndex).findViewById(R.id.gridTextViewCategoryId);
+                                                String masterCategoryId = mCid.getText().toString().trim();
 
-                                            Intent intent = new Intent(ParentCategoryActivity.this, CategoryChildActivity.class);
-                                            intent.putExtra("parentCategoryId", parentCategoryId);
-                                            intent.putExtra("masterCategoryId", masterCategoryId);
-                                            startActivity(intent);
-                                        }
-                                    });
+                                                Intent intent = new Intent(ParentCategoryActivity.this, CategoryChildActivity.class);
+                                                intent.putExtra("parentCategoryId", parentCategoryId);
+                                                intent.putExtra("masterCategoryId", masterCategoryId);
+                                                startActivity(intent);
+                                            }
+                                        });
+                                    }
                                 }
-                            }
-                        } catch (JSONException e) {
+                                } else if (statusInt == 0) {
+                                String message = jsonObject.getString("message");
+                                LinearLayout linearLayoutGrid = (LinearLayout) findViewById(R.id.gridView_layout);
+                                linearLayoutGrid.setVisibility(View.GONE);
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                                }
+                            } catch (JSONException e) {
                             //     Log.e("Volley", "Problem parsing the category JSON results", e);
                         }
                     }

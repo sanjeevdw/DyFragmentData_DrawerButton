@@ -23,7 +23,30 @@
             android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
             android:elevation="4dp"
             android:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
-        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <LinearLayout
+            android:id="@+id/response_message_linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="70dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="15dp"
+            android:visibility="gone"
+            android:background="@drawable/message_response_shape"
+            >
+            <TextView
+                android:id="@+id/response_message_two"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:padding="5dp"
+                android:textColor="#ffffff"
+                />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/listview_layout"
+            xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical" android:layout_width="match_parent"
             android:layout_height="wrap_content">
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"

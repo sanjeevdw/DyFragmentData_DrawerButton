@@ -159,41 +159,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
 
-    <RelativeLayout
-        android:id="@+id/see_more_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rectangle_shape">
-    <TextView
-        android:id="@+id/see_more_tv"
-        android:layout_width="wrap_content"
-        android:textAppearance="?android:textAppearanceMedium"
-        android:textColor="#e53935"
-        android:gravity="bottom"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="10dp"
-        android:textSize="14sp"
-        android:fontFamily="sans-serif"
-        android:text="@string/see_more"
-        android:layout_height="wrap_content"
-        />
-        <TextView
-            android:id="@+id/less_than_sign"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:textAlignment="center"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textStyle="bold"
-            android:text="@string/less_than_sign"
-            android:textColor="#e53935"
-            android:layout_marginEnd="12dp"
-            />
-    </RelativeLayout>
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/grid_category_heading_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -259,41 +225,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
 
-    <RelativeLayout
-        android:id="@+id/see_more_container_two"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rectangle_shape">
-        <TextView
-            android:id="@+id/see_more_tv_two"
-            android:layout_width="wrap_content"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#e53935"
-            android:gravity="bottom"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="10dp"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif"
-            android:text="@string/see_more"
-            android:layout_height="wrap_content"
-            />
-        <TextView
-            android:id="@+id/less_than_sign_two"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:textAlignment="center"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textStyle="bold"
-            android:text="@string/less_than_sign"
-            android:textColor="#e53935"
-            android:layout_marginEnd="12dp"
-            />
-    </RelativeLayout>
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/grid_category_heading_container_two"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -359,41 +291,7 @@
         android:layout_width="match_parent"
         android:layout_height="300dp"/>
 
-    <RelativeLayout
-        android:id="@+id/see_more_container_three"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/rectangle_shape">
-        <TextView
-            android:id="@+id/see_more_tv_three"
-            android:layout_width="wrap_content"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#e53935"
-            android:gravity="bottom"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginStart="10dp"
-            android:textSize="14sp"
-            android:fontFamily="sans-serif"
-            android:text="@string/see_more"
-            android:layout_height="wrap_content"
-            />
-        <TextView
-            android:id="@+id/less_than_sign_three"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:textAlignment="center"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textStyle="bold"
-            android:text="@string/less_than_sign"
-            android:textColor="#e53935"
-            android:layout_marginEnd="12dp"
-            />
-    </RelativeLayout>
-    <LinearLayout
+        <LinearLayout
         android:id="@+id/grid_category_heading_container_three"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

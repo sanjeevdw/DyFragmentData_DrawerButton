@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:minHeight="@dimen/list_item_height"
     android:background="@color/tan_background"
+    android:layout_marginBottom="5dp"
     android:orientation="horizontal">
     <ImageView
         android:id="@+id/image"
@@ -18,15 +19,17 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:layout_marginStart="5dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/name_view"
             android:layout_marginTop="10dp"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#424242"
             android:gravity="bottom"
-            android:textSize="16sp"
+            android:maxLines="3"
+            android:textSize="15sp"
             android:fontFamily="sans-serif"
             android:layout_height="wrap_content"/>
 
@@ -36,7 +39,7 @@
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#0b0b0b"
             android:layout_marginTop="5dp"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:gravity="top"
             android:textStyle="bold"
             android:fontFamily="sans-serif"
@@ -47,7 +50,7 @@
             android:layout_width="match_parent"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="#424242"
-            android:textSize="16sp"
+            android:textSize="3sp"
             android:fontFamily="sans-serif"
             android:layout_height="wrap_content"
             tools:text="product id"/>
@@ -59,11 +62,47 @@
             />
     </LinearLayout>
     <LinearLayout
+        android:id="@+id/master_category_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/gridTextViewParentId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            tools:text="Grid List Id" />
+        <TextView
+            android:id="@+id/gridTextViewCategoryId"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center"
+            android:textStyle="bold"
+            android:layout_marginTop="5dp"
+            android:textSize="12sp"
+            android:textAlignment="center"
+            tools:text="Grid List Text" />
+    </LinearLayout>
+    <LinearLayout
         android:id="@+id/text_container_two"
         android:layout_width="wrap_content"
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/wishlist_number"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="#424242"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:layout_height="wrap_content"/>
         <ImageView
             android:id="@+id/image_favorite"
             android:layout_width="50dp"

@@ -110,9 +110,11 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private String homepageInt = "";
     private Bundle bundleHomepage;
     private Bundle bundleParent;
+    private ImageView productFavoriteImageView;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+        protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Set the content of the activity to use the activity_category.xml layout file
@@ -150,6 +152,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         sessionToken = session.getusertoken();
 
         relatedProductsNetworkRequest();
+       // categoryChildNetworkRequest();
         listView = (ListView) findViewById(R.id.list);
         temples = new ArrayList<Guide>();
         products = new ArrayList<ProductDetails>();
@@ -182,36 +185,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             showFullNavItem();
         }
 
-      //  mainImageView = (ImageView) findViewById(R.id.main_image);
-        // mainImageView.setImageResource(R.drawable.product_image);
-
-     /*   ImageButton thumbOneImageView = (ImageButton) findViewById(R.id.thumbnail_image_one);
-        thumbOneImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.product_image);
-            }
-        });
-
-        ImageButton thumbTwoImageView = (ImageButton ) findViewById(R.id.thumbnail_image_two);
-        thumbTwoImageView.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.product_image_two);
-
-            }
-        });
-
-        ImageButton thumbThreeImageView = (ImageButton) findViewById(R.id.thumbnail_image_three);
-        thumbThreeImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mainImageView.setImageResource(R.drawable.product_image_three);
-            }
-        }); */
-
         editTextQuantity = (EditText) findViewById(R.id.quantity_et);
+
+        productFavoriteImageView = (ImageView) findViewById(R.id.product_favorite);
+        productFavoriteImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getImageResource(productFavoriteImageView);
+                }
+        });
 
         Button buttonCart = (Button) findViewById(R.id.add_to_cart_button);
 
@@ -232,6 +214,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                     Toast.makeText(DetailsActivity.this, "Please enter quantity less than "+ quantityProInt, LENGTH_SHORT).show();
                     } else if (cartQuantity == quantityProInt) {
                     addToCartRequest();
+                    } else {
+                    addToCartRequest();
                     }
                 }
                 }
@@ -239,7 +223,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         }
 
-    public View getViewByPosition(int pos, ListView listView) {
+        public View getViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
         final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
 
@@ -363,7 +347,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentWishlist);
                 break;
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", LENGTH_SHORT).show();
+               // Toast.makeText(this, "NavigationClick", LENGTH_SHORT).show();
                 break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
@@ -400,6 +384,108 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         }
         return false;
     }
+
+  /*  public void categoryChildNetworkRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/product_list.php?m_cid="+mCid+"&p_cid="+mPid+"&userid="+sessionToken;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            if (statusInt == 200) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+
+                                        for (int j = 0; j < currentProductDetail.length(); j++) {
+                                            //   JSONArray productDetail = new JSONArray("product_detail");
+                                            Log.e("Message", "loop");
+                                            HashMap<String, String> map = new HashMap<String, String>();
+                                            JSONObject e = currentProductDetail.getJSONObject(j);
+
+                                            String prodID = e.getString("product_id");
+                                            String productName = e.getString("productsname");
+                                            String productPrice = e.getString("price");
+                                            String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
+                                            String imageUrl = e.getString("feature_image");
+                                            String productRating = e.getString("rating");
+                                            String productWishlist = e.getString("is_whishlit");
+
+                                            Guide currentGuide = new Guide(prodID, productName, productPriceDollar, imageUrl, productRating, productWishlist);
+                                            temples.add(currentGuide);
+
+                                            adapter = new GuideAdapter(DetailsActivity.this, temples, R.color.temples_category);
+                                            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+                                            listView.setAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
+
+                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    long viewId = view.getId();
+                                                    getViewByPosition(position, listView);
+
+                                                    if (viewId == R.id.button_details_two) {
+                                                        String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                        //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
+                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productID = PPid.getText().toString().trim();
+
+                                                        Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                        intent.putExtra("ProductId", productID);
+                                                        intent.putExtra("masterCategoryId", mCid);
+                                                        intent.putExtra("parentCategoryId", mPid);
+                                                        startActivity(intent);
+                                                    } else if (viewId == R.id.image_favorite) {
+                                                        if (sessionToken.isEmpty()) {
+                                                            Intent intentLoginforWishlist = new Intent(DetailsActivity.this, LoginActivity.class);
+                                                            startActivity(intentLoginforWishlist);
+                                                        } else {
+                                                            String productId = listView.getItemAtPosition(position).toString().trim();
+                                                            TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                            String productID = PPid.getText().toString().trim();
+                                                            TextView wishlistId = (TextView) listView.getChildAt(childIndex).findViewById(R.id.wishlist_number);
+                                                            String wishlistID = wishlistId.getText().toString().trim();
+                                                            int wishlistInt = Integer.parseInt(wishlistID);
+                                                            if (wishlistInt == 0) {
+                                                                sendWishlistRequest(productID, sessionToken);
+                                                            } else {
+                                                                wishlistProductRemoveRequest(productID, sessionToken);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                }
+                            }
+                            } catch (JSONException e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(stringRequest);
+    } */
 
     private void relatedProductsNetworkRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -479,7 +565,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 .authority("www.godprice.com")
                 .appendPath("api")
                 .appendPath("products.php")
-                .appendQueryParameter("product_id", pid);
+                .appendQueryParameter("product_id", pid)
+                .appendQueryParameter("userid", sessionToken);
         String myUrl = builder.build().toString();
         String url = myUrl;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -503,6 +590,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     String productDetailsDescription = currentProductDetail.getString("description");
                                     String productDetailsPrice = currentProductDetail.getString("discount_percent");
                                     String imageUrlDetails = currentProductDetail.getString("featured_image");
+                                    String productWishlist = currentProductDetail.getString("is_whishlit");
 
                                     final JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
                                     if (galleryThumbnailArray.length() > 0) {
@@ -531,18 +619,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                   //  Drawable drawable = image.getDrawable();
                                                     mainImageView = (ImageView) findViewById(R.id.main_image);
                                                     mainImageView.setImageBitmap(bitmap);
-                                                  //  mainImageView.setImageDrawable(drawable);
-                                                  //  Glide.with(mainImageView.getContext())
-                                                   //         .load(galleryThumbnail)
-                                                   //         .into(mainImageView);
-                                                 //   Glide.with(mainImageView.getContext())
-                                                  //          .load(drawable)
-                                                 //           .into(mainImageView);
-                                                   // mainImageView.setImageResource(galleryThumbnail);
-                                                  //  Glide.with(mainImageView.getContext())
-                                                    //        .load(galleryThumbnail)
-                                                     //       .into(mainImageView);
-                                                 //   Toast.makeText(DetailsActivity.this, "Index " + index, LENGTH_SHORT).show();
+
                                                     }
                                                     });
 
@@ -584,8 +661,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 isAttAvailableColor = currentObjectValueOne.getString("is_att_availble");
                                                 final String attributeOne  = currentObjectValueOne.getString("att1");
                                                 int colorNonSelectedId = Integer.parseInt(isAttAvailableColor);
-                                               // stringBuilder.append(attributeColorValue);
-                                             //   stringBuilder.append(" ");
                                                 colorLayout = (LinearLayout) findViewById(R.id.text_color_container_two);
                                                 final Button button = new Button(DetailsActivity.this);
                                                 button.setId(k+1);
@@ -606,8 +681,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                   //  button.setBackgroundColor(Color.GRAY);
                                                     button.setTextColor(Color.parseColor("#424242"));
                                                     button.setBackground(getResources().getDrawable(R.drawable.details_button_gray));
-
-                                                }
+                                                    }
                                                 else if (colorNonSelectedId == 1) {
                                                   //  button.setBackgroundColor(Color.GRAY);
                                                     button.setTextColor(Color.parseColor("#424242"));
@@ -719,6 +793,36 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     TextView descriptionView = (TextView) findViewById(R.id.description_tv);
                                     descriptionView.setText(productDetailsDescription);
 
+                                    ImageView imageViewWishlist = (ImageView) findViewById(R.id.product_favorite);
+                                    final int userWishlist = Integer.parseInt(productWishlist);
+                                    if (userWishlist == 1) {
+                                        imageViewWishlist.setImageResource(R.drawable.red_wishlist);
+                                        imageViewWishlist.setTag(R.drawable.red_wishlist);
+                                    } else if (userWishlist == 0) {
+                                        imageViewWishlist.setImageResource(R.drawable.favorite_icon);
+                                        imageViewWishlist.setTag(R.drawable.favorite_icon);
+                                    }
+                                    imageViewWishlist.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View view) {
+                                            ImageView imageView = (ImageView) view;
+                                            assert (R.id.product_favorite == imageView.getId());
+
+                                            // See here
+                                            Integer integer = (Integer) imageView.getTag();
+                                            integer = integer == null ? 0 : integer;
+                                            switch (integer) {
+                                                case R.drawable.favorite_icon:
+                                                    sendWishlistRequest(pid, sessionToken);
+                                                    break;
+                                                    case R.drawable.red_wishlist:
+                                                    wishlistProductRemoveRequest(pid, sessionToken);
+                                                default:
+                                                    break;
+                                            }
+                                        }
+                                    });
+
                                     ImageView productImageView = (ImageView) findViewById(R.id.main_image);
 
                                     Glide.with(productImageView.getContext())
@@ -734,8 +838,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
                                             if (viewId == R.id.button_details_two) {
                                                 String productId = listView.getItemAtPosition(position).toString().trim();
-                                                //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
                                                 TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                 String productID = PPid.getText().toString().trim();
 
@@ -746,7 +848,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 String productId = listView.getItemAtPosition(position).toString().trim();
                                                 TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                 String productID = PPid.getText().toString().trim();
-                                                sendWishlistRequest(productID);
+                                                sendWishlistRequest(productID, sessionToken);
                                             }
                                         }
                                     });
@@ -1017,7 +1119,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                         try {
                             Intent intentCart = new Intent(DetailsActivity.this, CartActivity.class);
                             startActivity(intentCart);
-                            Toast.makeText(DetailsActivity.this, "Added to cart successfully", LENGTH_SHORT).show();
+                          //  Toast.makeText(DetailsActivity.this, "Added to cart successfully", LENGTH_SHORT).show();
                         } catch (Exception e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,
                             // catch the exception here, so the app doesn't crash. Print a log message
@@ -1045,15 +1147,20 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         queue.add(stringRequest);
     }
 
-    private void sendWishlistRequest(String pid) {
+    private void sendWishlistRequest(String pid, String userId) {
 
+        // final String userId = String.valueOf(uid);
         final String productId = String.valueOf(pid);
+        final String UserID = String.valueOf(userId);
+
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://www.godprice.com/api/whishlist_add.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
+                        productsDetailsRequest();
+                      //  categoryChildNetworkRequest();
                         Toast.makeText(DetailsActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
@@ -1066,13 +1173,53 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         }) { @Override
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", sessionToken);
+            params.put("userid", UserID);
             params.put("pid", productId);
             return params;
         }
         };
         queue.add(stringRequest);
     }
+
+    private void wishlistProductRemoveRequest(String productID, String userId) {
+        final String ProductID = productID;
+        final String UserId = userId;
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist_delete.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            productsDetailsRequest();
+                            }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+
+            }
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", UserId);
+            params.put("pid", ProductID);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private int getImageResource(ImageView imageView) {
+        return (Integer) imageView.getTag();
+        }
 }
 
 

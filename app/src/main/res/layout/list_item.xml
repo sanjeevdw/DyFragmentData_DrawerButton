@@ -18,6 +18,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
+        android:layout_marginStart="5dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/name_view"
@@ -64,6 +65,14 @@
         android:layout_marginTop="10dp"
         android:layout_height="wrap_content"
         android:orientation="vertical">
+        <TextView
+            android:id="@+id/wishlist_number"
+            android:layout_width="wrap_content"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="#424242"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif"
+            android:layout_height="wrap_content"/>
         <ImageView
             android:id="@+id/image_favorite"
             android:layout_width="50dp"

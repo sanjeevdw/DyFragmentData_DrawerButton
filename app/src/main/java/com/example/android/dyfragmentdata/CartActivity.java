@@ -95,7 +95,6 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();
-         //   sessionToken = usernameGoogle;
             sessionGoogleEmail = account.getEmail();
             registerNetworkRequest(usernameGoogle, sessionGoogleEmail);
             if (sessionToken.isEmpty()) {
@@ -222,9 +221,6 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
     public boolean onOptionsItemSelected(MenuItem item) {
 
         switch (item.getItemId()) {
-    /*        case_tab R.id.sign_out_menu:
-                AuthUI.getInstance().signOut(this);
-                return true; */
             case R.id.action_drawer_signin:
                 if (!sessionToken.isEmpty()) {
                     Intent intentUpdateProfile = new Intent(this, ProfileActivity.class);
@@ -301,7 +297,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 break;
 
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;
             case R.id.nav_checkout:
@@ -417,7 +413,8 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                                         String productNameCart = currentObjectCart.getString("product_name");
                                         String productCartQuantity = currentObjectCart.getString("quantity");
                                         String productPriceCart = currentObjectCart.getString("price");
-                                        CartData currentData = new CartData(productId, productCartId, productNameCart, productCartQuantity, productPriceCart, productImageCart);
+                                        String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPriceCart;
+                                        CartData currentData = new CartData(productId, productCartId, productNameCart, productCartQuantity, productPriceDollar, productImageCart);
                                         cartItems.add(currentData);
                                         cartAdapter = new CartAdapter(CartActivity.this, cartItems);
                                         //   Toast.makeText(CartActivity.this, "Cart response", LENGTH_SHORT).show();
@@ -428,11 +425,12 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                                     JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
                                     String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
                                     String cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                    String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + cartTotalAmount;
                                     TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
                                     noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
 
                                     TextView totalAmountCart = (TextView) findViewById(R.id.header_text_total_amount);
-                                    totalAmountCart.setText(cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
+                                    totalAmountCart.setText(productPriceDollar + " " + getResources().getString(R.string.cart_total_amount));
                                     listView.setAdapter(cartAdapter);
                                     cartAdapter.notifyDataSetChanged();
 
@@ -449,11 +447,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                                                 cartIDUpdated = cardIdView.getText().toString().trim();
 
                                                 cartUpdateRequest();
-                                                // String productId = listView.getItemAtPosition(position).toString().trim();
-                                                //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                                // TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                // String productID = PPid.getText().toString().trim();
+
                                             } else if (viewId == R.id.button_delete) {
                                                 TextView cardIdView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
                                                 cartIDDelete = cardIdView.getText().toString().trim();

@@ -315,7 +315,34 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
-            updateUI(account);
+            if (account != null) {
+                usernameGoogle = account.getDisplayName();
+                sessionGoogleEmail = account.getEmail();
+                session.setusename(usernameGoogle);
+                session.setUserEmail(sessionGoogleEmail);
+                navigationView = findViewById(R.id.nav_view);
+                View header = navigationView.getHeaderView(0);
+                TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                sessionUserName = session.getusename();
+                sessionUserEmail = session.getUserEmail();
+                loggedInUserName.setText(sessionUserName);
+                loggedInUserEmail.setText(sessionUserEmail);
+                registerNetworkRequest(username, email);
+                updateUI(account);
+            }
+            else {
+                if (sessionToken.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                    TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                    loggedInUserName.setText(R.string.header_name);
+                    loggedInUserEmail.setVisibility(View.GONE);
+                }
+            }
         }catch (ApiException e) {
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
             updateUI(null);
@@ -369,6 +396,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         }
 
     public void updateUI(Object o) {
+
         FirebaseUser user = mFirebaseAuth.getCurrentUser();
         if (user != null) {
             username = user.getDisplayName();
@@ -568,7 +596,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 startActivity(intentWishlist);
                 break;
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+              //  Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;
             case R.id.nav_checkout:

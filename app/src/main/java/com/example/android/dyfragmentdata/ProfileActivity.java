@@ -245,7 +245,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentWishlist);
                 break;
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;
             case R.id.nav_checkout:

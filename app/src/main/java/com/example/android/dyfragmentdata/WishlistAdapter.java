@@ -41,6 +41,7 @@ public class WishlistAdapter extends ArrayAdapter<WishlistData> {
 
         TextView productIdView = (TextView) itemListView.findViewById(R.id.textView_product_id);
         productIdView.setText(currentWishlistDetails.getProductId());
+        productIdView.setVisibility(View.INVISIBLE);
 
         TextView productNameView = (TextView) itemListView.findViewById(R.id.textView_product_title);
         productNameView.setText(currentWishlistDetails.getProductName());

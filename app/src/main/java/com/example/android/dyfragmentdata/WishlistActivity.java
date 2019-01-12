@@ -84,8 +84,6 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();
-            sessionToken = usernameGoogle;
-            sessionGoogleEmil = account.getEmail();
             if (sessionToken.isEmpty()) {
                 navigationView = findViewById(R.id.nav_view);
                 navigationView.getMenu().clear();
@@ -232,7 +230,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
                 break;
             case R.id.nav_checkout:
@@ -309,7 +307,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                                                 String productId = listView.getItemAtPosition(position).toString().trim();
                                                 TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.textView_product_id);
                                                 productID = PPid.getText().toString().trim();
-                                                wishlistProductRemoveRequest(productID);
+                                                wishlistProductRemoveRequest(productID, sessionToken);
                                             } else if (viewId == R.id.textView_product_title) {
                                                 String productId = listView.getItemAtPosition(position).toString().trim();
                                                 TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.textView_product_id);
@@ -342,8 +340,9 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         queue.add(stringRequest);
     }
 
-    private void wishlistProductRemoveRequest(String productID) {
+    private void wishlistProductRemoveRequest(String productID, String userId) {
         final String ProductID = productID;
+        final String UserId = userId;
 
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://www.godprice.com/api/whishlist_delete.php";
@@ -356,6 +355,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                             jsonResponse = jsonResponse.substring(3);
                             JSONObject jsonObject = new JSONObject(jsonResponse);
                             wishlistAdapter.clear();
+                            wishlistNetworkRequest(sessionToken);
                         }catch(Exception e) {
                             e.printStackTrace();
                         }
@@ -369,7 +369,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         }) { @Override
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", sessionToken);
+            params.put("userid", UserId);
             params.put("pid", ProductID);
             return params;
         }

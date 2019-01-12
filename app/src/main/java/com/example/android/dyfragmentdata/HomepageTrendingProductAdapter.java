@@ -1,6 +1,5 @@
 package com.example.android.dyfragmentdata;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,8 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Filter;
-import android.widget.Filterable;
+import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,15 +18,15 @@ import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
-public class GuideAdapter extends ArrayAdapter<Guide> {
+public class HomepageTrendingProductAdapter extends ArrayAdapter<HomepageTrendingProductData> {
 
 // Resource ID for the Background color for this list of words.
 
     private int mColorResourceId;
     //private static final String LOG_TAG = GuideAdapter.class.getSimpleName();
 
-    public GuideAdapter(Context context, ArrayList<Guide> temples, int colorResourceId) {
-        super(context, 0, temples);
+    public HomepageTrendingProductAdapter(Context context, ArrayList<HomepageTrendingProductData> trendingProductData, int colorResourceId) {
+        super(context, 0, trendingProductData);
         mColorResourceId = colorResourceId;
     }
 
@@ -43,24 +41,24 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
             itemListView = LayoutInflater.from(getContext()).inflate(R.layout.child_category_list_items, parent, false);
         }
 
-        Guide currentGuide = getItem(position);
+        HomepageTrendingProductData currentHomepageTrendingProductData = getItem(position);
 
         TextView productIdView = (TextView) itemListView.findViewById(R.id.product_id);
-        productIdView.setText(currentGuide.getProductId());
+        productIdView.setText(currentHomepageTrendingProductData.getProductId());
         productIdView.setVisibility(View.INVISIBLE);
 
         TextView nameTempleView = (TextView) itemListView.findViewById(R.id.name_view);
-        nameTempleView.setText(currentGuide.getTempleName());
+        nameTempleView.setText(currentHomepageTrendingProductData.getTempleName());
 
         TextView locationTempleView = (TextView) itemListView.findViewById(R.id.location_view);
-        locationTempleView.setText(currentGuide.getTempleLocation());
+        locationTempleView.setText(currentHomepageTrendingProductData.getTempleLocation());
 
         ImageView imageTempleView = (ImageView) itemListView.findViewById(R.id.image);
 
-        if (currentGuide != null) {
+        if (currentHomepageTrendingProductData != null) {
 
             Glide.with(imageTempleView.getContext())
-                    .load(currentGuide.getImageUrl())
+                    .load(currentHomepageTrendingProductData.getImageUrl())
                     .into(imageTempleView);
         }
 
@@ -69,16 +67,20 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
             @Override
             public void onClick(View v) {
                 ((ListView) parent).performItemClick(v, position, 0);
-                }
+
+                //   int position = getPosition();
+                //  long id = getItemId(position);
+                //  ((CatalogActivity) context).onButtonClick(id);
+            }
         });
 
         TextView wishlistIdView = (TextView) itemListView.findViewById(R.id.wishlist_number);
-        wishlistIdView.setText(currentGuide.getWishlist());
+        wishlistIdView.setText(currentHomepageTrendingProductData.getWishlist());
         wishlistIdView.setVisibility(View.INVISIBLE);
 
         ImageView wishlistImage = (ImageView) itemListView.findViewById(R.id.image_favorite);
 
-        int userWishlist = Integer.parseInt(currentGuide.getWishlist());
+        int userWishlist = Integer.parseInt(currentHomepageTrendingProductData.getWishlist());
         if (userWishlist == 1) {
             wishlistImage.setImageResource(R.drawable.red_wishlist);
         } else if (userWishlist == 0) {
@@ -90,41 +92,31 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
             public void onClick(View v) {
                 ((ListView) parent).performItemClick(v, position, 0);
 
-                }
+                //   int position = getPosition();
+                //  long id = getItemId(position);
+                //  ((CatalogActivity) context).onButtonClick(id);
+            }
         });
 
         ImageView ratingView = (ImageView) itemListView.findViewById(R.id.image_rating);
-        int reviewRating = Integer.parseInt(currentGuide.getRating());
-       switch(reviewRating) {
-           case 1:
-               ratingView.setImageResource(R.drawable.one_star_rating);
-           break;
-           case 2:
-               ratingView.setImageResource(R.drawable.two_star_rating);
-               break;
-           case 3:
-               ratingView.setImageResource(R.drawable.three_star_rating);
-               break;
-           case 4:
-               ratingView.setImageResource(R.drawable.four_star_rating);
-               break;
-           case 5:
-               ratingView.setImageResource(R.drawable.four_star_rating);
-               break;
-       }
-     //   if (reviewRating == 4) {
-     //   ratingView.setImageResource(R.drawable.four_star_rating);
-     //   }
-
-      //  if (currentGuide.hasImage()) {
-
-         //   imageTempleView.setImageResource(currentGuide.getImageResourceId());
-       //     imageTempleView.setVisibility(View.VISIBLE);
-     //   }
-    //   else {
-     //       imageTempleView.setVisibility(View.GONE);
-     //   }
-
+        int reviewRating = Integer.parseInt(currentHomepageTrendingProductData.getRating());
+        switch(reviewRating) {
+            case 1:
+                ratingView.setImageResource(R.drawable.one_star_rating);
+                break;
+            case 2:
+                ratingView.setImageResource(R.drawable.two_star_rating);
+                break;
+            case 3:
+                ratingView.setImageResource(R.drawable.three_star_rating);
+                break;
+            case 4:
+                ratingView.setImageResource(R.drawable.four_star_rating);
+                break;
+            case 5:
+                ratingView.setImageResource(R.drawable.four_star_rating);
+                break;
+        }
         // Set the theme color for the list items.
 
         View textContainer = itemListView.findViewById(R.id.text_container);
@@ -135,8 +127,5 @@ public class GuideAdapter extends ArrayAdapter<Guide> {
 
         return itemListView;
         // return super.getView(position, convertView, parent);
-
-
     }
 }
-

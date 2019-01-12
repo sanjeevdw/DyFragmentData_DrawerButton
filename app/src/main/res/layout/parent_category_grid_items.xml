@@ -58,9 +58,10 @@
     </LinearLayout>
     <Button
         android:id="@+id/parent_view_products"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="25dp"
         android:text="@string/view_products"
+        android:textSize="10sp"
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:background="@drawable/submit_button"

@@ -235,8 +235,7 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
                 break;
 
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
+              //  Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);

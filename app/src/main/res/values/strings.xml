@@ -170,7 +170,7 @@
     <string name="color_label">Color: </string>
     <string name="size_label">Size: </string>
     <string name="back_label">Back</string>
-    <string name="master_category">Master Category </string>
+    <string name="master_category">Product List</string>
     <string name="cart_empty">Your cart is empty</string>
     <string name="wallet_not_sufficient">You don\'t have sufficient amount in you wallet</string>
     <string name="order_detail_label">Order Detail </string>

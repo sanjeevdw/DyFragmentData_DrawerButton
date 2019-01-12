@@ -57,6 +57,7 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
     private ListView listView;
     private ArrayList<Guide> temples;
     private GuideAdapter adapter;
+    private String homepageUserSearchQuery;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +77,22 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
             mPid = (String) bundleParent.get("parentCategoryId");
         }
 
+        Intent homepageUserSearchIdIntent = getIntent();
+        Bundle homepageUserSearch = homepageUserSearchIdIntent.getExtras();
+
+        if (homepageUserSearch != null) {
+            homepageUserSearchQuery = (String) homepageUserSearch.get("userSearchQuery");
+        }
+
         session = new Session(this);
         sessionToken = session.getusertoken();
-        categoryChildNetworkRequest();
+
+        if (mPid == null) {
+            setHomepageUserSearchQueryNetworkRequest();
+        } else {
+            categoryChildNetworkRequest();
+        }
+
         setNavigationViewListener();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -232,7 +246,7 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                 startActivity(intentWishlist);
                 break;
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+            //    Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
@@ -272,7 +286,7 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
 
     public void categoryChildNetworkRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/product_list.php?m_cid="+mCid+"&p_cid="+mPid;
+        String url = "https://www.godprice.com/api/product_list.php?m_cid="+mCid+"&p_cid="+mPid+"&userid="+sessionToken;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -333,9 +347,132 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                                                         intent.putExtra("parentCategoryId", mPid);
                                                         startActivity(intent);
                                                     } else if (viewId == R.id.image_favorite) {
+                                                        if (sessionToken.isEmpty()) {
+                                                            Intent intentLoginforWishlist = new Intent(CategoryChildActivity.this, LoginActivity.class);
+                                                            startActivity(intentLoginforWishlist);
+                                                        } else {
+                                                            String productId = listView.getItemAtPosition(position).toString().trim();
+                                                            TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                            String productID = PPid.getText().toString().trim();
+                                                            TextView wishlistId = (TextView) listView.getChildAt(childIndex).findViewById(R.id.wishlist_number);
+                                                            String wishlistID = wishlistId.getText().toString().trim();
+                                                            int wishlistInt = Integer.parseInt(wishlistID);
+                                                            if (wishlistInt == 0) {
+                                                                sendWishlistRequest(productID, sessionToken);
+                                                            } else {
+                                                                wishlistProductRemoveRequest(productID, sessionToken);
+                                                            }
+                                                        }
+                                                        }
+                                                }
+                                            });
+
+                                        }
+                                    }
+                                }
+                            }
+                            else if (statusInt == 201) {
+                                String message = jsonObject.getString("message");
+                                LinearLayout linearLayoutGrid = (LinearLayout) findViewById(R.id.listview_layout);
+                                linearLayoutGrid.setVisibility(View.GONE);
+                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayout.setVisibility(View.VISIBLE);
+                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
+                                responseTextViewTwo.setText(message);
+                            }
+                        } catch (JSONException e) {
+                            // If an error is thrown when executing any of the above statements in the "try" block,
+                            // catch the exception here, so the app doesn't crash. Print a log message
+                            // with the message from the exception.
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(stringRequest);
+    }
+
+    public void setHomepageUserSearchQueryNetworkRequest() {
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/product_list.php?q="+homepageUserSearchQuery+"&userid="+sessionToken;
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            String status = jsonObject.getString("status");
+                            int statusInt = Integer.parseInt(status);
+                            if (statusInt == 200) {
+                                JSONArray data = jsonObject.getJSONArray("data");
+                                if (data.length() > 0) {
+                                    //Loop the Array
+                                    for (int i = 0; i < data.length(); i++) {
+                                        JSONObject currentObject = data.getJSONObject(i);
+                                        JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
+
+                                        for (int j = 0; j < currentProductDetail.length(); j++) {
+                                            //   JSONArray productDetail = new JSONArray("product_detail");
+                                            JSONObject e = currentProductDetail.getJSONObject(j);
+
+                                            String prodID = e.getString("product_id");
+                                            String productName = e.getString("productsname");
+                                            String productPrice = e.getString("price");
+                                            String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
+                                            String imageUrl = e.getString("feature_image");
+                                            String productRating = e.getString("rating");
+                                            String productWishlist = e.getString("is_whishlit");
+
+                                            Guide currentGuide = new Guide(prodID, productName, productPriceDollar, imageUrl, productRating, productWishlist);
+                                            temples.add(currentGuide);
+
+                                            adapter = new GuideAdapter(CategoryChildActivity.this, temples, R.color.temples_category);
+                                            listView = (ListView) findViewById(R.id.child_category_list);
+                                            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+                                            listView.setAdapter(adapter);
+                                            adapter.notifyDataSetChanged();
+
+                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    long viewId = view.getId();
+                                                    getViewByPosition(position, listView);
+
+                                                    if (viewId == R.id.button_details_two) {
                                                         String productId = listView.getItemAtPosition(position).toString().trim();
+                                                        //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
+                                                        //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
                                                         TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
                                                         String productID = PPid.getText().toString().trim();
+
+                                                        Intent intent = new Intent(CategoryChildActivity.this, DetailsActivity.class);
+                                                        intent.putExtra("ProductId", productID);
+                                                        intent.putExtra("masterCategoryId", mCid);
+                                                        intent.putExtra("parentCategoryId", mPid);
+                                                        startActivity(intent);
+                                                    } else if (viewId == R.id.image_favorite) {
+                                                        if (sessionToken.isEmpty()) {
+                                                            Intent intentLoginforWishlist = new Intent(CategoryChildActivity.this, LoginActivity.class);
+                                                            startActivity(intentLoginforWishlist);
+                                                        } else {
+                                                            String productId = listView.getItemAtPosition(position).toString().trim();
+                                                            TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                            String productID = PPid.getText().toString().trim();
+                                                            TextView wishlistId = (TextView) listView.getChildAt(childIndex).findViewById(R.id.wishlist_number);
+                                                            String wishlistID = wishlistId.getText().toString().trim();
+                                                            int wishlistInt = Integer.parseInt(wishlistID);
+                                                            if (wishlistInt == 0) {
+                                                                sendWishlistRequest(productID, sessionToken);
+                                                            } else {
+                                                                wishlistProductRemoveRequest(productID, sessionToken);
+                                                            }
+                                                        }
                                                     }
                                                 }
                                             });
@@ -368,6 +505,90 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
         });
         queue.add(stringRequest);
     }
+
+    private void sendWishlistRequest(String pid, String userId) {
+
+        // final String userId = String.valueOf(uid);
+        final String productId = String.valueOf(pid);
+        final String UserID = String.valueOf(userId);
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist_add.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        if (mPid == null) {
+                            setHomepageUserSearchQueryNetworkRequest();
+                        } else {
+                            categoryChildNetworkRequest();
+                        }
+                      //  adapter.clear();
+                      //  adapter.notifyDataSetChanged();
+                     //   categoryChildNetworkRequest();
+                     //   setHomepageUserSearchQueryNetworkRequest();
+                        Toast.makeText(CategoryChildActivity.this, "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(CategoryChildActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", UserID);
+            params.put("pid", productId);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void wishlistProductRemoveRequest(String productID, String userId) {
+        final String ProductID = productID;
+        final String UserId = userId;
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/whishlist_delete.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            if (mPid == null) {
+                                setHomepageUserSearchQueryNetworkRequest();
+                            } else {
+                                categoryChildNetworkRequest();
+                            }
+                          //  categoryChildNetworkRequest();
+                           // setHomepageUserSearchQueryNetworkRequest();
+                        }catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+
+            }
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", UserId);
+            params.put("pid", ProductID);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
 }
+
 
 

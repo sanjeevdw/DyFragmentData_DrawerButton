@@ -214,7 +214,7 @@ public class MasterCategoryActivity extends AppCompatActivity implements Navigat
                 startActivity(intentWishlist);
                 break;
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);

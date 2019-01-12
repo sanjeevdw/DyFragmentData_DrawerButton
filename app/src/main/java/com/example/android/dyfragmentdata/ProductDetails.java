@@ -17,7 +17,7 @@ public class ProductDetails {
 
     // created constructor with two parameters templeName and templeLocation
 
-    public ProductDetails(String productId, String productName, String productDescription, String discountPrice, String mImageUrl, String sku, String attributeName, String attributeValue) {
+    public ProductDetails(String productId, String productName, String productDescription, String discountPrice, String mImageUrl, String wishlist, String sku, String attributeName, String attributeValue) {
 
         // Variable initial values
 
@@ -29,6 +29,7 @@ public class ProductDetails {
         mSku = sku;
         mAttributeName = attributeName;
         mAttributeValue = attributeValue;
+        mWishlist = wishlist;
         }
 
     // Get method to return temple name
@@ -49,6 +50,10 @@ public class ProductDetails {
 
     public String getDiscountPrice() {
         return mDiscountPrice;
+    }
+
+    public String getWishlist() {
+        return  mWishlist;
     }
 
     public String getImageUrl() {

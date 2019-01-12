@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-    android:layout_gravity="center"
+        android:layout_gravity="center"
     >
 
     <TextView
@@ -12,17 +12,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start"
-            android:layout_marginStart="70dp"
+        android:layout_marginStart="10dp"
         android:layout_marginTop="8dp"
         android:textSize="14sp"
-            />
+        />
     <TextView
             android:id="@+id/spec_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="70dp"
+        android:layout_marginStart="200dp"
         android:layout_marginTop="8dp"
         android:textStyle="bold"
             android:textSize="14sp"

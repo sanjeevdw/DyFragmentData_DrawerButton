@@ -48,6 +48,7 @@ public class CartAdapter extends ArrayAdapter<CartData> {
 
         TextView cartId = (TextView) itemListView.findViewById(R.id.cart_id);
         cartId.setText(currentCartData.getCartId());
+        cartId.setVisibility(View.INVISIBLE);
 
         EditText quantityView = (EditText) itemListView.findViewById(R.id.editText_Quantity);
         quantityView.setText(currentCartData.getProductQuantity());

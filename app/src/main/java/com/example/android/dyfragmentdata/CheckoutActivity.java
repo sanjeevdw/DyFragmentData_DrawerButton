@@ -308,7 +308,7 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                 break;
 
             case R.id.nav_about_industry:
-                Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.nav_checkout:
@@ -426,7 +426,7 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                                           //  int checkedAddressId = addressTextView.getId();
                                             //  String subString = checkedAddress.substring(4,6);
                                            // String addressId = addressTextView.getText().toString().trim();
-                                            Toast.makeText(CheckoutActivity.this, "Index " + i, LENGTH_SHORT).show();
+                                          //  Toast.makeText(CheckoutActivity.this, "Index " + i, LENGTH_SHORT).show();
                                             //  return;
                                         }
                                     });
@@ -577,7 +577,6 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                                 nextButton.setVisibility(View.GONE);
                             }
 
-                            Toast.makeText(CheckoutActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
                             cartRequest();
                             TextView walletAmountTextView = (TextView) findViewById(R.id.wallet_amount_price);
                             walletAmountTextView.setText(walletAmount);

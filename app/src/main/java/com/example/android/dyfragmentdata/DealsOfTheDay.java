@@ -1,11 +1,6 @@
 package com.example.android.dyfragmentdata;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
-import java.io.Serializable;
-
-public class Guide {
+public class DealsOfTheDay {
 
     // Variable declaration
     private String mProductId;
@@ -19,10 +14,9 @@ public class Guide {
     // created constructor with two parameters templeName and templeLocation
 
 
-    public Guide(String productId, String templeName, String templeLocation, String mImageUrl, String rating, String wishlist) {
+    public DealsOfTheDay(String productId, String templeName, String templeLocation, String mImageUrl, String rating, String wishlist) {
 
         // Variable initial values
-
         mProductId = productId;
         mTempleName = templeName;
         mTempleLocation = templeLocation;
@@ -30,15 +24,6 @@ public class Guide {
         mRating = rating;
         mWishlist = wishlist;
     }
-
-  //  public Guide(String templeName, String templeLocation) {
-
-        // Variable initial values
-
-      //  mTempleName = templeName;
-      //  mTempleLocation = templeLocation;
-       // mImageResourceId = imageResourceId;
-  //  }
 
     // Get method to return temple name
 
@@ -67,22 +52,5 @@ public class Guide {
     public String getWishlist() {
         return  mWishlist;
     }
-    // Get method to return temple location
-
-   // public int getImageResourceId() {
-
-   //   return mImageResourceId;
-  //  }
-
-    /* Returns whether or not there is an image for this word
-     *
-     * @return
-     */
-
-  //  public boolean hasImage() {
-
-    //    return mImageResourceId != NO_IMAGE_PROVIDED;
-  // }
 }
-
 

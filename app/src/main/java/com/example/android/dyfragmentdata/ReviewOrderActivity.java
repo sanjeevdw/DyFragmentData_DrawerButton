@@ -92,6 +92,15 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ReviewOrderActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();

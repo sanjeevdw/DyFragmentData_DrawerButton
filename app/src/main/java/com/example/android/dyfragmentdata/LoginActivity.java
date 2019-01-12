@@ -129,6 +129,15 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         setNavigationViewListener();
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();

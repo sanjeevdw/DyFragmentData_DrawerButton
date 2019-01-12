@@ -115,6 +115,15 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
             }
         }
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CheckoutActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         if (sessionToken.isEmpty()) {
@@ -518,8 +527,9 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                                     String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
                                     cartTotalAmount = currentCartTotalDetail.getString("total_amount");
                                     cartAmountInt = Integer.parseInt(cartTotalAmount);
+                                    String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + cartTotalAmount;
                                     totalAmountCart = (TextView) findViewById(R.id.cart_price);
-                                    totalAmountCart.setText(cartTotalAmount);
+                                    totalAmountCart.setText(productPriceDollar);
                                 }
                                 }
                             else if (statusInt == 201) {
@@ -584,9 +594,10 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                             int cartAmountInt = Integer.parseInt(cartAmount);
                             int amountToPay = cartAmountInt - walletAmountInt;
                             String amountToPayString = String.valueOf(amountToPay);
+                            String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + amountToPayString;
                             if (cartAmountInt <= walletAmountInt) {
                                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
-                                amountToPayTextView.setText(amountToPayString);
+                                amountToPayTextView.setText(productPriceDollar);
                             } else {
                                 String noWalletAmount = "NA";
                                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);

@@ -71,6 +71,15 @@ public class AddAddressActivity extends AppCompatActivity {
             actionbar.setHomeAsUpIndicator(R.drawable.back_arrow);
         }
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AddAddressActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         Button addAddressButton = (Button) findViewById(R.id.save_deliver_here_checkout);
         addAddressButton.setOnClickListener(new View.OnClickListener() {
             @Override

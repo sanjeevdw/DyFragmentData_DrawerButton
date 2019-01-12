@@ -175,6 +175,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(DetailsActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();
@@ -802,6 +811,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                         imageViewWishlist.setImageResource(R.drawable.favorite_icon);
                                         imageViewWishlist.setTag(R.drawable.favorite_icon);
                                     }
+
                                     imageViewWishlist.setOnClickListener(new View.OnClickListener() {
                                         @Override
                                         public void onClick(View view) {

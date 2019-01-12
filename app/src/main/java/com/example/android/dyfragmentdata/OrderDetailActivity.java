@@ -99,6 +99,15 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrderDetailActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();

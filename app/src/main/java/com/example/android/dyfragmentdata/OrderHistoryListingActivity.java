@@ -89,6 +89,15 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
             }
         }
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(OrderHistoryListingActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);

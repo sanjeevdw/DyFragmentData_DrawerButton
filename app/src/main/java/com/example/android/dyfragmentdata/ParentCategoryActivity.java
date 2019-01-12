@@ -80,6 +80,15 @@ public class ParentCategoryActivity extends AppCompatActivity implements Navigat
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ParentCategoryActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
+
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
         if (sessionToken.isEmpty()) {

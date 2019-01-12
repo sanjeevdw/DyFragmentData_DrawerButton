@@ -1,5 +1,6 @@
 package com.example.android.dyfragmentdata;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -104,6 +105,15 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
+
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CategoryChildActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
 
@@ -519,14 +529,18 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                     @Override
                     public void onResponse(String response) {
                         if (mPid == null) {
+                            adapter.clear();
                             setHomepageUserSearchQueryNetworkRequest();
+                            //  adapter.notifyDataSetChanged();
+                         //   listView.smoothScrollToPosition(adapter.getCount() -1);
+
                         } else {
+                            adapter.clear();
                             categoryChildNetworkRequest();
+                          //  adapter.clear();
+                          //  adapter.notifyDataSetChanged();
+                         //   listView.smoothScrollToPosition(adapter.getCount() -1);
                         }
-                      //  adapter.clear();
-                      //  adapter.notifyDataSetChanged();
-                     //   categoryChildNetworkRequest();
-                     //   setHomepageUserSearchQueryNetworkRequest();
                         Toast.makeText(CategoryChildActivity.this, "Saved", Toast.LENGTH_SHORT).show();
                     }
                 }, new Response.ErrorListener() {
@@ -563,11 +577,13 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                             JSONObject jsonObject = new JSONObject(jsonResponse);
                             if (mPid == null) {
                                 setHomepageUserSearchQueryNetworkRequest();
-                            } else {
+                              //  adapter.clear();
+                                adapter.clear();
+                                } else {
                                 categoryChildNetworkRequest();
-                            }
-                          //  categoryChildNetworkRequest();
-                           // setHomepageUserSearchQueryNetworkRequest();
+                               adapter.clear();
+
+                                }
                         }catch(Exception e) {
                             e.printStackTrace();
                         }

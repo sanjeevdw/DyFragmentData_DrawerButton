@@ -111,7 +111,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private Bundle bundleHomepage;
     private Bundle bundleParent;
     private ImageView productFavoriteImageView;
-
+    private ArrayList<ProductRatingsData> productRatingsData;
+    private ReviewsAdapter reviewsAdapter;
+    private ListView reviewsListView;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -148,6 +150,15 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             homepageInt = (String) bundleHomepage.get("homepageToDetail");
         }
 
+      /*  Intent relatedProductIdIntent = getIntent();
+        Bundle bundlerelatedProduct = relatedProductIdIntent.getExtras();
+
+        if (bundlerelatedProduct != null) {
+            if (bundle == null) {
+                pid = (String) bundlerelatedProduct.get("RelatedProductId");
+            }
+        } */
+
         session = new Session(this);
         sessionToken = session.getusertoken();
 
@@ -160,6 +171,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         specListView = (ListView) findViewById(R.id.spec_list);
         listView.setNestedScrollingEnabled(true);
         specListView.setNestedScrollingEnabled(true);
+        productRatingsData = new ArrayList<ProductRatingsData>();
+        reviewsListView = (ListView) findViewById(R.id.rating_reviews_list);
+        reviewsListView.setNestedScrollingEnabled(true);
         productsDetailsRequest();
         setNavigationViewListener();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -533,11 +547,31 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                                 long viewId = view.getId();
-
+                                                getViewByPosition(position,listView);
                                                 if (viewId == R.id.button_details_two) {
-                                                    // Toast.makeText(DetailsActivity.this, "View more clicked", Toast.LENGTH_SHORT);
+                                                    String productId = listView.getItemAtPosition(position).toString().trim();
+                                                    TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                    String productID = PPid.getText().toString().trim();
                                                     Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
+                                                    intent.putExtra("ProductId", productID);
                                                     startActivity(intent);
+                                                } else if(viewId == R.id.image_favorite) {
+                                                    if (sessionToken.isEmpty()) {
+                                                        Intent intentLoginforWishlist = new Intent(DetailsActivity.this, LoginActivity.class);
+                                                        startActivity(intentLoginforWishlist);
+                                                    } else {
+                                                        String productIdRelated = listView.getItemAtPosition(position).toString().trim();
+                                                        TextView pidRelatedProducts = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
+                                                        String productIDRelatedProducts = pidRelatedProducts.getText().toString().trim();
+                                                        TextView wishlistId = (TextView) listView.getChildAt(childIndex).findViewById(R.id.wishlist_number);
+                                                        String wishlistID = wishlistId.getText().toString().trim();
+                                                        int wishlistInt = Integer.parseInt(wishlistID);
+                                                        if (wishlistInt == 0) {
+                                                            sendWishlistRequest(productIDRelatedProducts, sessionToken);
+                                                        } else {
+                                                            wishlistProductRemoveRequest(productIDRelatedProducts, sessionToken);
+                                                        }
+                                                    }
                                                 }
                                             }
                                         });
@@ -600,6 +634,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     String productDetailsPrice = currentProductDetail.getString("discount_percent");
                                     String imageUrlDetails = currentProductDetail.getString("featured_image");
                                     String productWishlist = currentProductDetail.getString("is_whishlit");
+                                    String productNoOfReview = currentProductDetail.getString("no_of_review");
+                                    String productNoOfReviewConcatenate = productNoOfReview + " " + getResources().getString(R.string.rating_count);
 
                                     final JSONArray galleryThumbnailArray = currentObject.getJSONArray("gallery");
                                     if (galleryThumbnailArray.length() > 0) {
@@ -649,6 +685,20 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                         specListView.setAdapter(specAdapter);
                                         specAdapter.notifyDataSetChanged();
                                         }
+
+                                    JSONArray reviewObject = currentObject.getJSONArray("rating_review");
+                                    for (int d = 0; d < reviewObject.length(); d++) {
+                                        JSONObject currentObjectReview = reviewObject.getJSONObject(d);
+                                        String currentObjectReviewUsername = currentObjectReview.getString("username");
+                                        String currentObjectReviewRating = currentObjectReview.getString("rating");
+                                        String currentObjectUserReview = currentObjectReview.getString("review");
+                                        String currentObjectFeaturedImage = currentObjectReview.getString("featured_image");
+                                        ProductRatingsData currentProductRatingsData = new ProductRatingsData(currentObjectFeaturedImage, currentObjectReviewUsername, currentObjectReviewRating, currentObjectUserReview  );
+                                        productRatingsData.add(currentProductRatingsData);
+                                        reviewsAdapter = new ReviewsAdapter(DetailsActivity.this, productRatingsData);
+                                        reviewsListView.setAdapter(reviewsAdapter);
+                                        reviewsAdapter.notifyDataSetChanged();
+                                    }
 
                                     JSONArray attributeObject = currentObject.getJSONArray("attribute");
                                     for (int c = 0; c < attributeObject.length(); c++) {
@@ -789,6 +839,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                     priceCart = currentObjectCart.getString("price");
                                     currentQuantityCart = currentObjectCart.getString("current_qty");
                                     quantityProInt = Integer.parseInt(currentQuantityCart);
+
+                                    TextView productReviewRating = (TextView) findViewById(R.id.ratings_count);
+                                    productReviewRating.setText(productNoOfReviewConcatenate);
 
                                     TextView productSkuView = (TextView) findViewById(R.id.sku);
                                     productSkuView.setText(getResources().getString(R.string.product_sku_detail) + " " + productDetailsSku);

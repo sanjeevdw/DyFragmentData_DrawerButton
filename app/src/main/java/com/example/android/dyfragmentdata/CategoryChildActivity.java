@@ -59,6 +59,8 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
     private ArrayList<Guide> temples;
     private GuideAdapter adapter;
     private String homepageUserSearchQuery;
+    private int index;
+    private int top;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -372,6 +374,11 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                                                             } else {
                                                                 wishlistProductRemoveRequest(productID, sessionToken);
                                                             }
+
+                                                           index = listView.getFirstVisiblePosition();
+                                                            View v = listView.getChildAt(0);
+                                                           top = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
+
                                                         }
                                                         }
                                                 }
@@ -482,6 +489,10 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                                                             } else {
                                                                 wishlistProductRemoveRequest(productID, sessionToken);
                                                             }
+
+                                                            index = listView.getFirstVisiblePosition();
+                                                            View v = listView.getChildAt(0);
+                                                            top = (v == null) ? 0 : (v.getTop() - listView.getPaddingTop());
                                                         }
                                                     }
                                                 }
@@ -531,12 +542,14 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                         if (mPid == null) {
                             adapter.clear();
                             setHomepageUserSearchQueryNetworkRequest();
+                            listView.setSelectionFromTop(index, top);
                             //  adapter.notifyDataSetChanged();
                          //   listView.smoothScrollToPosition(adapter.getCount() -1);
 
                         } else {
                             adapter.clear();
                             categoryChildNetworkRequest();
+                            listView.setSelectionFromTop(index, top);
                           //  adapter.clear();
                           //  adapter.notifyDataSetChanged();
                          //   listView.smoothScrollToPosition(adapter.getCount() -1);
@@ -579,10 +592,11 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                                 setHomepageUserSearchQueryNetworkRequest();
                               //  adapter.clear();
                                 adapter.clear();
+                                listView.setSelectionFromTop(index, top);
                                 } else {
                                 categoryChildNetworkRequest();
                                adapter.clear();
-
+                                listView.setSelectionFromTop(index, top);
                                 }
                         }catch(Exception e) {
                             e.printStackTrace();

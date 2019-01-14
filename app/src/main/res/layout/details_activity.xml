@@ -109,7 +109,6 @@ android:orientation="vertical">
             android:layout_marginStart="2dp"
             android:textSize="10sp"
             android:gravity="top"
-            android:text="@string/rating_count"
             android:fontFamily="sans-serif"
             android:layout_height="wrap_content"/>
             <ImageView
@@ -132,6 +131,18 @@ android:orientation="vertical">
     android:textStyle="bold"
     android:fontFamily="sans-serif"
     android:layout_height="wrap_content"/>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp">
+            <TextView
+                android:id="@+id/sku"
+                android:layout_alignParentStart="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                />
+        </RelativeLayout>
         <LinearLayout
             android:id="@+id/quantity_container"
             android:layout_width="match_parent"
@@ -159,20 +170,7 @@ android:orientation="vertical">
             android:layout_height="wrap_content"
             tools:text="quantity_et"/>
     </LinearLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-            <TextView
-                android:id="@+id/sku"
-                android:layout_alignParentStart="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                />
-        </RelativeLayout>
-
-</LinearLayout>
+    </LinearLayout>
     <RelativeLayout
         android:id="@+id/button_size_container"
         android:layout_marginTop="5dp"
@@ -303,7 +301,7 @@ android:orientation="vertical">
             android:layout_marginTop="8dp"
             android:layout_marginEnd="5dp"
             android:layout_marginStart="5dp"
-            android:background="#ddd" />+
+            android:background="#ddd" />
         <TextView
             android:id="@+id/description_tv"
             android:layout_width="match_parent"
@@ -387,179 +385,14 @@ android:orientation="vertical">
             android:text="@string/ratings_reviews_text"
             android:layout_height="wrap_content"/>
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/reviews_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/tan_background"
-        android:orientation="horizontal">
-        <ImageView
-        android:id="@+id/image_reviews"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+    <ListView
+        android:id="@+id/rating_reviews_list"
+        android:orientation="vertical"
         android:layout_marginTop="10dp"
-        android:layout_marginStart="8dp"
-        android:src="@drawable/t_shirt"
-        android:background="@drawable/circle_shape"
-        />
-    <LinearLayout
-        android:id="@+id/reviews_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:orientation="vertical">
-        <TextView
-            android:id="@+id/name_user"
-            android:layout_marginTop="2dp"
-            android:layout_width="match_parent"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#424242"
-            android:gravity="bottom"
-            android:textSize="13sp"
-            android:text="@string/reviewer_name"
-            android:textStyle="bold"
-            android:fontFamily="sans-serif"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:id="@+id/rating_user"
-            android:layout_marginTop="2dp"
-            android:layout_width="match_parent"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="#424242"
-            android:gravity="bottom"
-            android:textSize="11sp"
-            android:text="@string/review_text"
-            android:fontFamily="sans-serif"
-            android:layout_height="wrap_content"/>
-        <ImageView
-            android:id="@+id/image_rating_two"
-            android:layout_width="wrap_content"
-            android:src="@drawable/stars_rating"
-            android:layout_marginTop="8dp"
-            android:layout_height="wrap_content"/>
-    </LinearLayout>
-    </LinearLayout>
+        android:layout_height="200dp"/>
     <View
         android:id="@+id/line_separator_review"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="#eaeaea" />
-    <LinearLayout
-        android:id="@+id/reviews_container_two"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/tan_background"
-        android:orientation="horizontal">
-        <ImageView
-            android:id="@+id/image_reviews_two"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/t_shirt"
-            android:background="@drawable/circle_shape"
-            />
-        <LinearLayout
-            android:id="@+id/reviews_text_two"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/name_user_two"
-                android:layout_marginTop="2dp"
-                android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="#424242"
-                android:gravity="bottom"
-                android:textSize="13sp"
-                android:text="@string/reviewer_name"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/rating_user_two"
-                android:layout_marginTop="2dp"
-                android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="#424242"
-                android:gravity="bottom"
-                android:textSize="11sp"
-                android:text="@string/review_text"
-                android:fontFamily="sans-serif"
-                android:layout_height="wrap_content"/>
-            <ImageView
-                android:id="@+id/image_rating_three"
-                android:layout_width="wrap_content"
-                android:src="@drawable/stars_rating"
-                android:layout_marginTop="8dp"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </LinearLayout>
-    <View
-        android:id="@+id/line_separator_review_two"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="8dp"
-        android:background="#eaeaea" />
-    <LinearLayout
-        android:id="@+id/reviews_container_three"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/tan_background"
-        android:orientation="horizontal">
-        <ImageView
-            android:id="@+id/image_reviews_three"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginStart="8dp"
-            android:src="@drawable/t_shirt"
-            android:background="@drawable/circle_shape"
-            />
-        <LinearLayout
-            android:id="@+id/reviews_text_three"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:orientation="vertical">
-            <TextView
-                android:id="@+id/name_user_three"
-                android:layout_marginTop="2dp"
-                android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="#424242"
-                android:gravity="bottom"
-                android:textSize="13sp"
-                android:text="@string/reviewer_name"
-                android:textStyle="bold"
-                android:fontFamily="sans-serif"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:id="@+id/rating_user_three"
-                android:layout_marginTop="2dp"
-                android:layout_width="match_parent"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="#424242"
-                android:gravity="bottom"
-                android:textSize="11sp"
-                android:text="@string/review_text"
-                android:fontFamily="sans-serif"
-                android:layout_height="wrap_content"/>
-            <ImageView
-                android:id="@+id/image_rating_four"
-                android:layout_width="wrap_content"
-                android:src="@drawable/stars_rating"
-                android:layout_marginTop="8dp"
-                android:layout_height="wrap_content"/>
-        </LinearLayout>
-    </LinearLayout>
-    <View
-        android:id="@+id/line_separator_review_three"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginTop="8dp"

@@ -11,9 +11,6 @@
             android:id="@+id/nav_profile"
             android:title="@string/profile"/>
         <item
-            android:id="@+id/nav_forgot_password"
-            android:title="@string/forgot_password"/>
-        <item
             android:id="@+id/nav_change_password"
             android:title="@string/change_password"/>
         <item

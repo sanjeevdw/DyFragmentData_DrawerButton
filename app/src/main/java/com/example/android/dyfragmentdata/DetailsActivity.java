@@ -356,11 +356,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentProfile);
                 break;
 
-            case R.id.nav_forgot_password:
-                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
-                startActivity(intentForgotPassword);
-                break;
-            case R.id.nav_change_password:
+                case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
                 break;
@@ -407,108 +403,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         }
         return false;
     }
-
-  /*  public void categoryChildNetworkRequest() {
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/product_list.php?m_cid="+mCid+"&p_cid="+mPid+"&userid="+sessionToken;
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            String trimResponse = response.substring(3);
-                            String trimmedResponse = trimResponse.trim();
-                            JSONObject jsonObject = new JSONObject(trimmedResponse);
-                            String status = jsonObject.getString("status");
-                            int statusInt = Integer.parseInt(status);
-                            if (statusInt == 200) {
-                                JSONArray data = jsonObject.getJSONArray("data");
-                                if (data.length() > 0) {
-                                    //Loop the Array
-                                    for (int i = 0; i < data.length(); i++) {
-                                        JSONObject currentObject = data.getJSONObject(i);
-                                        JSONArray currentProductDetail = currentObject.getJSONArray("product_detail");
-
-                                        for (int j = 0; j < currentProductDetail.length(); j++) {
-                                            //   JSONArray productDetail = new JSONArray("product_detail");
-                                            Log.e("Message", "loop");
-                                            HashMap<String, String> map = new HashMap<String, String>();
-                                            JSONObject e = currentProductDetail.getJSONObject(j);
-
-                                            String prodID = e.getString("product_id");
-                                            String productName = e.getString("productsname");
-                                            String productPrice = e.getString("price");
-                                            String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
-                                            String imageUrl = e.getString("feature_image");
-                                            String productRating = e.getString("rating");
-                                            String productWishlist = e.getString("is_whishlit");
-
-                                            Guide currentGuide = new Guide(prodID, productName, productPriceDollar, imageUrl, productRating, productWishlist);
-                                            temples.add(currentGuide);
-
-                                            adapter = new GuideAdapter(DetailsActivity.this, temples, R.color.temples_category);
-                                            listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-                                            listView.setAdapter(adapter);
-                                            adapter.notifyDataSetChanged();
-
-                                            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                @Override
-                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                    long viewId = view.getId();
-                                                    getViewByPosition(position, listView);
-
-                                                    if (viewId == R.id.button_details_two) {
-                                                        String productId = listView.getItemAtPosition(position).toString().trim();
-                                                        //     TextView Pid = (TextView) parent.findViewById(R.id.product_id);
-                                                        //    TextView PPid = (TextView) listView.getChildAt(position).findViewById(R.id.product_id);
-                                                        TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                        String productID = PPid.getText().toString().trim();
-
-                                                        Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
-                                                        intent.putExtra("ProductId", productID);
-                                                        intent.putExtra("masterCategoryId", mCid);
-                                                        intent.putExtra("parentCategoryId", mPid);
-                                                        startActivity(intent);
-                                                    } else if (viewId == R.id.image_favorite) {
-                                                        if (sessionToken.isEmpty()) {
-                                                            Intent intentLoginforWishlist = new Intent(DetailsActivity.this, LoginActivity.class);
-                                                            startActivity(intentLoginforWishlist);
-                                                        } else {
-                                                            String productId = listView.getItemAtPosition(position).toString().trim();
-                                                            TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.product_id);
-                                                            String productID = PPid.getText().toString().trim();
-                                                            TextView wishlistId = (TextView) listView.getChildAt(childIndex).findViewById(R.id.wishlist_number);
-                                                            String wishlistID = wishlistId.getText().toString().trim();
-                                                            int wishlistInt = Integer.parseInt(wishlistID);
-                                                            if (wishlistInt == 0) {
-                                                                sendWishlistRequest(productID, sessionToken);
-                                                            } else {
-                                                                wishlistProductRemoveRequest(productID, sessionToken);
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            });
-
-                                        }
-                                    }
-                                }
-                            }
-                            } catch (JSONException e) {
-                            // If an error is thrown when executing any of the above statements in the "try" block,
-                            // catch the exception here, so the app doesn't crash. Print a log message
-                            // with the message from the exception.
-                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-            }
-        });
-        queue.add(stringRequest);
-    } */
 
     private void relatedProductsNetworkRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -1280,7 +1174,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         queue.add(stringRequest);
     }
 
-    private int getImageResource(ImageView imageView) {
+    private int getImageResource(ImageView imageView)
+      {
         return (Integer) imageView.getTag();
         }
 }

@@ -188,7 +188,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             showFullNavItem();
             }
 
-        // Create an ArrayList of badgujar objects
+        // Create an ArrayList of objects
         gridCategories = new ArrayList<GridCategory>();
         gridCategoriesTwo = new ArrayList<HomepageRecommendedCategoryData>();
         gridCategoriesThree = new ArrayList<HomepageFeaturedCategoryData>();
@@ -264,9 +264,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 startActivity(intent);
             }
         });
-
-
-
         }
 
     public View getViewByPosition(int pos, ListView listView) {
@@ -396,10 +393,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-            case R.id.nav_forgot_password:
-                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
-                startActivity(intentForgotPassword);
-                break;
+
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);

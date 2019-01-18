@@ -220,10 +220,7 @@ public class ParentCategoryActivity extends AppCompatActivity implements Navigat
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-            case R.id.nav_forgot_password:
-                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
-                startActivity(intentForgotPassword);
-                break;
+
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);

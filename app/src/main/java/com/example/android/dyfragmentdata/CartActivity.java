@@ -292,11 +292,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-            case R.id.nav_forgot_password:
-                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
-                startActivity(intentForgotPassword);
-                break;
-            case R.id.nav_change_password:
+                case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
                 break;

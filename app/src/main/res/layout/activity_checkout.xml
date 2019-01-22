@@ -175,6 +175,12 @@
                 android:layout_height="wrap_content"
                 android:text="@string/wallet_amount_checkout"
                 />
+            <ImageView
+                android:id="@+id/wallet_icon"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginStart="100dp"
+                android:src="@drawable/wallet"/>
             <TextView
                 android:id="@+id/wallet_amount_price"
                 android:layout_alignParentEnd="true"

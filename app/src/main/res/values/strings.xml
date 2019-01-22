@@ -12,6 +12,7 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="about_industry">About GodPrice</string>
+    <string name="choose_image_profile">Choose</string>
     <string name="home">Home</string>
     <string name="button_details_text">View More</string>
     <string name="sign_out">Sign out</string>
@@ -171,6 +172,14 @@
     <string name="size_label">Size: </string>
     <string name="back_label">Back</string>
     <string name="master_category">Product List</string>
+    <string name="brand_name">Fanideaz</string>
+    <string name="price_range">PRICE RANGE</string>
+    <string name="filter_by_brand">FILTER BY BRAND</string>
+    <string name="size_label_filter">SIZE</string>
+    <string name="color_label_filter">COLOR</string>
+    <string name="filter_button_submit">FILTER</string>
+    <string name="filter_color_placeholder">White</string>
+    <string name="filter_size_placeholder">XL</string>
     <string name="cart_empty">Your cart is empty</string>
     <string name="wallet_not_sufficient">You don\'t have sufficient amount in you wallet</string>
     <string name="order_detail_label">Order Detail </string>
@@ -179,6 +188,7 @@
     <string name="facebook_application_id" translatable="false">336835236870096</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb336835236870096</string>
 </resources>
+
 
 
 

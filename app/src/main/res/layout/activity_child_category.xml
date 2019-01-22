@@ -52,13 +52,25 @@
                 />
         </LinearLayout>
         <LinearLayout
+            android:id="@+id/listview_filter_layout"
+            android:layout_marginTop="55dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/choose_filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/filter_button_submit"/>
+        </LinearLayout>
+        <LinearLayout
             android:id="@+id/listview_layout"
             xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="vertical" android:layout_width="match_parent"
             android:layout_height="wrap_content">
 <ListView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/child_category_list"
-    android:layout_marginTop="60dp"
+    android:layout_marginTop="100dp"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"/>

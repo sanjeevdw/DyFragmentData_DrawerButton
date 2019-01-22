@@ -157,7 +157,6 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
             }
         }); */
 
-
      Button cartButton = (Button) findViewById(R.id.back_arrow_button);
         cartButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -428,6 +427,15 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
 
                                             checkedAddressId = radioGroup.getCheckedRadioButtonId();
                                             String checkedAddress = radioButton.getText().toString().trim();
+                                            Button reviewOrderButton = (Button) findViewById(R.id.forward_arrow_button);
+                                            reviewOrderButton.setOnClickListener(new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View v) {
+                                                    Intent intentCart = new Intent(CheckoutActivity.this, ReviewOrderActivity.class);
+                                                    startActivity(intentCart);
+                                                    //  checkoutNetworkRequest();
+                                                }
+                                            });
                                           //  int checkedAddressId = addressTextView.getId();
                                             //  String subString = checkedAddress.substring(4,6);
                                            // String addressId = addressTextView.getText().toString().trim();

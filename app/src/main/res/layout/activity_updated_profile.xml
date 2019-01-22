@@ -45,7 +45,7 @@
     <RelativeLayout
         android:id="@+id/header_image"
         android:layout_width="wrap_content"
-        android:layout_height="170dp"
+        android:layout_height="180dp"
         android:background="#e53935"
         >
         <ImageView
@@ -54,6 +54,14 @@
             android:layout_height="60dp"
             android:layout_marginTop="80dp"
             android:src="@mipmap/profile_pic" />
+        <Button
+            android:id="@+id/choose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/choose_image_profile"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/user_image"
+            />
     </RelativeLayout>
     <TextView
         android:id="@+id/first_name_tv"
@@ -110,16 +118,6 @@
         android:textStyle="bold"
         android:layout_marginStart="5dp"
         android:text="@string/change_password"
-        />
-    <TextView
-        android:id="@+id/deactivate_account_tv"
-        android:layout_marginTop="12dp"
-        android:layout_marginBottom="8dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textStyle="bold"
-        android:text="@string/deactivate_account"
         />
     <LinearLayout
         android:id="@+id/response_message_linear"

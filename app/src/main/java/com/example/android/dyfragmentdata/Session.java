@@ -31,6 +31,11 @@ public class Session {
         prefs.edit().putString("userToken", userToken).commit();
     }
 
+    public void setuserImage(String userImage) {
+
+        prefs.edit().putString("userImage", userImage).commit();
+    }
+
     public String getusename() {
 
         String usename = prefs.getString("usename", "");
@@ -47,6 +52,11 @@ public class Session {
 
         String userToken = prefs.getString("userToken", "");
         return userToken;
+        }
 
+    public String getuserImage() {
+
+        String userImage = prefs.getString("userImage", "");
+        return userImage;
     }
 }

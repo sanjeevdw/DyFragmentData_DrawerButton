@@ -23,12 +23,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.provider.Settings.Secure;
@@ -53,7 +55,7 @@ import java.util.Map;
 
 import static android.widget.Toast.LENGTH_SHORT;
 
-public class DetailsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class DetailsActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, AdapterView.OnItemSelectedListener {
     private DrawerLayout mDrawerLayout;
     private ArrayList<Guide> temples;
     private GuideAdapter adapter;
@@ -114,6 +116,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private ArrayList<ProductRatingsData> productRatingsData;
     private ReviewsAdapter reviewsAdapter;
     private ListView reviewsListView;
+    private Spinner spinner;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -208,7 +211,12 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             showFullNavItem();
         }
 
-        editTextQuantity = (EditText) findViewById(R.id.quantity_et);
+        // editTextQuantity = (EditText) findViewById(R.id.quantity_et);
+        spinner = (Spinner) findViewById(R.id.quantity_spinner);
+        spinner.setOnItemSelectedListener(DetailsActivity.this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(DetailsActivity.this, R.array.quantity_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
 
         productFavoriteImageView = (ImageView) findViewById(R.id.product_favorite);
         productFavoriteImageView.setOnClickListener(new View.OnClickListener() {
@@ -223,7 +231,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         buttonCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                quantityCart = editTextQuantity.getText().toString();
+                quantityCart = spinner.getSelectedItem().toString();
                 if (TextUtils.isEmpty(quantityCart)) {
                     Toast.makeText(DetailsActivity.this, "Please enter the quantity", Toast.LENGTH_LONG).show();
                 }
@@ -1062,7 +1070,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private void addToCartRequest() {
 
         if (cartQuantity <= quantityProInt) {
-            finalquantityCart = editTextQuantity.getText().toString();
+
+            finalquantityCart = spinner.getSelectedItem().toString();
         }
 
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -1178,6 +1187,17 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
       {
         return (Integer) imageView.getTag();
         }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        parent.getItemAtPosition(position);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
 }
 
 

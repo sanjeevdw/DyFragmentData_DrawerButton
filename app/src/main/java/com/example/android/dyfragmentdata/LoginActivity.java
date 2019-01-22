@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -660,7 +662,13 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             int statusInt = Integer.parseInt(status);
                             String message = jsonObject.getString("message");
                             if (statusInt == 200) {
+
                                 String userToken = jsonObject.getString("userid");
+                                session.setusertoken(userToken);
+                                final String sessionToken = session.getusertoken();
+                                defaultLoginNetworkRequest(sessionToken);
+                                LinearLayout linearLayoutError = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayoutError.setVisibility(View.INVISIBLE);
                                 LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear_success);
                                 linearLayout.setVisibility(View.VISIBLE);
                                 linearLayout.setBackgroundColor(Color.parseColor("#9f64dd17"));
@@ -668,8 +676,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                                 responseTextViewSuccess.setText(message);
 
                             //  Toast.makeText(getApplicationContext(), "Signed In", Toast.LENGTH_LONG).show();
-                                session.setusertoken(userToken);
-                                final String sessionToken = session.getusertoken();
+                             //   session.setusertoken(userToken);
+                             //   final String sessionToken = session.getusertoken();
                                 new Handler().postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -683,8 +691,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
 
                             } else if (statusInt == 201) {
                                 //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
-                                linearLayout.setVisibility(View.VISIBLE);
+                                LinearLayout linearLayoutError = (LinearLayout) findViewById(R.id.response_message_linear);
+                                linearLayoutError.setVisibility(View.VISIBLE);
                                 TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
                                 responseTextViewTwo.setText(message);
                             }
@@ -824,6 +832,64 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
             params.put("email", emailGoogle);
             return params;
         }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void defaultLoginNetworkRequest(String UserID) {
+        final String USERID = UserID;
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/my-account.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONObject dataJsonObject = jsonObject.getJSONObject("data");
+                            String userId = dataJsonObject.getString("id");
+                            String userName = dataJsonObject.getString("name");
+                            String userEmail = dataJsonObject.getString("email");
+                            String userMobile = dataJsonObject.getString("mobile");
+                            String userImage = dataJsonObject.getString("profileimage");
+
+                            session.setusename(userName);
+                            session.setUserEmail(userImage);
+                            session.setuserImage(userEmail);
+                            navigationView = findViewById(R.id.nav_view);
+                            View header = navigationView.getHeaderView(0);
+                            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+                            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+                            sessionUserName = session.getusename();
+                            sessionUserEmail = session.getUserEmail();
+                            loggedInUserName.setText(sessionUserName);
+                            loggedInUserEmail.setText(sessionUserEmail);
+                          /*  ImageView loggedInUserImage = header.findViewById(R.id.user_image);
+                            Glide.with(loggedInUserImage.getContext())
+                                    .load(userImage)
+                                    .into(loggedInUserImage); */
+
+                            }
+                        catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", USERID);
+            return params;
+        }
+
         };
         queue.add(stringRequest);
     }

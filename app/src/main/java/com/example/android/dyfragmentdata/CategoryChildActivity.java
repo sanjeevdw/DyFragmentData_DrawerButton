@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -135,6 +136,15 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
         }
 
         temples = new ArrayList<Guide>();
+
+        Button chooseFilterButton = (Button) findViewById(R.id.choose_filter);
+        chooseFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(CategoryChildActivity.this, FilterActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public View getViewByPosition(int pos, ListView listView) {

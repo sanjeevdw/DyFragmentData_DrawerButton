@@ -28,6 +28,8 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+
+
     }
     buildTypes {
         release {
@@ -59,6 +61,9 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-auth:4.2.1'
     implementation 'com.google.firebase:firebase-messaging:17.3.4'
     implementation 'com.google.firebase:firebase-core:16.0.4'
+   // implementation 'dev.dworks.libs:volleyplus:+'
+    implementation 'com.squareup.okhttp3:okhttp:3.12.1'
+    implementation 'net.gotev:uploadservice:2.1'
 
 }
 apply plugin: 'com.google.gms.google-services'

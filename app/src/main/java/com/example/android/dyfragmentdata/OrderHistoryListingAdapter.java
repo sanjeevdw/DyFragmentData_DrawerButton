@@ -39,8 +39,8 @@ public class OrderHistoryListingAdapter extends ArrayAdapter<OrderHistoryListing
 
         OrderHistoryListingData CurrentOrderHistoryListingData = getItem(position);
 
-        TextView SerialNoView = (TextView) itemListView.findViewById(R.id.serial_no);
-        SerialNoView.setText(CurrentOrderHistoryListingData.getSerialNo());
+      //  TextView SerialNoView = (TextView) itemListView.findViewById(R.id.serial_no);
+     //   SerialNoView.setText(CurrentOrderHistoryListingData.getSerialNo());
 
         TextView InvoiceView = (TextView) itemListView.findViewById(R.id.invoice_no);
         InvoiceView.setText(CurrentOrderHistoryListingData.getInvoice());

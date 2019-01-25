@@ -42,6 +42,9 @@
         <activity android:name=".CategoryChildActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
+        <activity android:name=".MerchantLoginActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
         <activity android:name=".SignupActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
@@ -82,6 +85,9 @@
             android:windowSoftInputMode="stateHidden">
         </activity>
         <activity android:name=".OrderDetailActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
+        <activity android:name=".TransactionActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
         <activity android:name=".AddAddressActivity"

@@ -282,7 +282,7 @@
                                 android:gravity="center"
                                 android:textColor="@android:color/white"
                                 android:background="@drawable/submit_button"
-                                android:text="@string/next"
+                                android:text="@string/confirm_button"
                                 />
                         </RelativeLayout>
                     </LinearLayout>

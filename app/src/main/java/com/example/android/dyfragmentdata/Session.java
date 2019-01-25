@@ -36,6 +36,11 @@ public class Session {
         prefs.edit().putString("userImage", userImage).commit();
     }
 
+    public void setuserWalletAmount(String userWalletAmount) {
+
+        prefs.edit().putString("userWalletAmount", userWalletAmount).commit();
+    }
+
     public String getusename() {
 
         String usename = prefs.getString("usename", "");
@@ -58,5 +63,11 @@ public class Session {
 
         String userImage = prefs.getString("userImage", "");
         return userImage;
+    }
+
+    public String getuserWalletAmount() {
+
+        String userWalletAmount = prefs.getString("userWalletAmount", "");
+        return userWalletAmount;
     }
 }

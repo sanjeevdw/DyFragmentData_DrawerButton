@@ -4,25 +4,6 @@
     android:layout_height="match_parent"
     android:layout_marginTop="10dp"
     android:layout_marginStart="10dp">
-<LinearLayout
-    android:id="@+id/price"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
-    <TextView
-    android:id="@+id/price_range"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:textStyle="bold"
-    android:layout_marginTop="5dp"
-    android:text="@string/price_range"/>
-    <Button
-        android:id="@+id/button_price_submit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:text="@string/filter_button_submit"/>
-</LinearLayout>
     <LinearLayout
         android:id="@+id/brand"
         android:layout_width="wrap_content"
@@ -36,7 +17,7 @@
             android:textStyle="bold"
             android:text="@string/filter_by_brand"
             />
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/brand_filter_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -45,17 +26,29 @@
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_marginTop="5dp"/>
             <TextView
                 android:id="@+id/brand_filter_tv"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:textStyle="bold"
-                android:layout_marginTop="5dp"
+                android:textSize="15sp"
+                android:layout_marginTop="12dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp"
                 android:text="@string/brand_name"
                 />
-        </LinearLayout>
+        </RelativeLayout>
 </LinearLayout>
+    <View
+        android:id="@+id/line_separator_one"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:background="#ddd" />
     <LinearLayout
         android:id="@+id/size"
         android:layout_width="wrap_content"
@@ -70,7 +63,7 @@
             android:textStyle="bold"
             android:text="@string/size_label_filter"
             />
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/size_filter_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -79,17 +72,28 @@
                 android:id="@+id/checkbox_size"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="5dp"/>
             <TextView
                 android:id="@+id/size_filter_tv"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:textStyle="bold"
-                android:layout_marginTop="5dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="12dp"
                 android:text="@string/filter_size_placeholder"
                 />
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
+    <View
+        android:id="@+id/line_separator_two"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:background="#ddd" />
     <LinearLayout
         android:id="@+id/color"
         android:layout_width="wrap_content"
@@ -103,7 +107,8 @@
             android:textStyle="bold"
             android:text="@string/color_label_filter"
             />
-        <LinearLayout
+
+        <RelativeLayout
             android:id="@+id/color_filter_two"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -112,20 +117,37 @@
                 android:id="@+id/checkbox_color"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:layout_marginTop="5dp"/>
             <TextView
                 android:id="@+id/color_filter_tv"
                 android:layout_height="wrap_content"
                 android:layout_width="wrap_content"
                 android:textStyle="bold"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="12dp"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="5dp"
                 android:text="@string/filter_color_placeholder"
                 />
-        </LinearLayout>
+        </RelativeLayout>
+
     </LinearLayout>
+    <View
+        android:id="@+id/line_separator_three"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginStart="5dp"
+        android:background="#ddd" />
     <Button
         android:id="@+id/button_filer_submit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/submit_button"
+        android:textColor="@android:color/white"
         android:text="@string/filter_button_submit"/>
 </LinearLayout>
+
+

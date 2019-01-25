@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,7 +38,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class OrderHistoryListingActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class TransactionActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout mDrawerLayout;
     private Session session;
@@ -48,9 +47,17 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
     private String usernameGoogle;
     private String sessionGoogleEmil;
     private ListView listView;
-    private ArrayList<OrderHistoryListingData> orderHistoryItems;
-    private OrderHistoryListingAdapter orderHistoryListingAdapter;
+    private ArrayList<TransactionData> transactionDetailData;
+    private TransactionAdapter transactionAdapter;
+    private String Transaction;
+    private String For;
+    private String Event;
+    private String Mode;
+    private String Amount;
+    private String Date;
+    private String Status;
     private int childIndex;
+    private String invoicenoIntent;
     private String sessionUserName;
     private String sessionUserEmail;
     private String sessionUserImage;
@@ -61,7 +68,7 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
         super.onCreate(savedInstanceState);
 
         // Set the content of the activity to use the activity_category.xml layout file
-        setContentView(R.layout.activity_order_history_main);
+        setContentView(R.layout.activity_transaction);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
@@ -69,13 +76,29 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
         ActionBar actionbar = getSupportActionBar();
         session = new Session(this);
         sessionToken = session.getusertoken();
-        orderHistoryNetworkRequest();
-        orderHistoryItems = new ArrayList<OrderHistoryListingData>();
+        transactionDetailData = new ArrayList<TransactionData>();
+
+        Intent invoiceNoIntent = getIntent();
+        Bundle bundle = invoiceNoIntent.getExtras();
+
+        if (bundle != null) {
+            invoicenoIntent = (String) bundle.get("invoiceNoClicked");
+            orderHistoryNetworkRequest();
+        }
 
         if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
+
+        toolbar.findViewById(R.id.toolbar_title);
+        toolbar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(TransactionActivity.this, HomepageActivity.class);
+                startActivity(intent);
+            }
+        });
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
@@ -93,15 +116,6 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
             }
         }
 
-        toolbar.findViewById(R.id.toolbar_title);
-        toolbar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(OrderHistoryListingActivity.this, HomepageActivity.class);
-                startActivity(intent);
-            }
-        });
-
         mDrawerLayout = findViewById(R.id.drawer_layout);
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);
@@ -114,20 +128,8 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
         }
 
         setNavigationViewListener();
-        }
 
-    public View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
     }
-
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
@@ -153,6 +155,7 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
                     .load(sessionUserImage)
                     .into(loggedInUserImage);
         }
+
     }
 
     // NavigationView click events
@@ -225,8 +228,7 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
                 Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
                 startActivity(intentMasterCategory);
                 break;
-
-                case R.id.nav_login:
+            case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -301,7 +303,9 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
     private void orderHistoryNetworkRequest() {
 
         RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/orderhistory.php?userid="+sessionToken;
+
+        String url = "https://www.godprice.com/api/transcation-history.php?userid="+sessionToken;
+
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
                     @Override
@@ -310,77 +314,44 @@ public class OrderHistoryListingActivity extends AppCompatActivity implements Na
                             String trimResponse = response.substring(3);
                             String trimmedResponse = trimResponse.trim();
                             JSONObject jsonObject = new JSONObject(trimmedResponse);
-                            String statusResponse = jsonObject.getString("status");
-                            int statusInt = Integer.parseInt(statusResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int l = 0; l < data.length(); l++) {
+                                    JSONObject currentObject = data.getJSONObject(l);
+                                    Transaction = currentObject.getString("transactionid");
+                                    For = currentObject.getString("For");
+                                    Event = currentObject.getString("Event");
+                                    Mode = currentObject.getString("Mode");
+                                    Amount = currentObject.getString("amount");
+                                    Date = currentObject.getString("create_at");
+                                    Status = currentObject.getString("status");
+                                    TransactionData currentTransactionData = new TransactionData( Transaction, For, Event, Mode, Amount, Date, Status);
+                                    transactionDetailData.add(currentTransactionData);
+                                    transactionAdapter = new TransactionAdapter(TransactionActivity.this, transactionDetailData);
+                                    listView = (ListView) findViewById(R.id.transaction_list);
+                                    listView.setAdapter(transactionAdapter);
+                                    transactionAdapter.notifyDataSetChanged();
+                                    listView.setNestedScrollingEnabled(true);
+                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                    long viewId = view.getId();
 
-                            if (statusInt == 200) {
-                                JSONArray data = jsonObject.getJSONArray("data");
-                                if (data.length() > 0) {
-                                    //Loop the Array
-                                    for (int l = 0; l < data.length(); l++) {
-                                        JSONObject currentObject = data.getJSONObject(l);
-                                        JSONArray shippingDetail = currentObject.getJSONArray("shipping_detail");
-                                        if (shippingDetail.length() > 0) {
-                                            //Loop the Array
-                                            for (int m = 0; m < shippingDetail.length(); m++) {
-                                                JSONObject currentShippingDetail = shippingDetail.getJSONObject(m);
-                                                String invoiceNo = currentShippingDetail.getString("invoiceno");
-                                                String totalAmount = currentShippingDetail.getString("totalamount");
-                                                String status = currentShippingDetail.getString("status");
-                                                String createAt = currentShippingDetail.getString("create_at");
-                                              //  TextView serialNo = (TextView) findViewById(R.id.serial_no);
-                                                String indexserialNo = String.valueOf(m+1);
-                                                String totalAmountString = getResources().getString(R.string.price_dollar_detail) + totalAmount;
-                                                OrderHistoryListingData currentOrderHistoryListingData = new OrderHistoryListingData(invoiceNo, createAt, totalAmountString, status);
-                                                orderHistoryItems.add(currentOrderHistoryListingData);
-                                                orderHistoryListingAdapter = new OrderHistoryListingAdapter(OrderHistoryListingActivity.this, orderHistoryItems);
-                                                listView = (ListView) findViewById(R.id.order_list);
-                                                listView.setAdapter(orderHistoryListingAdapter);
-                                                orderHistoryListingAdapter.notifyDataSetChanged();
-                                                listView.setNestedScrollingEnabled(true);
-
-                                                listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                                    @Override
-                                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                        long viewId = view.getId();
-
-                                                        if (viewId == R.id.action_view) {
-                                                            getViewByPosition(position,listView);
-                                                       //     Toast.makeText(OrderHistoryListingActivity.this, "View button clicked", Toast.LENGTH_SHORT).show();
-                                                            String invoiceNo = listView.getItemAtPosition(position).toString().trim();
-                                                            TextView invoiceTextView = (TextView) listView.getChildAt(childIndex).findViewById(R.id.invoice_no);
-                                                            String invoiceNoClicked = invoiceTextView.getText().toString().trim();
-                                                            Intent intent = new Intent(OrderHistoryListingActivity.this, OrderDetailActivity.class);
-                                                            intent.putExtra("invoiceNoClicked", invoiceNoClicked);
-                                                            startActivity(intent);
-                                                        }
-                                                    }
-                                                });
+                                                }
+                                            });
                                             }
-                                        }
-                                    }
-                                }
-                                } else if (statusInt == 201) {
-                                String message = jsonObject.getString("message");
-                                //Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
-                                linearLayout.setVisibility(View.VISIBLE);
-                                TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(message);
-                            }
-
-                          //  Toast.makeText(OrderHistoryListingActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
-                            } catch(Exception e) {
+                                            }
+                        } catch(Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(OrderHistoryListingActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+                Toast.makeText(TransactionActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
             }
-            });
+        });
         queue.add(stringRequest);
     }
 }
-

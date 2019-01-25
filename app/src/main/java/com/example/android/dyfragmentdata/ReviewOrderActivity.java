@@ -31,6 +31,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -62,6 +63,9 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
     private String cartTotalAmount;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String sessionUserImage;
+    private String addressIdString;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +79,13 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         ActionBar actionbar = getSupportActionBar();
         cartRequest();
-        myAccountNetworkRequest();
+
+        Intent addressIdIntent = getIntent();
+        Bundle bundle = addressIdIntent.getExtras();
+
+        if (bundle != null) {
+            addressIdString = (String) bundle.get("checkedAddressId");
+        }
 
         android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
@@ -113,6 +123,16 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
             }
 
             if (!sessionToken.isEmpty()) {
+                sessionUserImage = session.getuserImage();
+                if (!sessionUserImage.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+                    Glide.with(loggedInUserImage.getContext())
+                            .load(sessionUserImage)
+                            .into(loggedInUserImage);
+                }
                 showFullNavItem();
             }
         }
@@ -123,9 +143,9 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
             navigationView.inflateMenu(R.menu.drawer_view_without_login);
         }
 
-        if (!sessionToken.isEmpty()) {
-            showFullNavItem();
-        }
+      //  if (!sessionToken.isEmpty()) {
+        //    showFullNavItem();
+      //  }
 
         setNavigationViewListener();
 
@@ -158,7 +178,7 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
 
                 TextView walletTextView = (TextView) findViewById(R.id.wallet_amount_price);
                 String walletAmount = walletTextView.getText().toString().trim();
-                int walletTotalAmountIntButton = Integer.parseInt(walletAmount);
+              //  int walletTotalAmountIntButton = Integer.parseInt(walletAmount);
 
                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
                 String amountToPay = amountToPayTextView.getText().toString().trim();
@@ -168,13 +188,15 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                     Intent intentPayment = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
                     intentPayment.putExtra("amountToPay", amountToPay);
                     startActivity(intentPayment);
+                        checkoutNetworkRequest();
+                        }
 
-                    } else  {
+                    else  {
                     Intent intentPayment = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
                     startActivity(intentPayment);
                     }
                 }
-                    }
+                 }
         });
 
        /* Button paymentButton = (Button) findViewById(R.id.payment_button);
@@ -198,6 +220,20 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
         sessionUserEmail = session.getUserEmail();
         loggedInUserName.setText(sessionUserName);
         loggedInUserEmail.setText(sessionUserEmail);
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
+        }
+        ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+        sessionUserImage = session.getuserImage();
+        if (!sessionUserImage.isEmpty()) {
+            Glide.with(loggedInUserImage.getContext())
+                    .load(sessionUserImage)
+                    .into(loggedInUserImage);
+        }
+
     }
 
     // NavigationView click events
@@ -285,7 +321,10 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -295,11 +334,7 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 startActivity(intentWishlist);
                 break;
 
-                case R.id.nav_about_industry:
-             //   Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_checkout:
+                case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
 
@@ -308,6 +343,10 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
+                break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -315,6 +354,7 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -361,7 +401,11 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                                     String productNameCart = currentObjectCart.getString("product_name");
                                     String productCartQuantity = currentObjectCart.getString("quantity");
                                     String productPriceCart = currentObjectCart.getString("price");
-                                    ReviewOrderData currentReviewOrderData = new ReviewOrderData(productNameCart, productCartQuantity, productPriceCart, productImageCart);
+                                    String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + " "+ productPriceCart;
+                                    if (!productPriceCart.isEmpty()) {
+                                        myAccountNetworkRequest();
+                                    }
+                                    ReviewOrderData currentReviewOrderData = new ReviewOrderData(productNameCart, productCartQuantity, productPriceDollar, productImageCart);
                                     reviewOrderItems.add(currentReviewOrderData);
                                     reviewAdapter = new ReviewAdapter(ReviewOrderActivity.this, reviewOrderItems);
                                     //   Toast.makeText(CartActivity.this, "Cart response", LENGTH_SHORT).show();
@@ -374,15 +418,16 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                                 JSONObject currentCartTotalDetail = currentObject.getJSONObject("cart");
                                 String no_of_productCart = currentCartTotalDetail.getString("no_of_product");
                                 cartTotalAmount = currentCartTotalDetail.getString("total_amount");
+                                String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + cartTotalAmount;
                                 cartTotalAmountInt = Integer.parseInt(cartTotalAmount);
                                 totalAmountCartSummary = (TextView) findViewById(R.id.cart_price);
-                                totalAmountCartSummary.setText(cartTotalAmount);
+                                totalAmountCartSummary.setText(productPriceDollar);
 
                                 TextView noOfItemsCart = (TextView) findViewById(R.id.header_no_cart_items);
                                 noOfItemsCart.setText(no_of_productCart + " " + getResources().getString(R.string.cart_items));
 
                                 TextView totalAmountCart = (TextView) findViewById(R.id.header_text_total_amount);
-                                totalAmountCart.setText(cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
+                                totalAmountCart.setText(getResources().getString(R.string.price_dollar_detail) + cartTotalAmount + " " + getResources().getString(R.string.cart_total_amount));
 
                                 } } catch (Exception e) {
                             // If an error is thrown when executing any of the above statements in the "try" block,
@@ -421,18 +466,31 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                             JSONObject jsonObject = new JSONObject(jsonResponse);
                             JSONObject data = jsonObject.getJSONObject("data");
                             String walletAmount = data.getString("wallet_amount");
+                            String WalletPriceDollar = getResources().getString(R.string.price_dollar_detail) + walletAmount;
                             walletAmountInt = Integer.parseInt(walletAmount);
                           //  Toast.makeText(ReviewOrderActivity.this, "My account response.", Toast.LENGTH_SHORT).show();
                             TextView walletAmountTextView = (TextView) findViewById(R.id.wallet_amount_price);
-                            walletAmountTextView.setText(walletAmount);
+                            walletAmountTextView.setText(WalletPriceDollar);
 
-                            String cartAmount = totalAmountCartSummary.getText().toString();
+                       /*     String cartAmount = totalAmountCartSummary.getText().toString();
                             int cartAmountInt = Integer.parseInt(cartAmount);
                             int amountToPay = cartAmountInt - walletAmountInt;
                             String amountToPayString = String.valueOf(amountToPay);
                             if (cartAmountInt <= walletAmountInt) {
                                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
                                 amountToPayTextView.setText(amountToPayString);
+                            } else {
+                                String noWalletAmount = "NA";
+                                TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
+                                amountToPayTextView.setText(noWalletAmount);
+                            } */
+
+                            int amountToPay = cartAmountInt - walletAmountInt;
+                            String amountToPayString = String.valueOf(amountToPay);
+                            String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + "0";
+                            if (cartAmountInt <= walletAmountInt) {
+                                TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
+                                amountToPayTextView.setText(productPriceDollar);
                             } else {
                                 String noWalletAmount = "NA";
                                 TextView amountToPayTextView = (TextView) findViewById(R.id.amount_to_pay_price);
@@ -453,6 +511,42 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
         protected Map<String, String> getParams() {
             Map<String, String> params = new HashMap<String, String>();
             params.put("userid", sessionToken);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void checkoutNetworkRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/checkout.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                          //  Toast.makeText(ReviewOrderActivity.this, "Checkout response.", Toast.LENGTH_SHORT).show();
+                        //    Intent intentReviewOrder = new Intent(ReviewOrderActivity.this, PaymentActivity.class);
+                        //    startActivity(intentReviewOrder);
+
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(ReviewOrderActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
+            params.put("device_id", android_id);
+            params.put("addressid", addressIdString);
             return params;
         }
         };

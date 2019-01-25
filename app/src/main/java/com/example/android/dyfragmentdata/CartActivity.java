@@ -21,6 +21,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +33,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -71,6 +73,8 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
     private int childIndex;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,6 +95,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
         session = new Session(this);
         sessionToken = session.getusertoken();
         cartRequest();
+        myAccountNetworkRequest();
 
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
@@ -104,6 +109,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
             }
 
             if (!sessionToken.isEmpty()) {
+
                 showFullNavItem();
             }
             }
@@ -211,7 +217,21 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
         sessionUserEmail = session.getUserEmail();
         loggedInUserName.setText(sessionUserName);
         loggedInUserEmail.setText(sessionUserEmail);
-    }
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        navigationView = findViewById(R.id.nav_view);
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
+        }
+        ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+        sessionUserImage = session.getuserImage();
+        if (!sessionUserImage.isEmpty()) {
+            Glide.with(loggedInUserImage.getContext())
+                    .load(sessionUserImage)
+                    .into(loggedInUserImage);
+        }
+        }
 
     // NavigationView click events
     private void setNavigationViewListener() {
@@ -292,6 +312,10 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
                 case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -301,17 +325,21 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(intentWishlist);
                 break;
 
-            case R.id.nav_about_industry:
-               // Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_checkout:
+                case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
                 break;
             case R.id.nav_order_history:
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
+                break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
                 break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
@@ -320,6 +348,7 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -610,6 +639,49 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
             Map<String, String> params = new HashMap<String, String>();
             params.put("device_id", android_id);
             params.put("cart_id", cartIDDelete);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    private void myAccountNetworkRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/my-account.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String walletAmount = data.getString("wallet_amount");
+                            session.setuserWalletAmount(walletAmount);
+                            sessionUserWalletAmount = session.getuserWalletAmount();
+                            navigationView = findViewById(R.id.nav_view);
+                            View header = navigationView.getHeaderView(0);
+                            String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + walletAmount;
+                            TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+                            if (!walletAmount.isEmpty()) {
+                                loggedInUserWalletAmount.setText(WalletPriceDollar);
+                            }
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(CartActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
             return params;
         }
         };

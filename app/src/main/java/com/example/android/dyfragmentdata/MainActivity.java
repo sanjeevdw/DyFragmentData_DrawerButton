@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -49,6 +51,8 @@ public Bundle bundle;
     private String sessionGoogleEmil;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,6 +130,16 @@ public Bundle bundle;
         }
 
         if (!sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.inflateMenu(R.menu.drawer_view);
+            View header = navigationView.getHeaderView(0);
+            ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+            sessionUserImage = session.getuserImage();
+            if (!sessionUserImage.isEmpty()) {
+                Glide.with(loggedInUserImage.getContext())
+                        .load(sessionUserImage)
+                        .into(loggedInUserImage);
+            }
             showFullNavItem();
         }
         }
@@ -141,6 +155,15 @@ public Bundle bundle;
         sessionUserEmail = session.getUserEmail();
         loggedInUserName.setText(sessionUserName);
         loggedInUserEmail.setText(sessionUserEmail);
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        navigationView = findViewById(R.id.nav_view);
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
+        }
+
+
     }
 
     // NavigationView click events
@@ -324,9 +347,7 @@ public Bundle bundle;
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-            case R.id.nav_about_industry:
-             //   Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-                break;
+
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
@@ -335,6 +356,14 @@ public Bundle bundle;
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
+                break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -342,6 +371,7 @@ public Bundle bundle;
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();

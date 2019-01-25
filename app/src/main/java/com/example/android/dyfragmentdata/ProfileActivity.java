@@ -87,6 +87,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
     private String stringUri;
     private static final int MY_PERMISSIONS_REQUEST_MULTIPLE = 4;
     private ImageView userProfileImage;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +159,16 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         }
 
         if (!sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.inflateMenu(R.menu.drawer_view);
+            View header = navigationView.getHeaderView(0);
+            sessionUserImage = session.getuserImage();
+            if (!sessionUserImage.isEmpty()) {
+                ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+                Glide.with(loggedInUserImage.getContext())
+                        .load(sessionUserImage)
+                        .into(loggedInUserImage);
+            }
             showFullNavItem();
         }
 
@@ -173,14 +185,6 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             }
         });
 
-        Button changePasswordButton = (Button) findViewById(R.id.change_password_bt);
-        changePasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentChangePassword = new Intent(ProfileActivity.this, ChangePasswordActivity.class);
-                startActivity(intentChangePassword);
-            }
-        });
 
         updateProfileButton = (Button) findViewById(R.id.submit_button_update_profile);
         updateProfileButton.setOnClickListener(new View.OnClickListener() {
@@ -281,6 +285,14 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
         sessionUserEmail = session.getUserEmail();
         loggedInUserName.setText(sessionUserName);
         loggedInUserEmail.setText(sessionUserEmail);
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        navigationView = findViewById(R.id.nav_view);
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
+        }
+
     }
 
     // NavigationView click events
@@ -369,7 +381,10 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -379,10 +394,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-            case R.id.nav_about_industry:
-               // Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
-                break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
@@ -391,13 +403,22 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
-            case R.id.sign_out_menu:
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
+                break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+                case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                    session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -464,7 +485,8 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                             String userEmail = dataJsonObject.getString("email");
                             String userMobile = dataJsonObject.getString("mobile");
                             String userImage = dataJsonObject.getString("profileimage");
-
+                            session.setuserImage(userImage);
+                            sessionUserImage = session.getuserImage();
                             EditText firstName = (EditText) findViewById(R.id.first_name_et);
                             firstName.setText(userName);
 
@@ -482,7 +504,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
                             navigationView.getMenu().clear();
                             navigationView.inflateMenu(R.menu.drawer_view);
                             View header = navigationView.getHeaderView(0);
-                            ImageView loggedInUserImage = header.findViewById(R.id.user_image);
+                            ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
                             Glide.with(loggedInUserImage.getContext())
                                     .load(userImage)
                                     .into(loggedInUserImage);
@@ -651,7 +673,7 @@ public class ProfileActivity extends AppCompatActivity implements NavigationView
             new MultipartUploadRequest(this, uploadId, URL)
                     .addFileToUpload(picturePath, "profileimage") //Adding file
                     .addParameter("userid", sessionToken) //Adding text parameter to the request
-                    .setNotificationConfig(new UploadNotificationConfig())
+                  //  .setNotificationConfig(new UploadNotificationConfig())
                     .setMaxRetries(2)
                     .startUpload(); //Starting the upload
 

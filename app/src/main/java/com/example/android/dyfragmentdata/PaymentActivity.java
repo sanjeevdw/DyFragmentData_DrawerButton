@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -36,6 +37,8 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
     private int amountToPayInt;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +114,16 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
             }
 
             if (!sessionToken.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.inflateMenu(R.menu.drawer_view);
+                View header = navigationView.getHeaderView(0);
+                ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+                sessionUserImage = session.getuserImage();
+                if (!sessionUserImage.isEmpty()) {
+                    Glide.with(loggedInUserImage.getContext())
+                            .load(sessionUserImage)
+                            .into(loggedInUserImage);
+                }
                 showFullNavItem();
             }
         }
@@ -147,7 +160,14 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
         sessionUserEmail = session.getUserEmail();
         loggedInUserName.setText(sessionUserName);
         loggedInUserEmail.setText(sessionUserEmail);
-    }
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        navigationView = findViewById(R.id.nav_view);
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
+        }
+        }
 
     // NavigationView click events
     private void setNavigationViewListener() {
@@ -233,7 +253,10 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -243,17 +266,21 @@ public class PaymentActivity extends AppCompatActivity implements NavigationView
                 startActivity(intentWishlist);
                 break;
 
-            case R.id.nav_about_industry:
-              //  Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-
-                break;
-            case R.id.nav_checkout:
+                case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
                 break;
             case R.id.nav_order_history:
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
+                break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
                 break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);

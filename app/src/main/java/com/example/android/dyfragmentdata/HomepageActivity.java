@@ -96,6 +96,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private DealsOfTheDayAdapter dealsOfTheDayAdapter;
     private ArrayList<HomepageTrendingProductData> homepageTrendingProductData;
     private HomepageTrendingProductAdapter homepageTrendingProductAdapter;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -147,7 +149,18 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 }
 
             if (!sessionToken.isEmpty()) {
-                showFullNavItem();
+                sessionUserImage = session.getuserImage();
+                if (!sessionUserImage.isEmpty()) {
+                    navigationView = findViewById(R.id.nav_view);
+                    navigationView.getMenu().clear();
+                    navigationView.inflateMenu(R.menu.drawer_view_without_login);
+                    View header = navigationView.getHeaderView(0);
+                    ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+                    Glide.with(loggedInUserImage.getContext())
+                            .load(sessionUserImage)
+                            .into(loggedInUserImage);
+                }
+                               showFullNavItem();
                 }
         }
 
@@ -185,6 +198,16 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         }
 
         if (!sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.inflateMenu(R.menu.drawer_view);
+            View header = navigationView.getHeaderView(0);
+            sessionUserImage = session.getuserImage();
+            if (!sessionUserImage.isEmpty()) {
+                ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+                Glide.with(loggedInUserImage.getContext())
+                        .load(sessionUserImage)
+                        .into(loggedInUserImage);
+            }
             showFullNavItem();
             }
 
@@ -301,6 +324,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             sessionUserEmail = session.getUserEmail();
             loggedInUserName.setText(sessionUserName);
             loggedInUserEmail.setText(sessionUserEmail);
+            sessionUserWalletAmount = session.getuserWalletAmount();
+            navigationView = findViewById(R.id.nav_view);
+            String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+            TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+            if (!sessionUserWalletAmount.isEmpty()) {
+                loggedInUserWalletAmount.setText(WalletPriceDollar);
+            }
+
+
         }
 
      /*   private void setupTabIcons() {
@@ -393,7 +425,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -402,9 +437,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-            case R.id.nav_about_industry:
-             //   Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
-                break;
+
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
@@ -413,6 +446,14 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
+                break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -420,6 +461,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -1141,5 +1183,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 }
+
+
+
 
 

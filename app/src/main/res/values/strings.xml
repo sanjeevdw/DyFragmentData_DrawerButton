@@ -11,6 +11,7 @@
     <string name="header_name">God Price</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
+    <string name="merchant_login">Merchant Login</string>
     <string name="about_industry">About GodPrice</string>
     <string name="choose_image_profile">Choose</string>
     <string name="home">Home</string>
@@ -180,6 +181,17 @@
     <string name="filter_button_submit">FILTER</string>
     <string name="filter_color_placeholder">White</string>
     <string name="filter_size_placeholder">XL</string>
+    <string name="transaction_heading">My Transaction</string>
+    <string name="transaction_id">Transaction#</string>
+    <string name="for_heading">For</string>
+    <string name="event_heading">Event</string>
+    <string name="transaction_history_heading">Transaction History</string>
+    <string name="mode_heading">Mode</string>
+    <string name="amount_heading">Amount</string>
+    <string name="date_heading">Date</string>
+    <string name="status_heading">Status</string>
+    <string name="wallet_amount_label">Wallet Amount:</string>
+    <string name="confirm_button">Confirm Order</string>
     <string name="cart_empty">Your cart is empty</string>
     <string name="wallet_not_sufficient">You don\'t have sufficient amount in you wallet</string>
     <string name="order_detail_label">Order Detail </string>

@@ -117,6 +117,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
     private ReviewsAdapter reviewsAdapter;
     private ListView reviewsListView;
     private Spinner spinner;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
         protected void onCreate(Bundle savedInstanceState) {
@@ -176,7 +178,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         specListView.setNestedScrollingEnabled(true);
         productRatingsData = new ArrayList<ProductRatingsData>();
         reviewsListView = (ListView) findViewById(R.id.rating_reviews_list);
-        reviewsListView.setNestedScrollingEnabled(true);
+       // reviewsListView.setNestedScrollingEnabled(true);
         productsDetailsRequest();
         setNavigationViewListener();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -208,6 +210,16 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         }
 
         if (!sessionToken.isEmpty()) {
+            sessionUserImage = session.getuserImage();
+            if (!sessionUserImage.isEmpty()) {
+                navigationView = findViewById(R.id.nav_view);
+                navigationView.inflateMenu(R.menu.drawer_view);
+                View header = navigationView.getHeaderView(0);
+                ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+                Glide.with(loggedInUserImage.getContext())
+                        .load(sessionUserImage)
+                        .into(loggedInUserImage);
+            }
             showFullNavItem();
         }
 
@@ -237,13 +249,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 }
                 else if (!TextUtils.isEmpty(quantityCart)) {
                     cartQuantity = Integer.parseInt(quantityCart);
-                    if (cartQuantity > quantityProInt) {
+                    if (quantityProInt == 0) {
+                        Toast.makeText(DetailsActivity.this, "Out of Stock", Toast.LENGTH_LONG).show();
+                    }
+                   else if (cartQuantity > quantityProInt) {
+                        Toast.makeText(DetailsActivity.this, "Please enter quantity less than "+ quantityProInt, LENGTH_SHORT).show();
 
-                        if (quantityProInt == 0) {
-                            Toast.makeText(DetailsActivity.this, "Out of Stock", Toast.LENGTH_LONG).show();
-                        }
-                    Toast.makeText(DetailsActivity.this, "Please enter quantity less than "+ quantityProInt, LENGTH_SHORT).show();
-                    } else if (cartQuantity == quantityProInt) {
+                        } else if (cartQuantity == quantityProInt) {
                     addToCartRequest();
                     } else {
                     addToCartRequest();
@@ -277,6 +289,14 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             sessionUserEmail = session.getUserEmail();
             loggedInUserName.setText(sessionUserName);
             loggedInUserEmail.setText(sessionUserEmail);
+            sessionUserWalletAmount = session.getuserWalletAmount();
+            navigationView = findViewById(R.id.nav_view);
+            String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+            TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+            if (!sessionUserWalletAmount.isEmpty()) {
+                loggedInUserWalletAmount.setText(WalletPriceDollar);
+            }
+
     }
 
     // NavigationView click events
@@ -363,7 +383,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
                 case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -373,9 +396,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-            case R.id.nav_about_industry:
-               // Toast.makeText(this, "NavigationClick", LENGTH_SHORT).show();
-                break;
+
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
@@ -384,6 +405,14 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
+                break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", LENGTH_SHORT).show();
@@ -391,6 +420,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -625,8 +655,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 colorLayout = (LinearLayout) findViewById(R.id.text_color_container_two);
                                                 final Button button = new Button(DetailsActivity.this);
                                                 button.setId(k+1);
-                                                button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 63));
-                                                LinearLayout.LayoutParams buttonMargin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 63);
+                                                button.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70));
+                                                LinearLayout.LayoutParams buttonMargin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70);
                                                 buttonMargin.setMargins(15, 0, 0, 0);
                                                 button.setText(attributeColorValue);
                                                 button.setLayoutParams(buttonMargin);
@@ -687,8 +717,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 sizeLayout = (LinearLayout) findViewById(R.id.text_size_container);
                                                 final Button buttonSize = new Button(DetailsActivity.this);
                                                 buttonSize.setId(m+1);
-                                                buttonSize.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 63));
-                                                LinearLayout.LayoutParams buttonMargin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 63);
+                                                buttonSize.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70));
+                                                LinearLayout.LayoutParams buttonMargin = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, 70);
                                                 buttonMargin.setMargins(15, 0, 0, 0);
                                                 buttonSize.setText(attributeSizeValue);
                                                 buttonSize.setLayoutParams(buttonMargin);

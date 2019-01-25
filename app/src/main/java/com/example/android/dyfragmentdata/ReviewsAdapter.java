@@ -35,9 +35,15 @@ public class ReviewsAdapter extends ArrayAdapter<ProductRatingsData> {
         ProductRatingsData currentProductRatingsData = getItem(position);
 
         ImageView userImageView = (ImageView) itemListView.findViewById(R.id.image_reviews);
+        String imageUserReviewUrl = currentProductRatingsData.getFeaturedImage();
+
+        if (!imageUserReviewUrl.isEmpty()) {
         Glide.with(userImageView.getContext())
-                .load(currentProductRatingsData.getFeaturedImage())
+                .load(imageUserReviewUrl)
                 .into(userImageView);
+        } else {
+            userImageView.setVisibility(View.INVISIBLE);
+        }
 
         TextView userNameView = (TextView) itemListView.findViewById(R.id.name_user);
         userNameView.setText(currentProductRatingsData.getUserName());

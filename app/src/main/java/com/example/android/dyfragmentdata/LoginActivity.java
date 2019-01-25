@@ -98,6 +98,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
     private String sessionGoogleEmail;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,6 +154,16 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         }
 
         if (!sessionToken.isEmpty()) {
+            navigationView = findViewById(R.id.nav_view);
+            navigationView.inflateMenu(R.menu.drawer_view);
+            View header = navigationView.getHeaderView(0);
+            ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+            sessionUserImage = session.getuserImage();
+            if (!sessionUserImage.isEmpty()) {
+                Glide.with(loggedInUserImage.getContext())
+                        .load(sessionUserImage)
+                        .into(loggedInUserImage);
+            }
             showFullNavItem();
             }
 
@@ -277,6 +289,8 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Log.d(TAG, "facebook:onError", error);
             }
         });
+
+        myAccountNetworkRequest();
     }
 
     private void signIn() {
@@ -292,10 +306,20 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         View header = navigationView.getHeaderView(0);
         TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
         TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+        ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
         sessionUserName = session.getusename();
         sessionUserEmail = session.getUserEmail();
         loggedInUserName.setText(sessionUserName);
         loggedInUserEmail.setText(sessionUserEmail);
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        navigationView = findViewById(R.id.nav_view);
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
+        }
+
+
     }
 
         // NavigationView click events
@@ -594,7 +618,10 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -603,10 +630,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Intent intentWishlist = new Intent(this, WishlistActivity.class);
                 startActivity(intentWishlist);
                 break;
-            case R.id.nav_about_industry:
-              //  Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
 
-                break;
             case R.id.nav_checkout:
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
@@ -615,6 +639,14 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+            case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, OrderHistoryActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
+                break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
@@ -622,6 +654,7 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -856,20 +889,23 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                             String userImage = dataJsonObject.getString("profileimage");
 
                             session.setusename(userName);
-                            session.setUserEmail(userImage);
-                            session.setuserImage(userEmail);
+                            session.setUserEmail(userEmail);
+                            session.setuserImage(userImage);
                             navigationView = findViewById(R.id.nav_view);
                             View header = navigationView.getHeaderView(0);
                             TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
                             TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+
                             sessionUserName = session.getusename();
                             sessionUserEmail = session.getUserEmail();
+                            sessionUserImage = session.getuserImage();
                             loggedInUserName.setText(sessionUserName);
                             loggedInUserEmail.setText(sessionUserEmail);
-                          /*  ImageView loggedInUserImage = header.findViewById(R.id.user_image);
+
+                            ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
                             Glide.with(loggedInUserImage.getContext())
-                                    .load(userImage)
-                                    .into(loggedInUserImage); */
+                                    .load(sessionUserImage)
+                                    .into(loggedInUserImage);
 
                             }
                         catch(Exception e) {
@@ -893,7 +929,51 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
         };
         queue.add(stringRequest);
     }
+
+    private void myAccountNetworkRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url = "https://www.godprice.com/api/my-account.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String jsonResponse = response.toString().trim();
+                            jsonResponse = jsonResponse.substring(3);
+                            JSONObject jsonObject = new JSONObject(jsonResponse);
+                            JSONObject data = jsonObject.getJSONObject("data");
+                            String walletAmount = data.getString("wallet_amount");
+                            session.setuserWalletAmount(walletAmount);
+                            sessionUserWalletAmount = session.getuserWalletAmount();
+                            navigationView = findViewById(R.id.nav_view);
+                            View header = navigationView.getHeaderView(0);
+                            String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + walletAmount;
+                            TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+                            if (!walletAmount.isEmpty()) {
+                                loggedInUserWalletAmount.setText(WalletPriceDollar);
+                            }
+                            } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(LoginActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            params.put("userid", sessionToken);
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
 }
+
 
 
 

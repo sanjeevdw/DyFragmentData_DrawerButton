@@ -4,17 +4,17 @@ public class OrderHistoryListingData {
 
     // Variable declaration
 
-    private String mSerialNo;
+   // private String mSerialNo;
     private String mInvoice;
     private String mDate;
     private String mTotal;
     private String mStatus;
 
-    public OrderHistoryListingData(String SerialNo, String Invoice, String Date, String Total, String Status) {
+    public OrderHistoryListingData(String Invoice, String Date, String Total, String Status) {
 
         // Variable initial values
 
-        mSerialNo = SerialNo;
+    //    mSerialNo = SerialNo;
         mInvoice = Invoice;
         mDate = Date;
         mTotal = Total;
@@ -24,9 +24,9 @@ public class OrderHistoryListingData {
 
     // Get method to return order history items
 
-    public String getSerialNo() {
-        return  mSerialNo;
-    }
+  //  public String getSerialNo() {
+  //      return  mSerialNo;
+ //   }
 
     public String getInvoice() {
         return  mInvoice;

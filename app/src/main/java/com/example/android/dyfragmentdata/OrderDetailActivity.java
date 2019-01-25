@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,6 +30,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -70,6 +72,8 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
     private String invoicenoIntent;
     private String sessionUserName;
     private String sessionUserEmail;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -149,6 +153,21 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
             sessionUserEmail = session.getUserEmail();
             loggedInUserName.setText(sessionUserName);
             loggedInUserEmail.setText(sessionUserEmail);
+            sessionUserWalletAmount = session.getuserWalletAmount();
+            navigationView = findViewById(R.id.nav_view);
+            String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+            TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+            if (!sessionUserWalletAmount.isEmpty()) {
+                loggedInUserWalletAmount.setText(WalletPriceDollar);
+            }
+            ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+            sessionUserImage = session.getuserImage();
+            if (!sessionUserImage.isEmpty()) {
+                Glide.with(loggedInUserImage.getContext())
+                        .load(sessionUserImage)
+                        .into(loggedInUserImage);
+            }
+
     }
 
     // NavigationView click events
@@ -233,7 +252,10 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                 Intent intentProfile = new Intent(this, ProfileActivity.class);
                 startActivity(intentProfile);
                 break;
-
+            case R.id.nav_forgot_password:
+                Intent intentForgotPassword = new Intent(this, ForgotPasswordActivity.class);
+                startActivity(intentForgotPassword);
+                break;
             case R.id.nav_change_password:
                 Intent intentChangePassword = new Intent(this, ChangePasswordActivity.class);
                 startActivity(intentChangePassword);
@@ -253,8 +275,13 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                 startActivity(intentOrderHistory);
                 break;
 
-            case R.id.nav_about_industry:
-              //  Toast.makeText(this, "NavigationClick", Toast.LENGTH_SHORT).show();
+                case R.id.nav_merchant_login:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_transaction:
+                Intent intentTransaction = new Intent(this, TransactionActivity.class);
+                startActivity(intentTransaction);
                 break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
@@ -263,6 +290,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                 session.setusertoken("");
                 session.setUserEmail("");
                 session.setusename("");
+                session.setuserImage("");
                 if (sessionToken.isEmpty()) {
                     navigationView = findViewById(R.id.nav_view);
                     navigationView.getMenu().clear();
@@ -329,16 +357,18 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                             productQuantity = currentOrderDetail.getString("qty");
                                             productPrice = currentOrderDetail.getString("price");
                                             productTotalPrice = currentOrderDetail.getString("total_price");
-                                          //  JSONArray productAttribute = currentOrderDetail.getJSONArray("pro_att");
+                                           String productPriceString = getResources().getString(R.string.price_dollar_detail) + productPrice;
+                                            String productTotalPriceString = getResources().getString(R.string.price_dollar_detail) + productTotalPrice;
+                                            //  JSONArray productAttribute = currentOrderDetail.getJSONArray("pro_att");
                                             //Loop the Array
                                           //  for (int j = 0; j < productAttribute.length(); j++) {
                                            //     JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
                                            //     productSize = currentProductAttribute.getString("Size");
                                               //   productColor = currentProductAttribute.getString("Color");
-                                                OrderDetailData currentOrderDetailData = new OrderDetailData(invoiceno, fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPrice, productTotalPrice);
+                                                OrderDetailData currentOrderDetailData = new OrderDetailData(invoiceno, fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPriceString, productTotalPriceString);
                                                 orderDetailData.add(currentOrderDetailData);
                                                 orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
-                                                Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
+                                              //  Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
                                                 listView = (ListView) findViewById(R.id.order_detail_list);
                                                 listView.setAdapter(orderDetailAdapter);
                                                 orderDetailAdapter.notifyDataSetChanged();
@@ -349,7 +379,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                                         long viewId = view.getId();
 
                                                         if (viewId == R.id.back_label) {
-                                                            Toast.makeText(OrderDetailActivity.this, "Back button clicked", Toast.LENGTH_SHORT).show();
+                                                       //     Toast.makeText(OrderDetailActivity.this, "Back button clicked", Toast.LENGTH_SHORT).show();
                                                             Intent intent = new Intent(OrderDetailActivity.this, OrderHistoryListingActivity.class);
                                                             startActivity(intent);
                                                         }

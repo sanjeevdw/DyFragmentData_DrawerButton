@@ -3,8 +3,11 @@ package com.example.android.dyfragmentdata;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -16,45 +19,32 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
+import android.webkit.WebSettings;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.onesignal.OneSignal;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
+public class MerchantHeaderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-
-public class WishlistActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
-
-    private DrawerLayout mDrawerLayout;
-    private ListView listView;
-    private ArrayList<WishlistData> wishlistProducts;
-    private WishlistAdapter wishlistAdapter;
     private Session session;
     private String sessionToken;
+    private String android_id;
+    private WebView myWebView;
+    private String authToken;
+    private String ramdomId;
+    private DrawerLayout mDrawerLayout;
+    private String invoicenoIntent;
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
-    private int childIndex;
-    private String productID;
     private String sessionUserName;
     private String sessionUserEmail;
     private String sessionUserImage;
@@ -63,32 +53,47 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Set the content of the activity to use the activity_category.xml layout file
-        setContentView(R.layout.activity_wishlist);
+        setContentView(R.layout.activity_webview_merchant_header);
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(Color.parseColor("#e53935"));
         toolbar.setTitleTextColor(getResources().getColor(android.R.color.white));
         ActionBar actionbar = getSupportActionBar();
-        wishlistProducts = new ArrayList<WishlistData>();
+        session = new Session(this);
+        sessionToken = session.getusertoken();
+        android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
-        if (actionbar !=null) {
+        myWebView = (WebView) findViewById(R.id.webview);
+        myWebView.loadUrl("https://www.godprice.com/merchant/");
+        WebSettings webSettings = myWebView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        myWebView.setWebViewClient(new MerchantHeaderActivity.MyWebViewClient());
+        // OneSignal Initialization
+        OneSignal.startInit(this)
+                .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
+                .unsubscribeWhenNotificationsAreDisabled(true)
+                .init();
+
+        Intent invoiceNoIntent = getIntent();
+        Bundle bundle = invoiceNoIntent.getExtras();
+
+        if (bundle != null) {
+            invoicenoIntent = (String) bundle.get("invoiceNoClicked");
+
+        }
+
+        if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
             actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
-
-        session = new Session(this);
-        sessionToken = session.getusertoken();
-        wishlistNetworkRequest(sessionToken);
-
-        mDrawerLayout = findViewById(R.id.drawer_layout);
 
         toolbar.findViewById(R.id.toolbar_title);
         toolbar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(WishlistActivity.this, HomepageActivity.class);
+                Intent intent = new Intent(MerchantHeaderActivity.this, HomepageActivity.class);
                 startActivity(intent);
             }
         });
@@ -96,6 +101,8 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
         if (account != null) {
             usernameGoogle = account.getDisplayName();
+            sessionToken = usernameGoogle;
+            sessionGoogleEmil = account.getEmail();
             if (sessionToken.isEmpty()) {
                 navigationView = findViewById(R.id.nav_view);
                 navigationView.getMenu().clear();
@@ -107,6 +114,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
             }
         }
 
+        mDrawerLayout = findViewById(R.id.drawer_layout);
         if (sessionToken.isEmpty()) {
             navigationView = findViewById(R.id.nav_view);
             navigationView.getMenu().clear();
@@ -114,35 +122,11 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         }
 
         if (!sessionToken.isEmpty()) {
-            navigationView = findViewById(R.id.nav_view);
-            navigationView.inflateMenu(R.menu.drawer_view);
-            View header = navigationView.getHeaderView(0);
-            ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
-            sessionUserImage = session.getuserImage();
-            if (!sessionUserImage.isEmpty()) {
-                Glide.with(loggedInUserImage.getContext())
-                        .load(sessionUserImage)
-                        .into(loggedInUserImage);
-            }
             showFullNavItem();
         }
 
         setNavigationViewListener();
-
-        }
-
-    public View getViewByPosition(int pos, ListView listView) {
-        final int firstListItemPosition = listView.getFirstVisiblePosition();
-        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
-
-        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
-            return listView.getAdapter().getView(pos, null, listView);
-        } else {
-            childIndex = pos - firstListItemPosition;
-            return listView.getChildAt(childIndex);
-        }
     }
-
     private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
@@ -161,13 +145,21 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         if (!sessionUserWalletAmount.isEmpty()) {
             loggedInUserWalletAmount.setText(WalletPriceDollar);
         }
+        ImageView loggedInUserImage = header.findViewById(R.id.user_image_header);
+        sessionUserImage = session.getuserImage();
+        if (!sessionUserImage.isEmpty()) {
+            Glide.with(loggedInUserImage.getContext())
+                    .load(sessionUserImage)
+                    .into(loggedInUserImage);
         }
+
+    }
 
     // NavigationView click events
     private void setNavigationViewListener() {
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -222,7 +214,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         // close drawer when item is tapped
         mDrawerLayout.closeDrawers();
 
-        switch(id) {
+        switch (id) {
 
             case R.id.nav_home:
                 Intent intent = new Intent(this, HomepageActivity.class);
@@ -233,7 +225,7 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
                 startActivity(intentMasterCategory);
                 break;
-                case R.id.nav_login:
+            case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -262,10 +254,12 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
                 Intent intentCheckout = new Intent(this, CheckoutActivity.class);
                 startActivity(intentCheckout);
                 break;
+
             case R.id.nav_order_history:
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
+
             case R.id.nav_merchant_login:
                 Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
@@ -303,113 +297,18 @@ public class WishlistActivity extends AppCompatActivity implements NavigationVie
         return false;
     }
 
-    private void wishlistNetworkRequest(String UserID) {
-        final String USERID = UserID;
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/whishlist.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            String jsonResponse = response.toString().trim();
-                            jsonResponse = jsonResponse.substring(3);
-                            JSONObject jsonObject = new JSONObject(jsonResponse);
-                            JSONArray data = jsonObject.getJSONArray("data");
-
-                                for (int i = 0; i < data.length(); i++) {
-                                    JSONObject currentObject = data.getJSONObject(i);
-
-                                    String productId = currentObject.getString("pid");
-                                    String productName = currentObject.getString("productname");
-                                    String productPrice = currentObject.getString("price");
-                                    String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + productPrice;
-                                    String productImage = currentObject.getString("image");
-                                    WishlistData currentWishlist = new WishlistData(productId, productName, productPriceDollar, productImage);
-                                    wishlistProducts.add(currentWishlist);
-                                    wishlistAdapter = new WishlistAdapter(WishlistActivity.this, wishlistProducts);
-                                    listView = (ListView) findViewById(R.id.wishlist_list);
-                                    listView.setAdapter(wishlistAdapter);
-                                    wishlistAdapter.notifyDataSetChanged();
-                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                        @Override
-                                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                            long viewId = view.getId();
-                                            getViewByPosition(position, listView);
-
-                                            if (viewId == R.id.remove_product_icon) {
-                                                String productId = listView.getItemAtPosition(position).toString().trim();
-                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.textView_product_id);
-                                                productID = PPid.getText().toString().trim();
-                                                wishlistProductRemoveRequest(productID, sessionToken);
-                                            } else if (viewId == R.id.textView_product_title) {
-                                                String productId = listView.getItemAtPosition(position).toString().trim();
-                                                TextView PPid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.textView_product_id);
-                                                String productID = PPid.getText().toString().trim();
-
-                                                Intent intent = new Intent(WishlistActivity.this, DetailsActivity.class);
-                                                intent.putExtra("ProductId", productID);
-                                                startActivity(intent);
-                                            }
-                                        }
-                                    });
-                                    }  //      Toast.makeText(getApplicationContext(), response, Toast.LENGTH_SHORT).show();
-                        }catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
-
+    private class MyWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            //  if (Uri.parse(url).getHost().equals("http://hqsales.net/mobileappdev/makeadminlogin/")) {
+            if (Uri.parse(url).getHost().equals("www.godprice.com")) {
+                // This is my website, so do not override; let my WebView load the page
+                return false;
             }
-            }) { @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", USERID);
-            return params;
+            // Otherwise, the link is not for a page on my site, so launch another Activity that handles URLs
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+            startActivity(intent);
+            return true;
         }
-        };
-        queue.add(stringRequest);
-    }
-
-    private void wishlistProductRemoveRequest(String productID, String userId) {
-        final String ProductID = productID;
-        final String UserId = userId;
-
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://www.godprice.com/api/whishlist_delete.php";
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            String jsonResponse = response.toString().trim();
-                            jsonResponse = jsonResponse.substring(3);
-                            JSONObject jsonObject = new JSONObject(jsonResponse);
-                            wishlistAdapter.clear();
-                            wishlistNetworkRequest(sessionToken);
-                        }catch(Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
-
-            }
-        }) { @Override
-        protected Map<String, String> getParams() {
-            Map<String, String> params = new HashMap<String, String>();
-            params.put("userid", UserId);
-            params.put("pid", ProductID);
-            return params;
-        }
-        };
-        queue.add(stringRequest);
     }
 }
-
-

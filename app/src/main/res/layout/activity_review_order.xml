@@ -263,6 +263,7 @@
                                 android:layout_marginStart="5dp"
                                 android:gravity="center"
                                 android:text="@string/previous"
+                                android:textColor="@android:color/white"
                                 android:background="@drawable/submit_button"
                                 />
                         </RelativeLayout>

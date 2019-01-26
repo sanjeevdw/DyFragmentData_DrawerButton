@@ -89,6 +89,14 @@ public class OrderDetailAdapter extends ArrayAdapter<OrderDetailData> {
             }
         });
 
+        Button chatButton = (Button) itemListView.findViewById(R.id.chat_button_label);
+        chatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((ListView) parent).performItemClick(v, position, 0);
+            }
+        });
+
         return itemListView;
     }
 }

@@ -140,7 +140,6 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
         }
 
         setNavigationViewListener();
-
         }
         private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
@@ -383,6 +382,11 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                                             Intent intent = new Intent(OrderDetailActivity.this, OrderHistoryListingActivity.class);
                                                             startActivity(intent);
                                                         }
+
+                                                        if (viewId == R.id.chat_button_label) {
+                                                            Intent intentChat = new Intent(OrderDetailActivity.this, MerchantHeaderActivity.class);
+                                                                    startActivity(intentChat);
+                                                                    }
                                                     }
                                                 });
                                            // }

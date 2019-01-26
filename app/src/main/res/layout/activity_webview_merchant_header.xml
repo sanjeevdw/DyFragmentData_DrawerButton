@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".OrderHistoryListingActivity">
+    tools:context=".MerchantHeaderActivity">
 
     <!-- Layout to contain contents of main body of screen (drawer will slide over this)-->
     <FrameLayout
@@ -30,22 +30,14 @@
                 android:layout_height="wrap_content"
                 android:text="@string/app_name"/>
         </android.support.v7.widget.Toolbar>
-        <ScrollView
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/scroll_bar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true"
-            android:scrollbars="vertical">
-
-            <ListView
-        android:id="@+id/order_detail_list"
-        android:orientation="vertical"
-        android:layout_marginTop="50dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="10dp"/>
-    </ScrollView>
+<WebView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/webview"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    />
     </FrameLayout>
 
     <!-- Container for contents of drawer - use NavigationView to make configuration easier-->

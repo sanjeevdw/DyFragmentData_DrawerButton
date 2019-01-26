@@ -90,6 +90,9 @@
         <activity android:name=".TransactionActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
+        <activity android:name=".MerchantHeaderActivity"
+            android:windowSoftInputMode="stateHidden">
+        </activity>
         <activity android:name=".AddAddressActivity"
             android:parentActivityName=".CheckoutActivity"
             android:windowSoftInputMode="stateHidden">

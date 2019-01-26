@@ -187,6 +187,7 @@
     <string name="event_heading">Event</string>
     <string name="transaction_history_heading">Transaction History</string>
     <string name="mode_heading">Mode</string>
+    <string name="chat_button_label">Chat</string>
     <string name="amount_heading">Amount</string>
     <string name="date_heading">Date</string>
     <string name="status_heading">Status</string>

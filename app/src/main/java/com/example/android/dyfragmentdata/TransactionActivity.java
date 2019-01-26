@@ -326,7 +326,8 @@ public class TransactionActivity extends AppCompatActivity implements Navigation
                                     Amount = currentObject.getString("amount");
                                     Date = currentObject.getString("create_at");
                                     Status = currentObject.getString("status");
-                                    TransactionData currentTransactionData = new TransactionData( Transaction, For, Event, Mode, Amount, Date, Status);
+                                    String amountString = getResources().getString(R.string.price_dollar_detail) + Amount;
+                                    TransactionData currentTransactionData = new TransactionData( Transaction, For, Event, Mode, amountString, Date, Status);
                                     transactionDetailData.add(currentTransactionData);
                                     transactionAdapter = new TransactionAdapter(TransactionActivity.this, transactionDetailData);
                                     listView = (ListView) findViewById(R.id.transaction_list);

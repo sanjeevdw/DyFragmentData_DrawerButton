@@ -4,6 +4,7 @@ public class OrderDetailData {
 
     // Variable declaration
 
+    private String mProductID;
     private String mFullName;
     private String mEmailId;
     private String mPhoneno;
@@ -20,10 +21,11 @@ public class OrderDetailData {
     private String mTotalAmountValue;
     private String mInvoiceNo;
 
-    public OrderDetailData(String InvoiceNo, String FullName, String EmailId, String Phoneno, String Address, String Country, String City, String Zipcode, String Phoneno_alternative,
+    public OrderDetailData(String ProductID, String InvoiceNo, String FullName, String EmailId, String Phoneno, String Address, String Country, String City, String Zipcode, String Phoneno_alternative,
     String ProductName, String ProductSize, String ProductColor, String Quantity, String SubTotal, String TotalAmountValue) {
 
         // Variable initial values
+        mProductID = ProductID;
         mInvoiceNo = InvoiceNo;
         mFullName = FullName;
         mEmailId = EmailId;
@@ -42,6 +44,10 @@ public class OrderDetailData {
         }
 
     // Get method to return order history items
+
+    public String getProductID() {
+        return  mProductID;
+    }
 
     public String getInvoiceNo() {
         return  mInvoiceNo;

@@ -61,6 +61,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
     private String city;
     private String zipcode;
     private String phoneno_alternative;
+    private String productId;
     private String productName;
     private String productSize;
     private String productColor;
@@ -141,6 +142,18 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
 
         setNavigationViewListener();
         }
+
+    public View getViewByPosition(int pos, ListView listView) {
+        final int firstListItemPosition = listView.getFirstVisiblePosition();
+        final int lastListItemPosition = firstListItemPosition + listView.getChildCount() - 1;
+
+        if (pos < firstListItemPosition || pos > lastListItemPosition ) {
+            return listView.getAdapter().getView(pos, null, listView);
+        } else {
+            childIndex = pos - firstListItemPosition;
+            return listView.getChildAt(childIndex);
+        }
+    }
         private void showFullNavItem() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
@@ -352,6 +365,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                         //Loop the Array
                                         for (int n = 0; n < orderDetail.length(); n++) {
                                             JSONObject currentOrderDetail = orderDetail.getJSONObject(n);
+                                            productId = currentOrderDetail.getString("id");
                                             productName = currentOrderDetail.getString("products");
                                             productQuantity = currentOrderDetail.getString("qty");
                                             productPrice = currentOrderDetail.getString("price");
@@ -364,7 +378,7 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                            //     JSONObject currentProductAttribute = productAttribute.getJSONObject(j);
                                            //     productSize = currentProductAttribute.getString("Size");
                                               //   productColor = currentProductAttribute.getString("Color");
-                                                OrderDetailData currentOrderDetailData = new OrderDetailData(invoiceno, fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPriceString, productTotalPriceString);
+                                                OrderDetailData currentOrderDetailData = new OrderDetailData(productId, invoiceno, fullname, emailid, phoneno, address, country, city, zipcode, phoneno_alternative, productName, productSize, productColor, productQuantity, productPriceString, productTotalPriceString);
                                                 orderDetailData.add(currentOrderDetailData);
                                                 orderDetailAdapter = new OrderDetailAdapter(OrderDetailActivity.this, orderDetailData);
                                               //  Toast.makeText(OrderDetailActivity.this, "Order history response", Toast.LENGTH_SHORT).show();
@@ -384,7 +398,13 @@ public class OrderDetailActivity extends AppCompatActivity implements Navigation
                                                         }
 
                                                         if (viewId == R.id.chat_button_label) {
+                                                            getViewByPosition(position,listView);
+                                                            String productId = listView.getItemAtPosition(position).toString().trim();
+                                                            TextView Cartid = (TextView) listView.getChildAt(childIndex).findViewById(R.id.cart_id);
+                                                            String cartID = Cartid.getText().toString().trim();
+
                                                             Intent intentChat = new Intent(OrderDetailActivity.this, MerchantHeaderActivity.class);
+                                                            intentChat.putExtra("cartId", cartID);
                                                                     startActivity(intentChat);
                                                                     }
                                                     }

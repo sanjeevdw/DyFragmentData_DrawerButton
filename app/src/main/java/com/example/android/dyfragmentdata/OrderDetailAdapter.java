@@ -34,6 +34,10 @@ public class OrderDetailAdapter extends ArrayAdapter<OrderDetailData> {
 
         OrderDetailData CurrentOrderDetailData = getItem(position);
 
+        TextView productIdView = (TextView) itemListView.findViewById(R.id.cart_id);
+        productIdView.setText(CurrentOrderDetailData.getProductID());
+        productIdView.setVisibility(View.INVISIBLE);
+
         TextView invoiceNoView = (TextView) itemListView.findViewById(R.id.invoice_no);
         invoiceNoView.setText(CurrentOrderDetailData.getInvoiceNo());
 

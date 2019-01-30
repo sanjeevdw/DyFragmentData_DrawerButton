@@ -22,15 +22,26 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.onesignal.OneSignal;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class MerchantHeaderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
@@ -41,7 +52,7 @@ public class MerchantHeaderActivity extends AppCompatActivity implements Navigat
     private String authToken;
     private String ramdomId;
     private DrawerLayout mDrawerLayout;
-    private String invoicenoIntent;
+    private String cartId;
     private NavigationView navigationView;
     private String usernameGoogle;
     private String sessionGoogleEmil;
@@ -65,11 +76,6 @@ public class MerchantHeaderActivity extends AppCompatActivity implements Navigat
         android_id = Settings.Secure.getString(getApplicationContext().getContentResolver(),
                 Settings.Secure.ANDROID_ID);
 
-        myWebView = (WebView) findViewById(R.id.webview);
-        myWebView.loadUrl("https://www.godprice.com/merchant/");
-        WebSettings webSettings = myWebView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        myWebView.setWebViewClient(new MerchantHeaderActivity.MyWebViewClient());
         // OneSignal Initialization
         OneSignal.startInit(this)
                 .inFocusDisplaying(OneSignal.OSInFocusDisplayOption.Notification)
@@ -80,9 +86,16 @@ public class MerchantHeaderActivity extends AppCompatActivity implements Navigat
         Bundle bundle = invoiceNoIntent.getExtras();
 
         if (bundle != null) {
-            invoicenoIntent = (String) bundle.get("invoiceNoClicked");
-
-        }
+            cartId = (String) bundle.get("cartId");
+            if (!cartId.isEmpty()) {
+                myWebView = (WebView) findViewById(R.id.webview);
+                myWebView.loadUrl("https://www.godprice.com/api/chat.php?id="+cartId);
+                WebSettings webSettings = myWebView.getSettings();
+                webSettings.setJavaScriptEnabled(true);
+                myWebView.setWebViewClient(new MerchantHeaderActivity.MyWebViewClient());
+                // cartIdNetworkRequest();
+            }
+            }
 
         if (actionbar != null) {
             actionbar.setDisplayHomeAsUpEnabled(true);
@@ -310,5 +323,30 @@ public class MerchantHeaderActivity extends AppCompatActivity implements Navigat
             startActivity(intent);
             return true;
         }
+    }
+
+    private void cartIdNetworkRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(this);
+
+        String url = "https://www.godprice.com/api/chat.php?id="+cartId;
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+
+                        } catch(Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(MerchantHeaderActivity.this, "Error Occurred", Toast.LENGTH_SHORT).show();
+            }
+        });
+        queue.add(stringRequest);
     }
 }

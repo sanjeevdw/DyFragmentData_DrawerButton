@@ -43,7 +43,8 @@ import com.onesignal.OneSignal;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-public class MerchantHeaderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class
+MerchantHeaderActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     private Session session;
     private String sessionToken;
@@ -280,6 +281,10 @@ public class MerchantHeaderActivity extends AppCompatActivity implements Navigat
             case R.id.nav_transaction:
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
+                break;
+            case R.id.nav_delivery:
+                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
+                startActivity(intentDelivery);
                 break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);

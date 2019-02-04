@@ -20,13 +20,15 @@
 
         <activity android:name=".DetailsActivity"
             android:parentActivityName=".CategoryChildActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CategoryChildActivity"/>
         </activity>
         <activity android:name=".HomepageActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,68 +36,92 @@
             </intent-filter>
         </activity>
         <activity android:name=".MasterCategoryActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".ParentCategoryActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".CategoryChildActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".MerchantLoginActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".SignupActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".CartActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".LoginActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".ProfileActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".ForgotPasswordActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".FilterActivity"
             android:windowSoftInputMode="stateHidden">
         </activity>
         <activity android:name=".CheckoutActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".ReviewOrderActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".PaymentActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".ChangePasswordActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".WishlistActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".OrderHistoryActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".OrderHistoryListingActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".OrderDetailActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".TransactionActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".MerchantHeaderActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
+        </activity>
+        <activity android:name=".DeliveryActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
         </activity>
         <activity android:name=".AddAddressActivity"
             android:parentActivityName=".CheckoutActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".CheckoutActivity"/>

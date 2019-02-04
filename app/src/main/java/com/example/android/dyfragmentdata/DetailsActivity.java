@@ -130,6 +130,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Secure.ANDROID_ID);
 
         Intent productIdIntent = getIntent();
+
         Bundle bundle = productIdIntent.getExtras();
 
         if (bundle != null) {
@@ -155,13 +156,13 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             homepageInt = (String) bundleHomepage.get("homepageToDetail");
         }
 
-      /*  Intent relatedProductIdIntent = getIntent();
+        Intent relatedProductIdIntent = getIntent();
         Bundle bundlerelatedProduct = relatedProductIdIntent.getExtras();
 
-        if (bundlerelatedProduct != null) {
-            if (bundle == null) {
+       /* if (bundlerelatedProduct != null) {
+         //   if (bundle == null) {
                 pid = (String) bundlerelatedProduct.get("RelatedProductId");
-            }
+         //   }
         } */
 
         session = new Session(this);
@@ -413,6 +414,10 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
+            case R.id.nav_delivery:
+                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
+                startActivity(intentDelivery);
+                break;
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", LENGTH_SHORT).show();
@@ -486,6 +491,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                     String productID = PPid.getText().toString().trim();
                                                     Intent intent = new Intent(DetailsActivity.this, DetailsActivity.class);
                                                     intent.putExtra("ProductId", productID);
+                                                    finish();
                                                     startActivity(intent);
                                                 } else if(viewId == R.id.image_favorite) {
                                                     if (sessionToken.isEmpty()) {
@@ -526,10 +532,8 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
-
             }
-
-        });
+            });
         queue.add(stringRequest);
     }
 
@@ -596,7 +600,6 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                   //  Drawable drawable = image.getDrawable();
                                                     mainImageView = (ImageView) findViewById(R.id.main_image);
                                                     mainImageView.setImageBitmap(bitmap);
-
                                                     }
                                                     });
 
@@ -824,7 +827,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                             .load(galleryThumbnail)
                                             .into(productImageView);
 
-                                    listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                  /*  listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                             long viewId = view.getId();
@@ -846,7 +849,7 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                                                 sendWishlistRequest(productID, sessionToken);
                                             }
                                         }
-                                    });
+                                    }); */
                                     }
                             }
 

@@ -639,18 +639,19 @@ public class LoginActivity extends AppCompatActivity implements NavigationView.O
                 Intent intentOrderHistory = new Intent(this, OrderHistoryActivity.class);
                 startActivity(intentOrderHistory);
                 break;
-            case R.id.nav_merchant_login:
-                Intent intentMechantLogin = new Intent(this, OrderHistoryActivity.class);
+            case R.id.nav_footer_merchant:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_footer_delivery:
+                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
+                startActivity(intentDelivery);
                 break;
             case R.id.nav_transaction:
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_delivery:
-                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
-                startActivity(intentDelivery);
-                break;
+
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();

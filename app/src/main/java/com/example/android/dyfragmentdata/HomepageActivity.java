@@ -13,12 +13,10 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -314,26 +311,26 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     }
 
         private void showFullNavItem() {
-            navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.getMenu().clear();
-            navigationView.inflateMenu(R.menu.drawer_view);
-            View header = navigationView.getHeaderView(0);
-            TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
-            TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
-            sessionUserName = session.getusename();
-            sessionUserEmail = session.getUserEmail();
-            loggedInUserName.setText(sessionUserName);
-            loggedInUserEmail.setText(sessionUserEmail);
-            sessionUserWalletAmount = session.getuserWalletAmount();
-            navigationView = findViewById(R.id.nav_view);
-            String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
-            TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
-            if (!sessionUserWalletAmount.isEmpty()) {
-                loggedInUserWalletAmount.setText(WalletPriceDollar);
-            }
-
-
+        navigationView.inflateMenu(R.menu.drawer_view);
+        View header = navigationView.getHeaderView(0);
+        TextView loggedInUserName = header.findViewById(R.id.header_username_tv);
+        TextView loggedInUserEmail = header.findViewById(R.id.email_address_tv);
+        sessionUserName = session.getusename();
+        sessionUserEmail = session.getUserEmail();
+        loggedInUserName.setText(sessionUserName);
+        loggedInUserEmail.setText(sessionUserEmail);
+        sessionUserWalletAmount = session.getuserWalletAmount();
+        navigationView = findViewById(R.id.nav_view);
+        String WalletPriceDollar = getResources().getString(R.string.wallet_amount_label) + " " + getResources().getString(R.string.price_dollar_detail) + sessionUserWalletAmount;
+        TextView loggedInUserWalletAmount = header.findViewById(R.id.wallet_amount_header);
+        if (!sessionUserWalletAmount.isEmpty()) {
+            loggedInUserWalletAmount.setText(WalletPriceDollar);
         }
+
+
+    }
 
      /*   private void setupTabIcons() {
         tabLayout.getTabAt(0).setIcon(tabIcons[0]);
@@ -348,7 +345,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private void setNavigationViewListener() {
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -384,7 +381,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 } else {
                     showFullNavItem();
                 }
-              //  setNavigationViewListener();
+                //  setNavigationViewListener();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -412,7 +409,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentMasterCategory = new Intent(this, MasterCategoryActivity.class);
                 startActivity(intentMasterCategory);
                 break;
-                case R.id.nav_login:
+            case R.id.nav_login:
                 Intent intentLogin = new Intent(this, LoginActivity.class);
                 startActivity(intentLogin);
                 break;
@@ -450,14 +447,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_merchant_login:
+            case R.id.nav_footer_merchant:
                 Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
                 break;
-            case R.id.nav_delivery:
+            case R.id.nav_footer_delivery:
                 Intent intentDelivery = new Intent(this, DeliveryActivity.class);
                 startActivity(intentDelivery);
                 break;
+
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();

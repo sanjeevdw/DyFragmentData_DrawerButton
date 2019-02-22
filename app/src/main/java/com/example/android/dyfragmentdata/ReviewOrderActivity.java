@@ -347,7 +347,11 @@ public class ReviewOrderActivity extends AppCompatActivity implements Navigation
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_delivery:
+            case R.id.nav_footer_merchant:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_footer_delivery:
                 Intent intentDelivery = new Intent(this, DeliveryActivity.class);
                 startActivity(intentDelivery);
                 break;

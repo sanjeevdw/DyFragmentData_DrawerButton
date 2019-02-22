@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
@@ -16,12 +17,14 @@
         <item
             android:id="@+id/nav_forgot_password"
             android:title="@string/forgot_password"/>
+    </group>
+    <group
+        android:id="@+id/nav_footer"
+        >
         <item
-            android:id="@+id/nav_merchant_login"
-            android:title="@string/merchant_login"/>
-        <item
-            android:id="@+id/nav_delivery"
-            android:title="@string/delivery_drawer"/>
+            android:id="@+id/nav_log_version"
+            app:actionLayout="@layout/footer_navigation_menu_without_login" />
     </group>
 </menu>
+
 

@@ -1,20 +1,38 @@
 package com.example.android.dyfragmentdata;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,6 +43,11 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.bumptech.glide.Glide;
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.auth.api.signin.GoogleSignIn;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.onesignal.OneSignal;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,8 +58,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
-public class TemplesFragment extends Fragment {
+public class TemplesFragment extends Fragment{
+
     private ArrayList<Guide> temples;
     private View rootView;
     private GuideAdapter adapter;
@@ -44,6 +70,38 @@ public class TemplesFragment extends Fragment {
     private String sessionToken;
     private int childIndex;
     private static final int GUIDE_LOADER_ID = 1;
+    private DrawerLayout mDrawerLayout;
+    private ArrayList<HomepageRecommendedCategoryData> gridCategoriesTwo;
+    private HomepageRecommendedCategoryAdapter adapterRecommendedCategory;
+    private ArrayList<HomepageFeaturedCategoryData> gridCategoriesThree;
+    private HomepageFeaturedCategoryAdapter adapterFeaturedCategory;
+    private GridAdapter gridAdapter;
+    private ArrayList<GridCategory> gridCategories;
+    private int[] tabIcons = {R.drawable.shoes, R.drawable.mensjeans, R.drawable.casecase, R.drawable.accessories, R.drawable.wallet};
+    private TabLayout tabLayout;
+    CustomViewPager imageViewPager;
+    LinearLayout sliderDotspanel;
+    private int dotscount;
+    private ImageView[] dots;
+    int currentPage = 0;
+    private Session session;
+    private NavigationView navigationView;
+    private String usernameGoogle;
+    private String sessionGoogleEmil;
+    private String android_id;
+    private SliderData sliderData;
+    private ArrayList<SliderData> sliderDataItems;
+    private String sessionUserName;
+    private String sessionUserEmail;
+    private GridView gridView;
+    private GridView gridViewTwo;
+    private GridView gridViewThree;
+    private ArrayList<DealsOfTheDay> dealsOfTheDay;
+    private DealsOfTheDayAdapter dealsOfTheDayAdapter;
+    private ArrayList<HomepageTrendingProductData> homepageTrendingProductData;
+    private HomepageTrendingProductAdapter homepageTrendingProductAdapter;
+    private String sessionUserImage;
+    private String sessionUserWalletAmount;
 
    // private String productID;
 
@@ -62,14 +120,11 @@ public class TemplesFragment extends Fragment {
           temples = new ArrayList<Guide>();
           categoryNetworkRequest();
 
-      //  TextView productIdtv = (TextView) listView.findViewById(R.id.product_id);
-     //   productIdtv.setVisibility(View.GONE);
-
-        Session session = new Session(getActivity().getApplicationContext());
-        sessionToken = session.getusertoken();
 
         return rootView;
         }
+
+
 
     public View getViewByPosition(int pos, ListView listView) {
         final int firstListItemPosition = listView.getFirstVisiblePosition();
@@ -205,6 +260,68 @@ public class TemplesFragment extends Fragment {
         }
         };
         queue.add(stringRequest);
+    }
+
+    private void sendSliderRequest() {
+
+        RequestQueue queue = Volley.newRequestQueue(getActivity().getApplicationContext());
+        String url = "https://www.godprice.com/api/slider.php";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            String trimResponse = response.substring(3);
+                            String trimmedResponse = trimResponse.trim();
+                            JSONObject jsonObject = new JSONObject(trimmedResponse);
+                            JSONArray data = jsonObject.getJSONArray("data");
+                            if (data.length() > 0) {
+                                //Loop the Array
+                                for (int i = 0; i < data.length(); i++) {
+                                    JSONObject currentObject = data.getJSONObject(i);
+                                    String sliderId = currentObject.getString("id");
+                                    String sliderTitle = currentObject.getString("title");
+                                    String sliderDescription = currentObject.getString("description");
+                                    String sliderImage = currentObject.getString("image");
+                                    SliderData sliderData = new SliderData(sliderId, sliderTitle, sliderDescription, sliderImage);
+                                    sliderDataItems.add(sliderData);
+                                    imageViewPager = (CustomViewPager) rootView.findViewById(R.id.viewPager);
+                                    ViewPagerApdater viewPagerAdapter = new ViewPagerApdater(getActivity().getApplicationContext(), sliderDataItems);
+                                    imageViewPager.setAdapter(viewPagerAdapter);
+                                    viewPagerAdapter.notifyDataSetChanged();
+                                }
+                            }
+                        } catch (JSONException e) {
+                            //     Log.e("Volley", "Problem parsing the category JSON results", e);
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Toast.makeText(getActivity().getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
+
+            }
+
+        }) { @Override
+        protected Map<String, String> getParams() {
+            Map<String, String> params = new HashMap<String, String>();
+            return params;
+        }
+        };
+        queue.add(stringRequest);
+    }
+
+    public static boolean isValidContextForGlide(final Context context) {
+        if (context == null) {
+            return false;
+        }
+        if (context instanceof Activity) {
+            final Activity activity = (Activity) context;
+            if (activity.isDestroyed() || activity.isFinishing()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
 

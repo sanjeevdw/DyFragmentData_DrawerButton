@@ -59,7 +59,7 @@ public Bundle bundle;
         super.onCreate(savedInstanceState);
 
         // Set the content of the activity to use the activity_category.xml layout file
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.homepage_new);
 
         // Find the view pager that will allow the user to swipe between fragments.
 
@@ -356,18 +356,19 @@ public Bundle bundle;
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
-            case R.id.nav_merchant_login:
+            case R.id.nav_footer_merchant:
                 Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_footer_delivery:
+                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
+                startActivity(intentDelivery);
                 break;
             case R.id.nav_transaction:
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_delivery:
-                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
-                startActivity(intentDelivery);
-                break;
+
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();

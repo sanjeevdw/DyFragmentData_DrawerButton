@@ -11,7 +11,6 @@
     <string name="header_name">God Price</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
-    <string name="merchant_login">Merchant Login</string>
     <string name="about_industry">About GodPrice</string>
     <string name="choose_image_profile">Choose</string>
     <string name="home">Home</string>
@@ -73,7 +72,7 @@
     <string name="forgot_password">Forgot Password</string>
     <string name="submit_button_text">SUBMIT</string>
     <string name="deactivate_account">Deactivate account</string>
-    <string name="profile">Profile</string>
+    <string name="profile">My Profile</string>
     <string name="update">UPDATE</string>
     <string name="checkout_address_header">Checkout Address</string>
     <string name="billing_address">1. Billing Address</string>
@@ -108,7 +107,7 @@
     <string name="change_password">Change Password</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="new_password">New Password</string>
-    <string name="wishlist_heading">Wishlist</string>
+    <string name="wishlist_heading">Favourite List</string>
     <string name="wishlist_remove_product_icon">X</string>
     <string name="product_price_whistlist">$799.00</string>
     <string name="product_sku_whistlist">SKU: #12345</string>
@@ -128,7 +127,7 @@
     <string name="specification_heading_seven">Front Camera</string>
     <string name="specification_value_seven">2 MP</string>
     <string name="product_details">Product</string>
-    <string name="order_history">Order History</string>
+    <string name="order_history">Recent Order</string>
     <string name="purchased_history_text">Purchased</string>
     <string name="purchased_date">Dec 05, 2018</string>
     <string name="order_id">OrderId: 123456789</string>
@@ -172,7 +171,7 @@
     <string name="color_label">Color: </string>
     <string name="size_label">Size: </string>
     <string name="back_label">Back</string>
-    <string name="master_category">Product List</string>
+    <string name="master_category">Categories</string>
     <string name="brand_name">Fanideaz</string>
     <string name="price_range">PRICE RANGE</string>
     <string name="filter_by_brand">FILTER BY BRAND</string>
@@ -198,6 +197,10 @@
     <string name="order_detail_label">Order Detail </string>
     <string name="user_email_header">om@omtatsat.com</string>
     <string name="delivery_drawer">Delivery</string>
+    <string name="merchant_signup">Merchant Sign up</string>
+    <string name="driver_signup">Driver Sign up</string>
+    <string name="merchant_login">Merchant Login</string>
+    <string name="driver_login">Driver Login</string>
     <string name="product_name_whistlist">Alan Jones Men\'s Cotton Hooded Sweatshirt</string>
     <string name="facebook_application_id" translatable="false">336835236870096</string>
     <string name="facebook_login_protocol_scheme" translatable="false">fb336835236870096</string>

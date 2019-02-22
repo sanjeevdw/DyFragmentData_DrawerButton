@@ -1,6 +1,7 @@
 package com.example.android.dyfragmentdata;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -11,6 +12,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
@@ -353,19 +355,19 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
-            case R.id.nav_merchant_login:
+            case R.id.nav_footer_merchant:
                 Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_footer_delivery:
+                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
+                startActivity(intentDelivery);
                 break;
             case R.id.nav_transaction:
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_delivery:
-                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
-                startActivity(intentDelivery);
-                break;
-            case R.id.sign_out_menu:
+                case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show();
                 sessionToken = "";
@@ -615,8 +617,7 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                                     String productPriceDollar = getResources().getString(R.string.price_dollar_detail) + cartTotalAmount;
                                     totalAmountCart = (TextView) findViewById(R.id.cart_price);
                                     totalAmountCart.setText(productPriceDollar);
-
-                                }
+                                    }
                                 }
                             else if (statusInt == 201) {
                                 String message = jsonObject.getString("message");
@@ -675,10 +676,23 @@ public class CheckoutActivity extends AppCompatActivity implements NavigationVie
                                 int walletAmountInt = Integer.parseInt(walletAmount);
 
                             if (walletAmountInt <= 0) {
-                                LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
+
+
+                                AlertDialog alertDialog = new AlertDialog.Builder(CheckoutActivity.this).create();
+                                alertDialog.setTitle("Alert");
+                                alertDialog.setMessage(getResources().getString(R.string.wallet_not_sufficient));
+                                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                alertDialog.show();
+
+                              /*  LinearLayout linearLayout = (LinearLayout) findViewById(R.id.response_message_linear);
                                 linearLayout.setVisibility(View.VISIBLE);
                                 TextView responseTextViewTwo = (TextView) findViewById(R.id.response_message_two);
-                                responseTextViewTwo.setText(getResources().getString(R.string.wallet_not_sufficient));
+                                responseTextViewTwo.setText(getResources().getString(R.string.wallet_not_sufficient)); */
 
                                 Button nextButton = (Button) findViewById(R.id.forward_arrow_button);
                                 nextButton.setVisibility(View.GONE);

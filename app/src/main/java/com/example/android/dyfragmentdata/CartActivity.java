@@ -333,15 +333,15 @@ public class CartActivity extends AppCompatActivity implements NavigationView.On
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
-            case R.id.nav_merchant_login:
-                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
-                startActivity(intentMechantLogin);
-                break;
             case R.id.nav_transaction:
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_delivery:
+            case R.id.nav_footer_merchant:
+                Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
+                startActivity(intentMechantLogin);
+                break;
+                case R.id.nav_footer_delivery:
                 Intent intentDelivery = new Intent(this, DeliveryActivity.class);
                 startActivity(intentDelivery);
                 break;

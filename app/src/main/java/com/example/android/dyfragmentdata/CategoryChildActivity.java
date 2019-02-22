@@ -302,11 +302,11 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_merchant_login:
+            case R.id.nav_footer_merchant:
                 Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
                 break;
-            case R.id.nav_delivery:
+            case R.id.nav_footer_delivery:
                 Intent intentDelivery = new Intent(this, DeliveryActivity.class);
                 startActivity(intentDelivery);
                 break;
@@ -648,7 +648,7 @@ public class CategoryChildActivity extends AppCompatActivity implements Navigati
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Toast.makeText(getApplicationContext(), "Error Occurred" + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Error Occurred", Toast.LENGTH_SHORT).show();
 
             }
         }) { @Override

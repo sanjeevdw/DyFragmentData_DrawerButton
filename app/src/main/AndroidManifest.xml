@@ -14,8 +14,13 @@
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
         <activity android:name=".MainActivity"
-            android:windowSoftInputMode="stateHidden">
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity android:name=".DetailsActivity"
@@ -29,11 +34,11 @@
         <activity android:name=".HomepageActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
         </activity>
         <activity android:name=".MasterCategoryActivity"
             android:windowSoftInputMode="stateHidden"
@@ -115,6 +120,10 @@
             android:launchMode="singleTop">
         </activity>
         <activity android:name=".DeliveryActivity"
+            android:windowSoftInputMode="stateHidden"
+            android:launchMode="singleTop">
+        </activity>
+        <activity android:name=".HomepageNewActivity"
             android:windowSoftInputMode="stateHidden"
             android:launchMode="singleTop">
         </activity>

@@ -406,18 +406,19 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
                 Intent intentOrderHistory = new Intent(this, OrderHistoryListingActivity.class);
                 startActivity(intentOrderHistory);
                 break;
-            case R.id.nav_merchant_login:
+            case R.id.nav_footer_merchant:
                 Intent intentMechantLogin = new Intent(this, MerchantLoginActivity.class);
                 startActivity(intentMechantLogin);
+                break;
+            case R.id.nav_footer_delivery:
+                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
+                startActivity(intentDelivery);
                 break;
             case R.id.nav_transaction:
                 Intent intentTransaction = new Intent(this, TransactionActivity.class);
                 startActivity(intentTransaction);
                 break;
-            case R.id.nav_delivery:
-                Intent intentDelivery = new Intent(this, DeliveryActivity.class);
-                startActivity(intentDelivery);
-                break;
+
             case R.id.sign_out_menu:
                 AuthUI.getInstance().signOut(this);
                 Toast.makeText(this, "Signed out", LENGTH_SHORT).show();
@@ -1148,6 +1149,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
 
     private void sendWishlistRequest(String pid, String userId) {
 
+        colorLayout.removeAllViews();
+        sizeLayout.removeAllViews();
+        imageLayout.removeAllViews();
         // final String userId = String.valueOf(uid);
         final String productId = String.valueOf(pid);
         final String UserID = String.valueOf(userId);
@@ -1184,6 +1188,9 @@ public class DetailsActivity extends AppCompatActivity implements NavigationView
         final String ProductID = productID;
         final String UserId = userId;
 
+        colorLayout.removeAllViews();
+        sizeLayout.removeAllViews();
+        imageLayout.removeAllViews();
         RequestQueue queue = Volley.newRequestQueue(this);
         String url = "https://www.godprice.com/api/whishlist_delete.php";
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
